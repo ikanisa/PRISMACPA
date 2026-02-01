@@ -95,6 +95,7 @@ import { renderAuditWorkpapers } from "./views/audit-workpapers";
 import { renderAmlDashboard } from "./views/aml-dashboard";
 import { renderExecutiveDashboard, type JurisdictionCode } from "./views/executive-dashboard";
 import { renderAgentsDashboard, type AgentCardData, type AgentJurisdiction, type AgentStatus } from "./views/agents-dashboard";
+import { renderTeamChatView, type TeamAgentInfo, type TeamChatMessage } from "./views/team-chat-view";
 import { refreshTaxCompliance } from "./controllers/tax-compliance";
 import { loadExecutiveDashboard } from "./controllers/executive-dashboard";
 import type { AgentsListResult } from "./types";
@@ -174,6 +175,40 @@ function transformTeamsToCards(
     memberCount: agentsList.agents.length,
     emoji: "👥",
   }];
+}
+
+/**
+ * Check if a session key is a team session.
+ */
+function isTeamSessionKey(sessionKey: string): boolean {
+  return sessionKey.startsWith("team:") && sessionKey.endsWith(":main");
+}
+
+/**
+ * Parse team ID from session key.
+ */
+function parseTeamId(sessionKey: string): string | null {
+  if (!isTeamSessionKey(sessionKey)) return null;
+  const parts = sessionKey.split(":");
+  // format: team:<teamId>:main
+  if (parts.length >= 3 && parts[0] === "team" && parts[parts.length - 1] === "main") {
+    return parts.slice(1, -1).join(":");
+  }
+  return null;
+}
+
+/**
+ * Get team members from agents list for team chat view.
+ */
+function getTeamMembersForChat(agentsList: AgentsListResult | null): TeamAgentInfo[] {
+  if (!agentsList?.agents) return [];
+  return agentsList.agents.map((agent) => ({
+    id: agent.id,
+    name: agent.identity?.name ?? agent.name ?? agent.id,
+    emoji: agent.identity?.emoji,
+    theme: agent.identity?.theme,
+    avatar: agent.identity?.avatarUrl ?? agent.identity?.avatar,
+  }));
 }
 
 export function renderApp(state: AppViewState) {
@@ -659,76 +694,96 @@ export function renderApp(state: AppViewState) {
     }
 
         ${state.tab === "chat"
-      ? renderChat({
-        sessionKey: state.sessionKey,
-        onSessionKeyChange: (next) => {
-          state.sessionKey = next;
-          state.chatMessage = "";
-          state.chatAttachments = [];
-          state.chatStream = null;
-          state.chatStreamStartedAt = null;
-          state.chatRunId = null;
-          state.chatQueue = [];
-          state.resetToolStream();
-          state.resetChatScroll();
-          state.applySettings({
-            ...state.settings,
-            sessionKey: next,
-            lastActiveSessionKey: next,
-          });
-          void state.loadAssistantIdentity();
-          void loadChatHistory(state);
-          void refreshChatAvatar(state);
-        },
-        thinkingLevel: state.chatThinkingLevel,
-        showThinking,
-        loading: state.chatLoading,
-        sending: state.chatSending,
-        compactionStatus: state.compactionStatus,
-        assistantAvatarUrl: chatAvatarUrl,
-        messages: state.chatMessages,
-        toolMessages: state.chatToolMessages,
-        stream: state.chatStream,
-        streamStartedAt: state.chatStreamStartedAt,
-        draft: state.chatMessage,
-        queue: state.chatQueue,
-        connected: state.connected,
-        canSend: state.connected,
-        disabledReason: chatDisabledReason,
-        error: state.lastError,
-        sessions: state.sessionsResult,
-        focusMode: chatFocus,
-        onRefresh: () => {
-          state.resetToolStream();
-          return Promise.all([loadChatHistory(state), refreshChatAvatar(state)]);
-        },
-        onToggleFocusMode: () => {
-          if (state.onboarding) return;
-          state.applySettings({
-            ...state.settings,
-            chatFocusMode: !state.settings.chatFocusMode,
-          });
-        },
-        onChatScroll: (event) => state.handleChatScroll(event),
-        onDraftChange: (next) => (state.chatMessage = next),
-        attachments: state.chatAttachments,
-        onAttachmentsChange: (next) => (state.chatAttachments = next),
-        onSend: () => state.handleSendChat(),
-        canAbort: Boolean(state.chatRunId),
-        onAbort: () => void state.handleAbortChat(),
-        onQueueRemove: (id) => state.removeQueuedMessage(id),
-        onNewSession: () => state.handleSendChat("/new", { restoreDraft: true }),
-        // Sidebar props for tool output viewing
-        sidebarOpen: state.sidebarOpen,
-        sidebarContent: state.sidebarContent,
-        sidebarError: state.sidebarError,
-        splitRatio: state.splitRatio,
-        onOpenSidebar: (content: string) => state.handleOpenSidebar(content),
-        onCloseSidebar: () => state.handleCloseSidebar(),
-        onSplitRatioChange: (ratio: number) => state.handleSplitRatioChange(ratio),
-        assistantName: state.assistantName,
-        assistantAvatar: state.assistantAvatar,
-      })
+      ? (isTeamSessionKey(state.sessionKey)
+        ? renderTeamChatView({
+          connected: state.connected,
+          loading: state.chatLoading,
+          error: state.lastError ?? null,
+          teamId: parseTeamId(state.sessionKey) ?? "unknown",
+          teamName: "Prisma CPA Staff Team", // TODO: Get from config
+          members: getTeamMembersForChat(state.agentsList),
+          messages: [], // TODO: Wire to team messages storage
+          inputValue: state.chatMessage,
+          onInputChange: (value) => (state.chatMessage = value),
+          onSendMessage: () => {
+            // TODO: Implement team message sending
+            console.log("Team message:", state.chatMessage);
+            state.chatMessage = "";
+          },
+          onBack: () => {
+            state.tab = "agents";
+          },
+        })
+        : renderChat({
+          sessionKey: state.sessionKey,
+          onSessionKeyChange: (next) => {
+            state.sessionKey = next;
+            state.chatMessage = "";
+            state.chatAttachments = [];
+            state.chatStream = null;
+            state.chatStreamStartedAt = null;
+            state.chatRunId = null;
+            state.chatQueue = [];
+            state.resetToolStream();
+            state.resetChatScroll();
+            state.applySettings({
+              ...state.settings,
+              sessionKey: next,
+              lastActiveSessionKey: next,
+            });
+            void state.loadAssistantIdentity();
+            void loadChatHistory(state);
+            void refreshChatAvatar(state);
+          },
+          thinkingLevel: state.chatThinkingLevel,
+          showThinking,
+          loading: state.chatLoading,
+          sending: state.chatSending,
+          compactionStatus: state.compactionStatus,
+          assistantAvatarUrl: chatAvatarUrl,
+          messages: state.chatMessages,
+          toolMessages: state.chatToolMessages,
+          stream: state.chatStream,
+          streamStartedAt: state.chatStreamStartedAt,
+          draft: state.chatMessage,
+          queue: state.chatQueue,
+          connected: state.connected,
+          canSend: state.connected,
+          disabledReason: chatDisabledReason,
+          error: state.lastError,
+          sessions: state.sessionsResult,
+          focusMode: chatFocus,
+          onRefresh: () => {
+            state.resetToolStream();
+            return Promise.all([loadChatHistory(state), refreshChatAvatar(state)]);
+          },
+          onToggleFocusMode: () => {
+            if (state.onboarding) return;
+            state.applySettings({
+              ...state.settings,
+              chatFocusMode: !state.settings.chatFocusMode,
+            });
+          },
+          onChatScroll: (event) => state.handleChatScroll(event),
+          onDraftChange: (next) => (state.chatMessage = next),
+          attachments: state.chatAttachments,
+          onAttachmentsChange: (next) => (state.chatAttachments = next),
+          onSend: () => state.handleSendChat(),
+          canAbort: Boolean(state.chatRunId),
+          onAbort: () => void state.handleAbortChat(),
+          onQueueRemove: (id) => state.removeQueuedMessage(id),
+          onNewSession: () => state.handleSendChat("/new", { restoreDraft: true }),
+          // Sidebar props for tool output viewing
+          sidebarOpen: state.sidebarOpen,
+          sidebarContent: state.sidebarContent,
+          sidebarError: state.sidebarError,
+          splitRatio: state.splitRatio,
+          onOpenSidebar: (content: string) => state.handleOpenSidebar(content),
+          onCloseSidebar: () => state.handleCloseSidebar(),
+          onSplitRatioChange: (ratio: number) => state.handleSplitRatioChange(ratio),
+          assistantName: state.assistantName,
+          assistantAvatar: state.assistantAvatar,
+        }))
       : nothing
     }
 
