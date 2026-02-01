@@ -1,7 +1,7 @@
 {
   "name": "openclaw",
   "version": "2026.1.30",
-  "description": "WhatsApp gateway CLI (Baileys web) with Pi RPC agent",
+  "description": "OpenClaw AI Assistant Platform — configured for Prisma CPA (Malta tax/audit/accounting)",
   "keywords": [],
   "license": "MIT",
   "author": "",
@@ -219,6 +219,7 @@
     "oxlint": "^1.42.0",
     "oxlint-tsgolint": "^0.11.4",
     "rolldown": "1.0.0-rc.2",
+    "sqlite-vec-darwin-x64": "0.1.7-alpha.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"

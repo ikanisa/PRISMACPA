@@ -4,14 +4,17 @@ export const TAB_GROUPS = [
   { label: "Chat", tabs: ["chat"] },
   {
     label: "Control",
-    tabs: ["overview", "channels", "instances", "sessions", "cron"],
+    tabs: ["overview", "executive", "channels", "instances", "sessions", "cron"],
   },
   { label: "Agent", tabs: ["skills", "nodes"] },
+  { label: "Compliance", tabs: ["tax", "vat", "evidence", "bank", "audit", "aml"] },
   { label: "Settings", tabs: ["config", "debug", "logs"] },
 ] as const;
 
+
 export type Tab =
   | "overview"
+  | "executive"
   | "channels"
   | "instances"
   | "sessions"
@@ -19,12 +22,19 @@ export type Tab =
   | "skills"
   | "nodes"
   | "chat"
+  | "tax"
+  | "vat"
+  | "evidence"
+  | "bank"
+  | "audit"
+  | "aml"
   | "config"
   | "debug"
   | "logs";
 
 const TAB_PATHS: Record<Tab, string> = {
   overview: "/overview",
+  executive: "/executive",
   channels: "/channels",
   instances: "/instances",
   sessions: "/sessions",
@@ -32,6 +42,12 @@ const TAB_PATHS: Record<Tab, string> = {
   skills: "/skills",
   nodes: "/nodes",
   chat: "/chat",
+  tax: "/tax",
+  vat: "/vat",
+  evidence: "/evidence",
+  bank: "/bank",
+  audit: "/audit",
+  aml: "/aml",
   config: "/config",
   debug: "/debug",
   logs: "/logs",
@@ -104,6 +120,8 @@ export function iconForTab(tab: Tab): IconName {
       return "messageSquare";
     case "overview":
       return "barChart";
+    case "executive":
+      return "globe";
     case "channels":
       return "link";
     case "instances":
@@ -116,6 +134,18 @@ export function iconForTab(tab: Tab): IconName {
       return "zap";
     case "nodes":
       return "monitor";
+    case "tax":
+      return "fileText";
+    case "vat":
+      return "fileText";
+    case "evidence":
+      return "folder";
+    case "bank":
+      return "book";
+    case "audit":
+      return "edit";
+    case "aml":
+      return "brain";
     case "config":
       return "settings";
     case "debug":
@@ -131,6 +161,8 @@ export function titleForTab(tab: Tab) {
   switch (tab) {
     case "overview":
       return "Overview";
+    case "executive":
+      return "Executive Dashboard";
     case "channels":
       return "Channels";
     case "instances":
@@ -145,6 +177,18 @@ export function titleForTab(tab: Tab) {
       return "Nodes";
     case "chat":
       return "Chat";
+    case "tax":
+      return "Tax & Compliance";
+    case "vat":
+      return "VAT Returns";
+    case "evidence":
+      return "Evidence Ledger";
+    case "bank":
+      return "Bank Recon";
+    case "audit":
+      return "Audit Papers";
+    case "aml":
+      return "AML Compliance";
     case "config":
       return "Config";
     case "debug":
@@ -160,6 +204,8 @@ export function subtitleForTab(tab: Tab) {
   switch (tab) {
     case "overview":
       return "Gateway status, entry points, and a fast health read.";
+    case "executive":
+      return "Partner & Manager KPIs, risk heatmap, and deadline tracking.";
     case "channels":
       return "Manage channels and settings.";
     case "instances":
@@ -174,6 +220,18 @@ export function subtitleForTab(tab: Tab) {
       return "Paired devices, capabilities, and command exposure.";
     case "chat":
       return "Direct gateway chat session for quick interventions.";
+    case "tax":
+      return "Malta VAT periods, evidence ledger, and approval workflows.";
+    case "vat":
+      return "Malta VAT period management and CFR filings.";
+    case "evidence":
+      return "Document intake, OCR extraction, and verification.";
+    case "bank":
+      return "Bank transaction matching and reconciliation.";
+    case "audit":
+      return "Working papers, PBC tracking, and pack assembly.";
+    case "aml":
+      return "CDD monitoring, STR queue, and FIAU compliance.";
     case "config":
       return "Edit ~/.openclaw/openclaw.json safely.";
     case "debug":

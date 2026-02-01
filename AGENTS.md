@@ -1,6 +1,7 @@
 # Repository Guidelines
 
-- Repo: https://github.com/openclaw/openclaw
+- Repo: https://github.com/ikanisa/PRISMACPA (originally forked from openclaw/openclaw)
+- Product: **Prisma CPA** — AI Agent Assistant Dashboard for Malta tax/audit/accounting
 - GitHub issues/comments/PR comments: use literal multiline strings or `-F - <<'EOF'` (or $'...') for real newlines; never embed "\\n".
 
 ## Project Structure & Module Organization

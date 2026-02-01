@@ -220,6 +220,9 @@ importers:
       rolldown:
         specifier: 1.0.0-rc.2
         version: 1.0.0-rc.2
+      sqlite-vec-darwin-x64:
+        specifier: 0.1.7-alpha.2
+        version: 0.1.7-alpha.2
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
@@ -536,6 +539,19 @@ importers:
       openclaw:
         specifier: workspace:*
         version: link:../..
+
+  packages/prisma-cpa:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(@vitest/browser-playwright@4.0.18)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)
 
   ui:
     dependencies:
@@ -1044,7 +1060,7 @@ packages:
     resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
     engines: {node: '>=18.14.1'}
     peerDependencies:
-      hono: ^4
+      hono: 4.11.4
 
   '@huggingface/jinja@0.5.4':
     resolution: {integrity: sha512-VoQJywjpjy2D88Oj0BTHRuS8JCbUgoOg5t1UGgbtGh2fRia9Dx/k6Wf8FqrEWIvWK9fAkfJeeLB9fcSpCNPCpw==}
@@ -1276,7 +1292,6 @@ packages:
   '@lancedb/lancedb@0.23.0':
     resolution: {integrity: sha512-aYrIoEG24AC+wILCL57Ius/Y4yU+xFHDPKLvmjzzN4byAjzeIGF0TC86S5RBt4Ji+dxS7yIWV5Q/gE5/fybIFQ==}
     engines: {node: '>= 18'}
-    cpu: [x64, arm64]
     os: [darwin, linux, win32]
     peerDependencies:
       apache-arrow: '>=15.0.0 <=18.1.0'
@@ -4877,7 +4892,6 @@ packages:
 
   sqlite-vec-darwin-x64@0.1.7-alpha.2:
     resolution: {integrity: sha512-jeZEELsQjjRsVojsvU5iKxOvkaVuE+JYC8Y4Ma8U45aAERrDYmqZoHvgSG7cg1PXL3bMlumFTAmHynf1y4pOzA==}
-    cpu: [x64]
     os: [darwin]
 
   sqlite-vec-linux-arm64@0.1.7-alpha.2:
@@ -10422,8 +10436,7 @@ snapshots:
   sqlite-vec-darwin-arm64@0.1.7-alpha.2:
     optional: true
 
-  sqlite-vec-darwin-x64@0.1.7-alpha.2:
-    optional: true
+  sqlite-vec-darwin-x64@0.1.7-alpha.2: {}
 
   sqlite-vec-linux-arm64@0.1.7-alpha.2:
     optional: true

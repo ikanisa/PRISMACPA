@@ -4,6 +4,11 @@ import type { EventLogEntry } from "./app-events";
 import type { DevicePairingList } from "./controllers/devices";
 import type { ExecApprovalRequest } from "./controllers/exec-approval";
 import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals";
+import type {
+  TaxPeriod,
+  EvidenceStats,
+  ApprovalItem,
+} from "./controllers/tax-compliance";
 import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway";
 import type { Tab } from "./navigation";
 import type { ResolvedTheme, ThemeMode } from "./theme";
@@ -242,6 +247,20 @@ export class OpenClawApp extends LitElement {
   @state() logsLimit = 500;
   @state() logsMaxBytes = 250_000;
   @state() logsAtBottom = true;
+
+  // Tax & Compliance (Malta)
+  @state() taxComplianceLoading = false;
+  @state() taxPeriods: TaxPeriod[] = [];
+  @state() taxEvidenceStats: EvidenceStats | null = null;
+  @state() taxPendingApprovals: ApprovalItem[] = [];
+  @state() taxError: string | null = null;
+
+  // Executive Dashboard (Big 4)
+  @state() executiveLoading = false;
+  @state() executiveError: string | null = null;
+  @state() executiveJurisdiction: "MT" | "EU" | "US" | "UK" = "MT";
+  @state() executiveKpis: import("./views/executive-dashboard").KPISummary | null = null;
+  @state() executiveEngagements: import("./views/executive-dashboard").EngagementSummary[] = [];
 
   client: GatewayBrowserClient | null = null;
   private chatScrollFrame: number | null = null;

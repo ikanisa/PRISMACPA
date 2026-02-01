@@ -3,6 +3,16 @@ import type { DevicePairingList } from "./controllers/devices";
 import type { ExecApprovalRequest } from "./controllers/exec-approval";
 import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals";
 import type { SkillMessage } from "./controllers/skills";
+import type {
+  TaxPeriod,
+  EvidenceStats,
+  ApprovalItem,
+} from "./controllers/tax-compliance";
+import type {
+  JurisdictionCode,
+  KPISummary,
+  EngagementSummary,
+} from "./views/executive-dashboard";
 import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway";
 import type { Tab } from "./navigation";
 import type { UiSettings } from "./storage";
@@ -143,6 +153,18 @@ export type AppViewState = {
   logsLevelFilters: Record<LogLevel, boolean>;
   logsAutoFollow: boolean;
   logsTruncated: boolean;
+  // Tax & Compliance (Malta)
+  taxComplianceLoading: boolean;
+  taxPeriods: TaxPeriod[];
+  taxEvidenceStats: EvidenceStats | null;
+  taxPendingApprovals: ApprovalItem[];
+  taxError: string | null;
+  // Executive Dashboard (Big 4)
+  executiveLoading: boolean;
+  executiveError: string | null;
+  executiveJurisdiction: JurisdictionCode;
+  executiveKpis: KPISummary | null;
+  executiveEngagements: EngagementSummary[];
   client: GatewayBrowserClient | null;
   connect: () => void;
   setTab: (tab: Tab) => void;

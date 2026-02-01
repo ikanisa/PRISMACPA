@@ -242,6 +242,27 @@ export function createGatewayHttpServer(opts: {
     try {
       const configSnapshot = loadConfig();
       const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];
+
+      // Dev-token endpoint for UI auto-connection in local dev environments
+      const url = new URL(req.url ?? "/", `http://localhost`);
+      if (url.pathname === "/__openclaw__/dev-token" && req.method === "GET") {
+        // Only provide token for localhost requests in token auth mode
+        const remoteAddr = req.socket?.remoteAddress ?? "";
+        const isLocalhost =
+          remoteAddr === "127.0.0.1" || remoteAddr === "::1" || remoteAddr === "::ffff:127.0.0.1";
+        if (isLocalhost && resolvedAuth.mode === "token" && resolvedAuth.token) {
+          res.setHeader("Access-Control-Allow-Origin", "*");
+          res.setHeader("Cache-Control", "no-store");
+          sendJson(res, 200, { token: resolvedAuth.token });
+          return;
+        }
+        // Not available in this configuration
+        res.statusCode = 404;
+        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.end("Not Found");
+        return;
+      }
+
       if (await handleHooksRequest(req, res)) {
         return;
       }
