@@ -117,8 +117,16 @@ function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
 /**
  * Transform gateway AgentsListResult to view-compatible AgentCardData array
  */
-function transformAgentsListToCards(agentsList: AgentsListResult | null): AgentCardData[] {
+function transformAgentsListToCards(
+  agentsList: AgentsListResult | null,
+  skillsReport: import("./types").SkillStatusReport | null
+): AgentCardData[] {
   if (!agentsList?.agents) return [];
+
+  // Get eligible skill names from skills report
+  const eligibleSkillNames = skillsReport?.skills
+    ?.filter((s) => s.eligible && !s.disabled)
+    ?.map((s) => s.name) ?? [];
 
   return agentsList.agents.map((agent) => {
     // Determine jurisdiction from agent ID or name (MT default)
@@ -141,7 +149,7 @@ function transformAgentsListToCards(agentsList: AgentsListResult | null): AgentC
       avatar: agent.identity?.avatarUrl || agent.identity?.avatar,
       emoji: agent.identity?.emoji,
       theme: agent.identity?.theme,
-      skills: [], // Skills would come from skills.status API
+      skills: eligibleSkillNames.slice(0, 5), // Show up to 5 eligible skills
       activeSessions: agent.id === agentsList.defaultId ? 1 : 0,
     };
   });
@@ -324,7 +332,7 @@ export function renderApp(state: AppViewState) {
         connected: state.connected,
         loading: state.agentsLoading,
         error: state.agentsError ?? null,
-        agents: transformAgentsListToCards(state.agentsList),
+        agents: transformAgentsListToCards(state.agentsList, state.skillsReport),
         selectedAgentId: state.selectedAgentId ?? null,
         onSelectAgent: (agentId) => {
           state.selectedAgentId = state.selectedAgentId === agentId ? null : agentId;
