@@ -13,6 +13,7 @@ import type {
   KPISummary,
   EngagementSummary,
 } from "./views/executive-dashboard";
+import type { AgentCardData } from "./views/agents-dashboard";
 import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway";
 import type { Tab } from "./navigation";
 import type { UiSettings } from "./storage";
@@ -114,6 +115,9 @@ export type AppViewState = {
   agentsLoading: boolean;
   agentsList: AgentsListResult | null;
   agentsError: string | null;
+  agentsCards: AgentCardData[];
+  agentsCardsError: string | null;
+  selectedAgentId: string | null;
   sessionsLoading: boolean;
   sessionsResult: SessionsListResult | null;
   sessionsError: string | null;

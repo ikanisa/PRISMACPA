@@ -262,6 +262,11 @@ export class OpenClawApp extends LitElement {
   @state() executiveKpis: import("./views/executive-dashboard").KPISummary | null = null;
   @state() executiveEngagements: import("./views/executive-dashboard").EngagementSummary[] = [];
 
+  // Agents Dashboard
+  @state() agentsCards: import("./views/agents-dashboard").AgentCardData[] = [];
+  @state() agentsCardsError: string | null = null;
+  @state() selectedAgentId: string | null = null;
+
   client: GatewayBrowserClient | null = null;
   private chatScrollFrame: number | null = null;
   private chatScrollTimeout: number | null = null;

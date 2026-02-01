@@ -6,7 +6,7 @@ export const TAB_GROUPS = [
     label: "Control",
     tabs: ["overview", "executive", "channels", "instances", "sessions", "cron"],
   },
-  { label: "Agent", tabs: ["skills", "nodes"] },
+  { label: "Agent", tabs: ["agents", "skills", "nodes"] },
   { label: "Compliance", tabs: ["tax", "vat", "evidence", "bank", "audit", "aml"] },
   { label: "Settings", tabs: ["config", "debug", "logs"] },
 ] as const;
@@ -19,6 +19,7 @@ export type Tab =
   | "instances"
   | "sessions"
   | "cron"
+  | "agents"
   | "skills"
   | "nodes"
   | "chat"
@@ -39,6 +40,7 @@ const TAB_PATHS: Record<Tab, string> = {
   instances: "/instances",
   sessions: "/sessions",
   cron: "/cron",
+  agents: "/agents",
   skills: "/skills",
   nodes: "/nodes",
   chat: "/chat",
@@ -130,6 +132,8 @@ export function iconForTab(tab: Tab): IconName {
       return "fileText";
     case "cron":
       return "loader";
+    case "agents":
+      return "brain";
     case "skills":
       return "zap";
     case "nodes":
@@ -171,6 +175,8 @@ export function titleForTab(tab: Tab) {
       return "Sessions";
     case "cron":
       return "Cron Jobs";
+    case "agents":
+      return "Agents";
     case "skills":
       return "Skills";
     case "nodes":
@@ -214,6 +220,8 @@ export function subtitleForTab(tab: Tab) {
       return "Inspect active sessions and adjust per-session defaults.";
     case "cron":
       return "Schedule wakeups and recurring agent runs.";
+    case "agents":
+      return "View and chat with configured AI agents.";
     case "skills":
       return "Manage skill availability and API key injection.";
     case "nodes":

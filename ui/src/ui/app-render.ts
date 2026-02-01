@@ -94,8 +94,10 @@ import { renderBankReconciliation } from "./views/bank-reconciliation";
 import { renderAuditWorkpapers } from "./views/audit-workpapers";
 import { renderAmlDashboard } from "./views/aml-dashboard";
 import { renderExecutiveDashboard, type JurisdictionCode } from "./views/executive-dashboard";
+import { renderAgentsDashboard, type AgentCardData } from "./views/agents-dashboard";
 import { refreshTaxCompliance } from "./controllers/tax-compliance";
 import { loadExecutiveDashboard } from "./controllers/executive-dashboard";
+import { loadAgentsDashboard, selectAgent, getChatSessionKeyForAgent, getMockAgentCards } from "./controllers/agents-dashboard";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
@@ -279,6 +281,40 @@ export function renderApp(state: AppViewState) {
           } finally {
             state.executiveLoading = false;
           }
+        },
+      })
+      : nothing
+    }
+
+        ${state.tab === "agents"
+      ? renderAgentsDashboard({
+        connected: state.connected,
+        loading: state.agentsLoading,
+        error: state.agentsCardsError ?? null,
+        agents: state.agentsCards ?? getMockAgentCards(),
+        selectedAgentId: state.selectedAgentId ?? null,
+        onSelectAgent: (agentId) => {
+          state.selectedAgentId = state.selectedAgentId === agentId ? null : agentId;
+        },
+        onChatWithAgent: (agentId) => {
+          // Navigate to chat with this agent
+          const sessionKey = `main:${agentId}`;
+          state.sessionKey = sessionKey;
+          state.tab = "chat";
+        },
+        onRefresh: () => {
+          void loadAgentsDashboard({
+            client: state.client,
+            connected: state.connected,
+            agentsLoading: state.agentsLoading,
+            agentsError: null,
+            agentsList: state.agentsList,
+            agentsCards: state.agentsCards ?? [],
+            selectedAgentId: state.selectedAgentId ?? null,
+            skillsReport: null,
+          }).then((updated) => {
+            // State updates happen in controller
+          });
         },
       })
       : nothing
