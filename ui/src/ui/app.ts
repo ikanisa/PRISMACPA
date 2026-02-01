@@ -258,7 +258,7 @@ export class OpenClawApp extends LitElement {
   // Executive Dashboard (Big 4)
   @state() executiveLoading = false;
   @state() executiveError: string | null = null;
-  @state() executiveJurisdiction: "MT" | "EU" | "US" | "UK" = "MT";
+  @state() executiveJurisdiction: "MT" | "RW" = "MT";
   @state() executiveKpis: import("./views/executive-dashboard").KPISummary | null = null;
   @state() executiveEngagements: import("./views/executive-dashboard").EngagementSummary[] = [];
 

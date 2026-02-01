@@ -5,99 +5,97 @@ import { html } from "lit";
  * Provides partner/manager KPIs, risk heatmaps, and deadline tracking.
  */
 
-export type JurisdictionCode = "MT" | "EU" | "US" | "UK";
+export type JurisdictionCode = "MT" | "RW";
 
 export type Jurisdiction = {
-    code: JurisdictionCode;
-    name: string;
-    flag: string;
-    regulator: string;
+  code: JurisdictionCode;
+  name: string;
+  flag: string;
+  regulator: string;
 };
 
 export const JURISDICTIONS: Jurisdiction[] = [
-    { code: "MT", name: "Malta", flag: "🇲🇹", regulator: "CFR" },
-    { code: "EU", name: "European Union", flag: "🇪🇺", regulator: "EU DAC" },
-    { code: "US", name: "United States", flag: "🇺🇸", regulator: "IRS" },
-    { code: "UK", name: "United Kingdom", flag: "🇬🇧", regulator: "HMRC" },
+  { code: "MT", name: "Malta", flag: "🇲🇹", regulator: "CFR" },
+  { code: "RW", name: "Rwanda", flag: "🇷🇼", regulator: "RRA" },
 ];
 
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 
 export type EngagementSummary = {
-    id: string;
-    clientName: string;
-    type: "tax" | "audit" | "advisory";
-    jurisdiction: JurisdictionCode;
-    status: "active" | "review" | "filing" | "complete";
-    riskLevel: RiskLevel;
-    dueDate: string;
-    assignee: string;
+  id: string;
+  clientName: string;
+  type: "tax" | "audit" | "advisory";
+  jurisdiction: JurisdictionCode;
+  status: "active" | "review" | "filing" | "complete";
+  riskLevel: RiskLevel;
+  dueDate: string;
+  assignee: string;
 };
 
 export type KPISummary = {
-    openEngagements: number;
-    atRiskItems: number;
-    pendingApprovals: number;
-    upcomingDeadlines: number;
-    evidenceBacklog: number;
-    completionRate: number;
+  openEngagements: number;
+  atRiskItems: number;
+  pendingApprovals: number;
+  upcomingDeadlines: number;
+  evidenceBacklog: number;
+  completionRate: number;
 };
 
 export type ExecutiveDashboardProps = {
-    connected: boolean;
-    jurisdiction: JurisdictionCode;
-    kpis: KPISummary | null;
-    engagements: EngagementSummary[];
-    onJurisdictionChange: (code: JurisdictionCode) => void;
-    onRefresh: () => void;
+  connected: boolean;
+  jurisdiction: JurisdictionCode;
+  kpis: KPISummary | null;
+  engagements: EngagementSummary[];
+  onJurisdictionChange: (code: JurisdictionCode) => void;
+  onRefresh: () => void;
 };
 
 function riskBadge(level: RiskLevel) {
-    const colors: Record<RiskLevel, string> = {
-        low: "ok",
-        medium: "info",
-        high: "warn",
-        critical: "danger",
-    };
-    return html`<span class="badge ${colors[level]}">${level.toUpperCase()}</span>`;
+  const colors: Record<RiskLevel, string> = {
+    low: "ok",
+    medium: "info",
+    high: "warn",
+    critical: "danger",
+  };
+  return html`<span class="badge ${colors[level]}">${level.toUpperCase()}</span>`;
 }
 
 function statusBadge(status: EngagementSummary["status"]) {
-    const colors: Record<EngagementSummary["status"], string> = {
-        active: "info",
-        review: "warn",
-        filing: "ok",
-        complete: "success",
-    };
-    return html`<span class="badge ${colors[status]}">${status}</span>`;
+  const colors: Record<EngagementSummary["status"], string> = {
+    active: "info",
+    review: "warn",
+    filing: "ok",
+    complete: "success",
+  };
+  return html`<span class="badge ${colors[status]}">${status}</span>`;
 }
 
 function typeBadge(type: EngagementSummary["type"]) {
-    const icons: Record<EngagementSummary["type"], string> = {
-        tax: "📊",
-        audit: "📋",
-        advisory: "💡",
-    };
-    return html`<span class="badge">${icons[type]} ${type}</span>`;
+  const icons: Record<EngagementSummary["type"], string> = {
+    tax: "📊",
+    audit: "📋",
+    advisory: "💡",
+  };
+  return html`<span class="badge">${icons[type]} ${type}</span>`;
 }
 
 function daysUntil(deadline: string): number {
-    const diff = new Date(deadline).getTime() - Date.now();
-    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  const diff = new Date(deadline).getTime() - Date.now();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 
 function deadlineDisplay(deadline: string) {
-    const days = daysUntil(deadline);
-    if (days < 0) return html`<span class="stat-value danger">Overdue by ${Math.abs(days)}d</span>`;
-    if (days <= 3) return html`<span class="stat-value danger">${days}d</span>`;
-    if (days <= 7) return html`<span class="stat-value warn">${days}d</span>`;
-    if (days <= 14) return html`<span class="stat-value info">${days}d</span>`;
-    return html`<span class="stat-value">${days}d</span>`;
+  const days = daysUntil(deadline);
+  if (days < 0) return html`<span class="stat-value danger">Overdue by ${Math.abs(days)}d</span>`;
+  if (days <= 3) return html`<span class="stat-value danger">${days}d</span>`;
+  if (days <= 7) return html`<span class="stat-value warn">${days}d</span>`;
+  if (days <= 14) return html`<span class="stat-value info">${days}d</span>`;
+  return html`<span class="stat-value">${days}d</span>`;
 }
 
 export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
-    if (!props.connected) {
-        return html`
+  if (!props.connected) {
+    return html`
       <section class="card">
         <div class="card-title">Executive Dashboard</div>
         <div class="card-sub">Partner & Manager overview for professional services.</div>
@@ -106,29 +104,29 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
         </div>
       </section>
     `;
-    }
+  }
 
-    const currentJurisdiction = JURISDICTIONS.find((j) => j.code === props.jurisdiction) ?? JURISDICTIONS[0];
-    const kpis = props.kpis ?? {
-        openEngagements: 0,
-        atRiskItems: 0,
-        pendingApprovals: 0,
-        upcomingDeadlines: 0,
-        evidenceBacklog: 0,
-        completionRate: 0,
-    };
+  const currentJurisdiction = JURISDICTIONS.find((j) => j.code === props.jurisdiction) ?? JURISDICTIONS[0];
+  const kpis = props.kpis ?? {
+    openEngagements: 0,
+    atRiskItems: 0,
+    pendingApprovals: 0,
+    upcomingDeadlines: 0,
+    evidenceBacklog: 0,
+    completionRate: 0,
+  };
 
-    // Filter engagements by deadline proximity
-    const upcomingDeadlines = props.engagements
-        .filter((e) => e.status !== "complete")
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-        .slice(0, 5);
+  // Filter engagements by deadline proximity
+  const upcomingDeadlines = props.engagements
+    .filter((e) => e.status !== "complete")
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+    .slice(0, 5);
 
-    const atRiskEngagements = props.engagements.filter(
-        (e) => e.riskLevel === "high" || e.riskLevel === "critical"
-    );
+  const atRiskEngagements = props.engagements.filter(
+    (e) => e.riskLevel === "high" || e.riskLevel === "critical"
+  );
 
-    return html`
+  return html`
     <!-- Jurisdiction Selector -->
     <section class="card" style="margin-bottom: 18px;">
       <div class="row" style="gap: 12px; align-items: center;">
@@ -139,13 +137,13 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
           class="select"
           .value=${props.jurisdiction}
           @change=${(e: Event) => {
-            const code = (e.target as HTMLSelectElement).value as JurisdictionCode;
-            props.onJurisdictionChange(code);
-        }}
+      const code = (e.target as HTMLSelectElement).value as JurisdictionCode;
+      props.onJurisdictionChange(code);
+    }}
         >
           ${JURISDICTIONS.map(
-            (j) => html`<option value=${j.code}>${j.flag} ${j.name}</option>`
-        )}
+      (j) => html`<option value=${j.code}>${j.flag} ${j.name}</option>`
+    )}
         </select>
         <span class="muted">Regulator: ${currentJurisdiction.regulator}</span>
         <button class="btn" @click=${() => props.onRefresh()}>Refresh</button>
@@ -205,10 +203,10 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
         <div class="card-title">🔥 At-Risk Engagements</div>
         <div class="card-sub">High or critical risk items requiring attention.</div>
         ${atRiskEngagements.length === 0
-            ? html`<div class="callout ok" style="margin-top: 14px;">
+      ? html`<div class="callout ok" style="margin-top: 14px;">
               No at-risk items. All engagements on track.
             </div>`
-            : html`
+      : html`
               <table class="data-table" style="margin-top: 14px;">
                 <thead>
                   <tr>
@@ -220,7 +218,7 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
                 </thead>
                 <tbody>
                   ${atRiskEngagements.map(
-                (e) => html`
+        (e) => html`
                       <tr>
                         <td>${e.clientName}</td>
                         <td>${typeBadge(e.type)}</td>
@@ -228,7 +226,7 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
                         <td>${deadlineDisplay(e.dueDate)}</td>
                       </tr>
                     `
-            )}
+      )}
                 </tbody>
               </table>
             `}
@@ -238,10 +236,10 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
         <div class="card-title">📅 Upcoming Deadlines</div>
         <div class="card-sub">Next filing dates and deliverables.</div>
         ${upcomingDeadlines.length === 0
-            ? html`<div class="callout" style="margin-top: 14px;">
+      ? html`<div class="callout" style="margin-top: 14px;">
               No upcoming deadlines in the next 14 days.
             </div>`
-            : html`
+      : html`
               <table class="data-table" style="margin-top: 14px;">
                 <thead>
                   <tr>
@@ -253,7 +251,7 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
                 </thead>
                 <tbody>
                   ${upcomingDeadlines.map(
-                (e) => html`
+        (e) => html`
                       <tr>
                         <td>${e.clientName}</td>
                         <td>${statusBadge(e.status)}</td>
@@ -261,7 +259,7 @@ export function renderExecutiveDashboard(props: ExecutiveDashboardProps) {
                         <td>${deadlineDisplay(e.dueDate)}</td>
                       </tr>
                     `
-            )}
+      )}
                 </tbody>
               </table>
             `}
