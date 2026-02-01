@@ -94,10 +94,10 @@ import { renderBankReconciliation } from "./views/bank-reconciliation";
 import { renderAuditWorkpapers } from "./views/audit-workpapers";
 import { renderAmlDashboard } from "./views/aml-dashboard";
 import { renderExecutiveDashboard, type JurisdictionCode } from "./views/executive-dashboard";
-import { renderAgentsDashboard, type AgentCardData } from "./views/agents-dashboard";
+import { renderAgentsDashboard, type AgentCardData, type AgentJurisdiction, type AgentStatus } from "./views/agents-dashboard";
 import { refreshTaxCompliance } from "./controllers/tax-compliance";
 import { loadExecutiveDashboard } from "./controllers/executive-dashboard";
-import { loadAgentsDashboard, selectAgent, getChatSessionKeyForAgent, getMockAgentCards } from "./controllers/agents-dashboard";
+import type { AgentsListResult } from "./types";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
@@ -112,6 +112,39 @@ function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
   if (!candidate) return undefined;
   if (AVATAR_DATA_RE.test(candidate) || AVATAR_HTTP_RE.test(candidate)) return candidate;
   return identity?.avatarUrl;
+}
+
+/**
+ * Transform gateway AgentsListResult to view-compatible AgentCardData array
+ */
+function transformAgentsListToCards(agentsList: AgentsListResult | null): AgentCardData[] {
+  if (!agentsList?.agents) return [];
+
+  return agentsList.agents.map((agent) => {
+    // Determine jurisdiction from agent ID or name (MT default)
+    const id = agent.id.toLowerCase();
+    const name = (agent.identity?.name || agent.name || "").toLowerCase();
+    const jurisdiction: AgentJurisdiction =
+      id.includes("rwanda") || id.includes("rw") ||
+        name.includes("rwanda") || name.includes("rw")
+        ? "RW"
+        : "MT";
+
+    // Determine status - default agent is online, others online
+    const status: AgentStatus = agent.id === agentsList.defaultId ? "online" : "online";
+
+    return {
+      id: agent.id,
+      name: agent.identity?.name || agent.name || agent.id,
+      jurisdiction,
+      status,
+      avatar: agent.identity?.avatarUrl || agent.identity?.avatar,
+      emoji: agent.identity?.emoji,
+      theme: agent.identity?.theme,
+      skills: [], // Skills would come from skills.status API
+      activeSessions: agent.id === agentsList.defaultId ? 1 : 0,
+    };
+  });
 }
 
 export function renderApp(state: AppViewState) {
@@ -290,31 +323,31 @@ export function renderApp(state: AppViewState) {
       ? renderAgentsDashboard({
         connected: state.connected,
         loading: state.agentsLoading,
-        error: state.agentsCardsError ?? null,
-        agents: state.agentsCards ?? getMockAgentCards(),
+        error: state.agentsError ?? null,
+        agents: transformAgentsListToCards(state.agentsList),
         selectedAgentId: state.selectedAgentId ?? null,
         onSelectAgent: (agentId) => {
           state.selectedAgentId = state.selectedAgentId === agentId ? null : agentId;
         },
         onChatWithAgent: (agentId) => {
           // Navigate to chat with this agent
-          const sessionKey = `main:${agentId}`;
+          const sessionKey = `agent:${agentId}:main`;
           state.sessionKey = sessionKey;
           state.tab = "chat";
         },
-        onRefresh: () => {
-          void loadAgentsDashboard({
-            client: state.client,
-            connected: state.connected,
-            agentsLoading: state.agentsLoading,
-            agentsError: null,
-            agentsList: state.agentsList,
-            agentsCards: state.agentsCards ?? [],
-            selectedAgentId: state.selectedAgentId ?? null,
-            skillsReport: null,
-          }).then((updated) => {
-            // State updates happen in controller
-          });
+        onRefresh: async () => {
+          // Use existing loadAgents from controllers/agents.ts
+          if (!state.client || !state.connected) return;
+          state.agentsLoading = true;
+          state.agentsError = null;
+          try {
+            const res = await state.client.request("agents.list", {}) as AgentsListResult | undefined;
+            if (res) state.agentsList = res;
+          } catch (err) {
+            state.agentsError = String(err);
+          } finally {
+            state.agentsLoading = false;
+          }
         },
       })
       : nothing
