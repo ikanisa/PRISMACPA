@@ -14,44 +14,54 @@ export type AgentJurisdiction = "MT" | "RW";
 export type AgentStatus = "online" | "busy" | "offline";
 
 export type AgentCardData = {
-    id: string;
-    name: string;
-    jurisdiction: AgentJurisdiction;
-    status: AgentStatus;
-    avatar?: string;
-    emoji?: string;
-    theme?: string;
-    skills: string[];
-    lastActiveAt?: number;
-    activeSessions: number;
+  id: string;
+  name: string;
+  jurisdiction: AgentJurisdiction;
+  status: AgentStatus;
+  avatar?: string;
+  emoji?: string;
+  theme?: string;
+  skills: string[];
+  lastActiveAt?: number;
+  activeSessions: number;
+};
+
+export type TeamCardData = {
+  id: string;
+  name: string;
+  memberCount: number;
+  emoji?: string;
+  theme?: string;
 };
 
 export type AgentsDashboardProps = {
-    connected: boolean;
-    loading: boolean;
-    error: string | null;
-    agents: AgentCardData[];
-    selectedAgentId: string | null;
-    onSelectAgent: (agentId: string) => void;
-    onChatWithAgent: (agentId: string) => void;
-    onRefresh: () => void;
+  connected: boolean;
+  loading: boolean;
+  error: string | null;
+  agents: AgentCardData[];
+  teams: TeamCardData[];
+  selectedAgentId: string | null;
+  onSelectAgent: (agentId: string) => void;
+  onChatWithAgent: (agentId: string) => void;
+  onOpenTeamChat: (teamId: string) => void;
+  onRefresh: () => void;
 };
 
 // Status badge color mapping
 const STATUS_COLORS: Record<AgentStatus, string> = {
-    online: "var(--status-success, #22c55e)",
-    busy: "var(--status-warning, #eab308)",
-    offline: "var(--status-error, #ef4444)",
+  online: "var(--status-success, #22c55e)",
+  busy: "var(--status-warning, #eab308)",
+  offline: "var(--status-error, #ef4444)",
 };
 
 // Jurisdiction flag mapping
 const JURISDICTION_FLAGS: Record<AgentJurisdiction, { flag: string; name: string }> = {
-    MT: { flag: "🇲🇹", name: "Malta" },
-    RW: { flag: "🇷🇼", name: "Rwanda" },
+  MT: { flag: "🇲🇹", name: "Malta" },
+  RW: { flag: "🇷🇼", name: "Rwanda" },
 };
 
 function renderStatusBadge(status: AgentStatus) {
-    return html`
+  return html`
     <span
       class="agent-status-badge"
       style="
@@ -81,8 +91,8 @@ function renderStatusBadge(status: AgentStatus) {
 }
 
 function renderJurisdictionBadge(jurisdiction: AgentJurisdiction) {
-    const { flag, name } = JURISDICTION_FLAGS[jurisdiction];
-    return html`
+  const { flag, name } = JURISDICTION_FLAGS[jurisdiction];
+  return html`
     <span
       class="agent-jurisdiction-badge"
       title="${name}"
@@ -103,7 +113,7 @@ function renderJurisdictionBadge(jurisdiction: AgentJurisdiction) {
 }
 
 function renderSkillBadge(skill: string) {
-    return html`
+  return html`
     <span
       class="agent-skill-badge"
       style="
@@ -121,15 +131,15 @@ function renderSkillBadge(skill: string) {
 }
 
 function renderAgentCard(
-    agent: AgentCardData,
-    isSelected: boolean,
-    onSelect: () => void,
-    onChat: () => void
+  agent: AgentCardData,
+  isSelected: boolean,
+  onSelect: () => void,
+  onChat: () => void
 ) {
-    const avatar = agent.avatar || agent.emoji || agent.name.charAt(0).toUpperCase();
-    const isEmoji = agent.emoji && !agent.avatar;
+  const avatar = agent.avatar || agent.emoji || agent.name.charAt(0).toUpperCase();
+  const isEmoji = agent.emoji && !agent.avatar;
 
-    return html`
+  return html`
     <div
       class="agent-card ${isSelected ? "selected" : ""}"
       style="
@@ -163,12 +173,12 @@ function renderAgentCard(
           "
         >
           ${agent.avatar
-            ? html`<img
+      ? html`<img
                 src="${agent.avatar}"
                 alt="${agent.name}"
                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;"
               />`
-            : avatar}
+      : avatar}
         </div>
         <div style="flex: 1; min-width: 0;">
           <div
@@ -195,7 +205,7 @@ function renderAgentCard(
         ${renderJurisdictionBadge(agent.jurisdiction)}
         ${agent.skills.slice(0, 3).map((skill) => renderSkillBadge(skill))}
         ${agent.skills.length > 3
-            ? html`<span
+      ? html`<span
               style="
                 font-size: 10px;
                 color: var(--text-tertiary, #94a3b8);
@@ -204,7 +214,7 @@ function renderAgentCard(
             >
               +${agent.skills.length - 3} more
             </span>`
-            : nothing}
+      : nothing}
       </div>
 
       <!-- Footer: Sessions + Chat Button -->
@@ -226,9 +236,9 @@ function renderAgentCard(
             transition: background 0.15s ease;
           "
           @click=${(e: Event) => {
-            e.stopPropagation();
-            onChat();
-        }}
+      e.stopPropagation();
+      onChat();
+    }}
         >
           Chat
         </button>
@@ -238,7 +248,7 @@ function renderAgentCard(
 }
 
 function renderEmptyState() {
-    return html`
+  return html`
     <div
       style="
         display: flex;
@@ -262,7 +272,7 @@ function renderEmptyState() {
 }
 
 function renderLoadingState() {
-    return html`
+  return html`
     <div
       style="
         display: grid;
@@ -272,7 +282,7 @@ function renderLoadingState() {
       "
     >
       ${[1, 2, 3].map(
-        () => html`
+    () => html`
           <div
             class="agent-card-skeleton"
             style="
@@ -289,7 +299,7 @@ function renderLoadingState() {
             "
           ></div>
         `
-    )}
+  )}
     </div>
     <style>
       @keyframes shimmer {
@@ -301,7 +311,7 @@ function renderLoadingState() {
 }
 
 function renderErrorState(error: string, onRetry: () => void) {
-    return html`
+  return html`
     <div
       style="
         display: flex;
@@ -337,11 +347,89 @@ function renderErrorState(error: string, onRetry: () => void) {
   `;
 }
 
-export function renderAgentsDashboard(props: AgentsDashboardProps) {
-    const { connected, loading, error, agents, selectedAgentId, onSelectAgent, onChatWithAgent, onRefresh } = props;
+function renderTeamCard(team: TeamCardData, onOpenTeamChat: () => void) {
+  return html`
+    <div
+      class="team-card"
+      style="
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary, #4f46e5) 0%, #7c3aed 100%);
+        color: white;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      "
+      @click=${onOpenTeamChat}
+    >
+      <div
+        style="
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+        "
+      >
+        ${team.emoji ?? "👥"}
+      </div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600; font-size: 16px;">${team.name}</div>
+        <div style="font-size: 13px; opacity: 0.85;">
+          ${team.memberCount} team member${team.memberCount !== 1 ? "s" : ""} • Group Chat
+        </div>
+      </div>
+      <div
+        style="
+          padding: 8px 16px;
+          background: rgba(255,255,255,0.2);
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 500;
+        "
+      >
+        Open Chat →
+      </div>
+    </div>
+  `;
+}
 
-    if (!connected) {
-        return html`
+function renderTeamsSection(teams: TeamCardData[], onOpenTeamChat: (teamId: string) => void) {
+  if (teams.length === 0) {
+    return nothing;
+  }
+
+  return html`
+    <div style="margin-bottom: 24px;">
+      <h3
+        style="
+          margin: 0 0 12px;
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-secondary, #64748b);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        "
+      >
+        Team Chats
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        ${teams.map((team) => renderTeamCard(team, () => onOpenTeamChat(team.id)))}
+      </div>
+    </div>
+  `;
+}
+
+export function renderAgentsDashboard(props: AgentsDashboardProps) {
+  const { connected, loading, error, agents, teams, selectedAgentId, onSelectAgent, onChatWithAgent, onOpenTeamChat, onRefresh } = props;
+
+  if (!connected) {
+    return html`
       <div
         style="
           display: flex;
@@ -354,9 +442,9 @@ export function renderAgentsDashboard(props: AgentsDashboardProps) {
         Connect to gateway to view agents
       </div>
     `;
-    }
+  }
 
-    return html`
+  return html`
     <div class="agents-dashboard" style="display: flex; flex-direction: column; height: 100%;">
       <!-- Header -->
       <div
@@ -386,7 +474,7 @@ export function renderAgentsDashboard(props: AgentsDashboardProps) {
               color: var(--text-tertiary, #94a3b8);
             "
           >
-            ${agents.length} agent${agents.length !== 1 ? "s" : ""} configured
+            ${agents.length} agent${agents.length !== 1 ? "s" : ""} configured${teams.length > 0 ? ` • ${teams.length} team${teams.length !== 1 ? "s" : ""}` : ""}
           </p>
         </div>
         <button
@@ -412,28 +500,48 @@ export function renderAgentsDashboard(props: AgentsDashboardProps) {
       <!-- Content -->
       <div style="flex: 1; overflow-y: auto; padding: 16px;">
         ${loading
-            ? renderLoadingState()
-            : error
-                ? renderErrorState(error, onRefresh)
-                : agents.length === 0
-                    ? renderEmptyState()
-                    : html`
-                  <div
-                    style="
-                      display: grid;
-                      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                      gap: 16px;
-                    "
-                  >
-                    ${agents.map((agent) =>
-                        renderAgentCard(
-                            agent,
-                            agent.id === selectedAgentId,
-                            () => onSelectAgent(agent.id),
-                            () => onChatWithAgent(agent.id)
-                        )
-                    )}
-                  </div>
+      ? renderLoadingState()
+      : error
+        ? renderErrorState(error, onRefresh)
+        : agents.length === 0 && teams.length === 0
+          ? renderEmptyState()
+          : html`
+                  <!-- Teams Section -->
+                  ${renderTeamsSection(teams, onOpenTeamChat)}
+
+                  <!-- Agents Section -->
+                  ${agents.length > 0 ? html`
+                    ${teams.length > 0 ? html`
+                      <h3
+                        style="
+                          margin: 0 0 12px;
+                          font-size: 14px;
+                          font-weight: 600;
+                          color: var(--text-secondary, #64748b);
+                          text-transform: uppercase;
+                          letter-spacing: 0.5px;
+                        "
+                      >
+                        Individual Agents
+                      </h3>
+                    ` : nothing}
+                    <div
+                      style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                        gap: 16px;
+                      "
+                    >
+                      ${agents.map((agent) =>
+            renderAgentCard(
+              agent,
+              agent.id === selectedAgentId,
+              () => onSelectAgent(agent.id),
+              () => onChatWithAgent(agent.id)
+            )
+          )}
+                    </div>
+                  ` : nothing}
                 `}
       </div>
     </div>

@@ -155,6 +155,27 @@ function transformAgentsListToCards(
   });
 }
 
+/**
+ * Transform teams from gateway config to view-compatible TeamCardData array
+ */
+function transformTeamsToCards(
+  agentsList: AgentsListResult | null
+): import("./views/agents-dashboard").TeamCardData[] {
+  // Teams would come from config, but for now we'll check if there are multiple agents
+  // In a real implementation, this would read from cfg.agents.teams
+  // For now, we create a default team if there are 2+ agents
+  if (!agentsList?.agents || agentsList.agents.length < 2) return [];
+
+  // TODO: When gateway exposes teams config, use that instead
+  // For now, create a synthetic "Staff Team" if multiple agents exist
+  return [{
+    id: "prisma-cpa-staff",
+    name: "Prisma CPA Staff Team",
+    memberCount: agentsList.agents.length,
+    emoji: "👥",
+  }];
+}
+
 export function renderApp(state: AppViewState) {
   const presenceCount = state.presenceEntries.length;
   const sessionsCount = state.sessionsResult?.count ?? null;
@@ -333,6 +354,7 @@ export function renderApp(state: AppViewState) {
         loading: state.agentsLoading,
         error: state.agentsError ?? null,
         agents: transformAgentsListToCards(state.agentsList, state.skillsReport),
+        teams: transformTeamsToCards(state.agentsList),
         selectedAgentId: state.selectedAgentId ?? null,
         onSelectAgent: (agentId) => {
           state.selectedAgentId = state.selectedAgentId === agentId ? null : agentId;
@@ -340,6 +362,12 @@ export function renderApp(state: AppViewState) {
         onChatWithAgent: (agentId) => {
           // Navigate to chat with this agent
           const sessionKey = `agent:${agentId}:main`;
+          state.sessionKey = sessionKey;
+          state.tab = "chat";
+        },
+        onOpenTeamChat: (teamId) => {
+          // Navigate to team chat
+          const sessionKey = `team:${teamId}:main`;
           state.sessionKey = sessionKey;
           state.tab = "chat";
         },
