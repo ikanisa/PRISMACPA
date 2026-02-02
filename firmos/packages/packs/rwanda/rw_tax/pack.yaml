@@ -1,0 +1,184 @@
+# Rwanda Tax Pack (RW_TAX)
+# Rwanda Revenue Authority (RRA) Tax Compliance
+
+version: "1.0"
+pack_id: rw_tax
+jurisdiction: RW
+name: Rwanda Tax Pack
+description: >
+  Rwanda tax compliance including VAT, corporate income tax, and RRA e-filing.
+  Human performs all portal submissions.
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+services:
+  - VAT
+  - CORPORATE_INCOME_TAX
+  - PAYE
+  - WITHHOLDING_TAX
+
+# =============================================================================
+# WORKFLOW TEMPLATES
+# =============================================================================
+workflows:
+  vat_return:
+    name: VAT Return Preparation
+    phases:
+      - id: intake
+        name: Document Intake
+        tasks:
+          - name: Collect EBM invoices
+            autonomy_tier: A
+            required_outputs: [ebm_invoice_register]
+            required_evidence: [ebm_invoice_pdf]
+          - name: Import bank statements
+            autonomy_tier: A
+            required_outputs: [bank_import]
+            required_evidence: [bank_statement]
+
+      - id: coding
+        name: Transaction Coding
+        tasks:
+          - name: Classify transactions
+            autonomy_tier: B
+            required_outputs: [coding_proposals]
+          - name: Apply VAT rates (0%, 18%)
+            autonomy_tier: B
+            required_outputs: [vat_calculations]
+          - name: Identify reverse charge items
+            autonomy_tier: B
+            required_outputs: [reverse_charge_schedule]
+
+      - id: reconciliation
+        name: Reconciliation
+        tasks:
+          - name: Match EBM to ledger
+            autonomy_tier: B
+            required_outputs: [ebm_reconciliation]
+          - name: Bank reconciliation
+            autonomy_tier: B
+            required_outputs: [bank_reconciliation]
+
+      - id: draft
+        name: Draft Return
+        tasks:
+          - name: Generate VAT summary
+            autonomy_tier: B
+            required_outputs: [vat_return_draft]
+          - name: Prepare annexures
+            autonomy_tier: A
+            required_outputs: [vat_annexures]
+
+      - id: review
+        name: Review
+        tasks:
+          - name: Accountant review
+            autonomy_tier: C
+            required_outputs: [review_sign_off]
+
+      - id: filing
+        name: RRA Filing (Human)
+        tasks:
+          - name: Human submits via RRA portal
+            autonomy_tier: C
+            required_evidence: [rra_filing_confirmation]
+
+  corporate_income_tax:
+    name: Corporate Income Tax Return
+    phases:
+      - id: data_collection
+        name: Data Collection
+        tasks:
+          - name: Obtain trial balance
+            autonomy_tier: A
+            required_evidence: [trial_balance]
+          - name: Gather adjustments
+            autonomy_tier: B
+            required_outputs: [adjustment_schedule]
+
+      - id: computation
+        name: Tax Computation
+        tasks:
+          - name: Prepare tax computation
+            autonomy_tier: B
+            required_outputs: [tax_computation_draft]
+          - name: Calculate CIT liability
+            autonomy_tier: B
+            required_outputs: [cit_calculation]
+
+      - id: review_filing
+        name: Review & Filing
+        tasks:
+          - name: Partner review
+            autonomy_tier: C
+            required_outputs: [partner_sign_off]
+          - name: Human files via RRA
+            autonomy_tier: C
+            required_evidence: [cit_filing_confirmation]
+
+  paye_monthly:
+    name: Monthly PAYE Filing
+    phases:
+      - id: payroll_data
+        name: Payroll Data
+        tasks:
+          - name: Collect payroll summary
+            autonomy_tier: A
+            required_evidence: [payroll_summary]
+          - name: Calculate PAYE
+            autonomy_tier: B
+            required_outputs: [paye_calculation]
+
+      - id: filing
+        name: Filing
+        tasks:
+          - name: Prepare PAYE return
+            autonomy_tier: B
+            required_outputs: [paye_return_draft]
+          - name: Human submits to RRA
+            autonomy_tier: C
+            required_evidence: [paye_filing_confirmation]
+
+# =============================================================================
+# DEADLINES
+# =============================================================================
+obligations:
+  vat_monthly:
+    frequency: monthly
+    due_offset_days: 15
+    description: VAT return due 15th of following month
+
+  cit_annual:
+    frequency: annual
+    due_date: "03-31"
+    description: Corporate income tax due March 31
+
+  paye_monthly:
+    frequency: monthly
+    due_offset_days: 15
+    description: PAYE due 15th of following month
+
+# =============================================================================
+# DOCUMENT TEMPLATES
+# =============================================================================
+templates:
+  - id: vat_return_rw
+    name: Rwanda VAT Return
+    format: pdf
+  - id: cit_computation_rw
+    name: Rwanda CIT Computation
+    format: xlsx
+  - id: paye_return_rw
+    name: Rwanda PAYE Return
+    format: pdf
+
+# =============================================================================
+# CONSTRAINTS
+# =============================================================================
+constraints:
+  no_rra_automation: true
+  no_auto_pay: true
+  human_filing: true
+  ebm_required: true
+  maker_checker: true

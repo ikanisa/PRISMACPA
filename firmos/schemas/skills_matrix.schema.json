@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openclaw.ai/schema/skills_matrix.schema.json",
+    "title": "FirmOS Skills Matrix",
+    "description": "Schema for validating FirmOS skills matrix YAML files",
+    "type": "object",
+    "required": [
+        "version",
+        "name",
+        "agents"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "name": {
+            "type": "string"
+        },
+        "agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent_skills"
+            }
+        }
+    },
+    "definitions": {
+        "agent_skills": {
+            "type": "object",
+            "required": [
+                "agent_id"
+            ],
+            "properties": {
+                "agent_id": {
+                    "type": "string",
+                    "pattern": "^agent_"
+                },
+                "l5_skills": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/skill_entry"
+                    }
+                },
+                "evaluation_metrics": {
+                    "type": "object"
+                }
+            }
+        },
+        "skill_entry": {
+            "type": "object",
+            "required": [
+                "skill"
+            ],
+            "properties": {
+                "skill": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "proficiency": {
+                    "type": "string",
+                    "enum": [
+                        "mastery",
+                        "advanced",
+                        "competent",
+                        "developing"
+                    ]
+                }
+            }
+        }
+    }
+}

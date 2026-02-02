@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "rootDir": ".",
+        "declaration": true
+    },
+    "include": [
+        "index.ts",
+        "service-catalog.ts",
+        "routing.ts",
+        "validation.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "agent-service-catalog.ts",
+        "*.test.ts"
+    ]
+}

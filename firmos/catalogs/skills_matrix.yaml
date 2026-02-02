@@ -1,0 +1,327 @@
+# FirmOS Skills Matrix v1.0
+# Partner-level skills with proficiency (L3-L5)
+
+version: "1.0"
+name: "FirmOS Agent Skills Matrix"
+
+proficiency_levels:
+  L5: "Partner mastery — can teach, design, and handle exceptions"
+  L4: "Senior manager — executes with minimal supervision"
+  L3: "Manager — executes routine with supervision needed for complexity"
+
+# =============================================================================
+# GOVERNANCE AGENTS
+# =============================================================================
+
+agents:
+  agent_aline:
+    name: Aline
+    title: Firm Orchestrator
+    mastery_expectation: L5
+    skills:
+      - skill: "Engagement triage & service classification (MT/RW, audit/tax/CSP/notary)"
+        level: L5
+      - skill: "Program composition: instantiate task graphs from service catalog"
+        level: L5
+      - skill: "Dependency management (PBC->testing->completion; evidence before final)"
+        level: L5
+      - skill: "Workstream scheduling & deadline calendar management"
+        level: L5
+      - skill: "Autonomy-aware routing (AUTO vs AUTO_CHECK vs ESCALATE)"
+        level: L5
+      - skill: "Pack separation enforcement (hard routing; no MT/RW leakage)"
+        level: L5
+      - skill: "Operational risk sensing (bottlenecks, missing evidence patterns)"
+        level: L5
+      - skill: "Escalation orchestration (right agent, right time, right context)"
+        level: L5
+      - skill: "Status consolidation & executive-style reporting"
+        level: L5
+      - skill: "Service delivery governance (SLA, WIP limits, throughput)"
+        level: L5
+      - skill: "Case file hygiene (versioning, metadata, audit trail completeness)"
+        level: L5
+      - skill: "Conflict detection routing to Marco (ethics/independence/AML flags)"
+        level: L4
+
+  agent_marco:
+    name: Marco
+    title: Autonomy & Policy Governor
+    mastery_expectation: L5
+    skills:
+      - skill: "Autonomy tiering design & enforcement (task-level + action-level)"
+        level: L5
+      - skill: "Professional risk judgment under uncertainty"
+        level: L5
+      - skill: "Ethics & independence governance (conflicts, safeguards, threats)"
+        level: L5
+      - skill: "Release gating for irreversible actions (filings/submissions/formal opinions)"
+        level: L5
+      - skill: "Pack separation policy (hard barriers + audit of violations)"
+        level: L5
+      - skill: "AML/CFT awareness overlay for Malta CSP-adjacent matters"
+        level: L4
+      - skill: "Policy writing: crisp escalation triggers + thresholds"
+        level: L5
+      - skill: "Exception governance: when to override, how to document"
+        level: L5
+      - skill: "Tool permissions & least-privilege controls"
+        level: L5
+      - skill: "Quality management mindset (review points, remediation closure)"
+        level: L4
+      - skill: "Regulatory sensitivity (reputational and compliance risk)"
+        level: L5
+
+  agent_diane:
+    name: Diane
+    title: Quality, Risk & Evidence Guardian
+    mastery_expectation: L5
+    skills:
+      - skill: "Evidence sufficiency design (what proves what)"
+        level: L5
+      - skill: "Traceability enforcement (output ↔ evidence mapping)"
+        level: L5
+      - skill: "Consistency checking (names/dates/amounts/IDs) across packs"
+        level: L5
+      - skill: "Quality management approach (review notes + closure)"
+        level: L5
+      - skill: "Materiality and reasonability sense-checking"
+        level: L5
+      - skill: "Detecting risky language/positions (legal/tax/audit)"
+        level: L5
+      - skill: "Country pack mismatch detection"
+        level: L5
+      - skill: "Fraud/go-concern red-flag intuition (for audit outputs)"
+        level: L4
+      - skill: "Document hygiene: version control, change logs, approvals"
+        level: L5
+      - skill: "Review of computations and schedules for arithmetic integrity"
+        level: L5
+      - skill: "Executive-level QA summaries (PASS/FAIL with fixes)"
+        level: L5
+
+# =============================================================================
+# GLOBAL ENGINE AGENTS
+# =============================================================================
+
+  agent_patrick:
+    name: Patrick
+    title: Audit & Assurance Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "ISA-based audit planning and strategy"
+        level: L5
+      - skill: "Risk assessment (incl. ISA 315 style entity/process understanding)"
+        level: L5
+      - skill: "Materiality & performance materiality judgment"
+        level: L5
+      - skill: "Audit response design (ISA 330 responsiveness)"
+        level: L5
+      - skill: "Controls testing (COSO-aligned control thinking)"
+        level: L5
+      - skill: "Substantive testing design & execution (tests of details + analytics)"
+        level: L5
+      - skill: "Sampling strategy, population completeness, selection methods"
+        level: L5
+      - skill: "Revenue recognition skepticism & fraud risk awareness"
+        level: L5
+      - skill: "Estimates and provisions audit approach (bias detection)"
+        level: L5
+      - skill: "Going concern assessment and documentation"
+        level: L5
+      - skill: "Subsequent events procedures"
+        level: L5
+      - skill: "Audit reporting support pack logic + management letter drafting"
+        level: L5
+      - skill: "Group/component audit coordination (when applicable)"
+        level: L4
+      - skill: "Professional judgment documentation (why this conclusion)"
+        level: L5
+      - skill: "Audit file defensibility for inspection-style review"
+        level: L5
+
+  agent_sofia:
+    name: Sofia
+    title: Accounting & Financial Reporting Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "End-to-end close cycle leadership (monthly/quarterly/year-end)"
+        level: L5
+      - skill: "Bank/AP/AR reconciliations and break resolution"
+        level: L5
+      - skill: "Accruals/prepayments/provisions mechanics + support"
+        level: L5
+      - skill: "Fixed assets: capitalization, depreciation, disposals, impairment indicators"
+        level: L5
+      - skill: "Revenue/COGS integrity and cut-off discipline"
+        level: L5
+      - skill: "Financial statements construction + note drafting"
+        level: L5
+      - skill: "Disclosure completeness and tie-out methodology"
+        level: L5
+      - skill: "Accounting policy selection and documentation"
+        level: L5
+      - skill: "Variance analysis and narrative explanation (mgmt accounts)"
+        level: L5
+      - skill: "Data integrity checks (TB↔GL↔subsidiary ledgers)"
+        level: L5
+      - skill: "Audit-ready schedules (clean PBC pack mindset)"
+        level: L5
+      - skill: "Controls-aware accounting (designing processes to reduce error)"
+        level: L4
+
+  agent_james:
+    name: James
+    title: Advisory & Consulting Engine (CFO/Transformation)
+    mastery_expectation: L5
+    skills:
+      - skill: "Problem framing (objective, constraints, success metrics)"
+        level: L5
+      - skill: "CFO toolkit: budgeting, forecasting, runway, WC optimization"
+        level: L5
+      - skill: "Scenario & sensitivity modeling (driver-based)"
+        level: L5
+      - skill: "Operating model & process redesign (finance transformation)"
+        level: L5
+      - skill: "KPI architecture (north-star metrics + supporting tree)"
+        level: L5
+      - skill: "Board/steerco pack writing (clear decisions & asks)"
+        level: L5
+      - skill: "Cost diagnostics and margin bridge analysis"
+        level: L5
+      - skill: "Implementation roadmaps with governance cadence"
+        level: L5
+      - skill: "Risk trade-off articulation (ISO 31000 style)"
+        level: L4
+      - skill: "Stakeholder management through crisp narrative (no hype)"
+        level: L5
+      - skill: "Benefits realization tracking and post-implementation review"
+        level: L4
+
+  agent_fatima:
+    name: Fatima
+    title: Risk, Controls & Internal Audit Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "Internal audit universe design & annual planning"
+        level: L5
+      - skill: "Risk register design (inherent/residual, appetite, KRIs)"
+        level: L5
+      - skill: "RCM (risk-control matrix) construction and control objective mapping"
+        level: L5
+      - skill: "Controls testing: design vs operating effectiveness"
+        level: L5
+      - skill: "Sampling, exception evaluation, severity rating"
+        level: L5
+      - skill: "Root cause analysis and remediation program design"
+        level: L5
+      - skill: "Follow-up / re-testing and closure evidence requirements"
+        level: L5
+      - skill: "ITGC/IT governance literacy (COBIT framing)"
+        level: L4
+      - skill: "Fraud deterrence/control environment sensing (COSO lens)"
+        level: L4
+      - skill: "Audit committee-style reporting and action plan governance"
+        level: L5
+
+# =============================================================================
+# MALTA ENGINE AGENTS
+# =============================================================================
+
+  agent_matthew:
+    name: Matthew
+    title: Malta Tax Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "Malta tax compliance production line (data→compute→pack→archive)"
+        level: L5
+      - skill: "Book-to-tax bridge discipline (traceable schedules)"
+        level: L5
+      - skill: "Tax risk identification and defensible position memo writing"
+        level: L5
+      - skill: "Ethics in tax planning (IESBA tax planning pronouncement awareness)"
+        level: L5
+      - skill: "Cross-border fundamentals (OECD arm's length baseline where relevant)"
+        level: L4
+      - skill: "Documentation sufficiency standards (evidence map mindset)"
+        level: L5
+      - skill: "Coordination with accounting outputs (provisions/tax notes inputs)"
+        level: L4
+      - skill: "AML/CFT sensitivity for CSP-adjacent client profiles (risk-based lens)"
+        level: L3
+
+  agent_claire:
+    name: Claire
+    title: Malta CSP / MBR Corporate Services Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "End-to-end CSP corporate services lifecycle management"
+        level: L5
+      - skill: "MBR submission-quality drafting (resolutions/minutes/forms)"
+        level: L5
+      - skill: "Registers maintenance (members/directors/UBOs as applicable)"
+        level: L5
+      - skill: "Annual return cycle mastery (timelines, completeness, fees awareness)"
+        level: L5
+      - skill: "Rejection remediation loop (root cause, re-pack, re-submit)"
+        level: L5
+      - skill: "Authority/capacity checks for corporate actions"
+        level: L5
+      - skill: "CSP regulatory discipline (MFSA rulebook alignment)"
+        level: L5
+      - skill: "AML/CFT operational awareness (FIAU implementing procedures context)"
+        level: L4
+      - skill: "Evidence mapping and archiving for regulatory defensibility"
+        level: L5
+
+# =============================================================================
+# RWANDA ENGINE AGENTS
+# =============================================================================
+
+  agent_emmanuel:
+    name: Emmanuel
+    title: Rwanda Tax Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "Rwanda tax compliance production line (data→compute→pack→archive)"
+        level: L5
+      - skill: "Ledger↔bank integrity checks and contradiction resolution discipline"
+        level: L5
+      - skill: "Penalty-risk sensing and documentation sufficiency enforcement"
+        level: L5
+      - skill: "Defensible position memo writing (bounded; evidence-first)"
+        level: L5
+      - skill: "Cross-border fundamentals (OECD arm's length baseline where relevant)"
+        level: L4
+      - skill: "Coordination with notary documents (terms ↔ tax implications consistency)"
+        level: L4
+      - skill: "Escalation when facts are incomplete or contentious"
+        level: L5
+
+  agent_chantal:
+    name: Chantal
+    title: Rwanda Private Notary Engine
+    mastery_expectation: L5
+    skills:
+      - skill: "Legal intake mastery (facts, objectives, constraints, missing info)"
+        level: L5
+      - skill: "Partner-grade legal advisory writing (options matrix + risk notes + recommendation)"
+        level: L5
+      - skill: "Contract architecture across types (definitions, representations, covenants, remedies)"
+        level: L5
+      - skill: "Negotiation-safe drafting (ambiguity removal; enforceability mindset)"
+        level: L5
+      - skill: "Corporate document factory (articles/resolutions/share transfers/POAs/declarations)"
+        level: L5
+      - skill: "Clause library governance (approved clauses, fallback clauses, redline discipline)"
+        level: L5
+      - skill: "Novelty scoring + safe escalation for non-standard terms"
+        level: L5
+      - skill: "Authority/capacity/identity verification discipline"
+        level: L5
+      - skill: "Execution support (signing packs, checklists, scheduling readiness)"
+        level: L5
+      - skill: "Post-execution archiving & precedent capture"
+        level: L5
+      - skill: "Risk triggers: dispute, fraud signals, cross-border legalization complexity"
+        level: L5

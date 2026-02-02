@@ -1,0 +1,148 @@
+# FirmOS Resource Library v1.0
+# Knowledge shelf registry with country-tagged resources
+
+version: "1.0"
+name: "FirmOS Resource Library"
+
+# =============================================================================
+# GLOBAL RESOURCES (All Agents)
+# =============================================================================
+
+global:
+  standards:
+    - id: IAASB_HANDBOOK
+      name: "IAASB Handbook of International Quality Management, Auditing, Review, Other Assurance, and Related Services Pronouncements"
+      scope: global
+      mandatory_for: [agent_patrick, agent_diane, agent_aline]
+      
+    - id: IESBA_CODE
+      name: "IESBA International Code of Ethics for Professional Accountants"
+      scope: global
+      mandatory_for: [agent_marco, agent_aline, agent_matthew]
+      
+    - id: IFRS_STANDARDS_LIST
+      name: "IFRS Standards (full list)"
+      scope: global
+      mandatory_for: [agent_sofia, agent_patrick, agent_james]
+      
+    - id: IFAC_ISA_SME_GUIDE
+      name: "IFAC Guide to Using ISAs in the Audits of SMEs"
+      scope: global
+      mandatory_for: [agent_patrick]
+      
+    - id: COSO_INTERNAL_CONTROL
+      name: "COSO Internal Control — Integrated Framework"
+      scope: global
+      mandatory_for: [agent_fatima, agent_patrick]
+      
+    - id: ISO_31000
+      name: "ISO 31000 Risk Management"
+      scope: global
+      mandatory_for: [agent_fatima, agent_james]
+      
+    - id: COBIT
+      name: "COBIT Framework for IT Governance"
+      scope: global
+      mandatory_for: [agent_fatima]
+      
+    - id: FATF_RECS
+      name: "FATF Recommendations"
+      scope: global
+      mandatory_for: [agent_marco]
+      
+    - id: OECD_TPG_2022
+      name: "OECD Transfer Pricing Guidelines 2022"
+      scope: global
+      mandatory_for: [agent_matthew, agent_emmanuel]
+
+# =============================================================================
+# MALTA RESOURCES
+# =============================================================================
+
+malta:
+  csp_regulatory:
+    - id: MALTA_CSP_ACT_CAP529
+      name: "Companies' Service Provider Act (Cap. 529)"
+      scope: malta
+      mandatory_for: [agent_claire, agent_marco]
+      
+    - id: MFSA_CSP_RULEBOOK
+      name: "MFSA CSP Rulebook"
+      scope: malta
+      mandatory_for: [agent_claire, agent_aline]
+      
+    - id: MFSA_CSP_FAQS
+      name: "MFSA CSP FAQs and Guidance Notes"
+      scope: malta
+      mandatory_for: [agent_claire]
+      
+    - id: FIAU_IMPL_PROCS
+      name: "FIAU Implementing Procedures"
+      scope: malta
+      mandatory_for: [agent_claire, agent_matthew, agent_marco]
+      
+  mbr:
+    - id: MBR_ANNUAL_RETURNS
+      name: "MBR Annual Returns Guidance"
+      scope: malta
+      mandatory_for: [agent_claire, agent_aline]
+
+# =============================================================================
+# RWANDA RESOURCES
+# =============================================================================
+
+rwanda:
+  notary:
+    - id: RW_LAW_NOTARY_RWANDALII
+      name: "Law N° 08/2017 Governing Notaries and Notarial Deeds (RwandaLII)"
+      scope: rwanda
+      mandatory_for: [agent_chantal, agent_aline]
+      
+    - id: RW_NOTARY_AMEND_2023_PDF
+      name: "Notary Law 2023 Amendment PDF"
+      scope: rwanda
+      mandatory_for: [agent_chantal]
+      
+    - id: RW_LAW_NOTARY_MINIJUST_PDF
+      name: "Ministry of Justice Notary Guidance PDF"
+      scope: rwanda
+      mandatory_for: [agent_chantal]
+
+# =============================================================================
+# ACCESS CONTROL RULES
+# =============================================================================
+
+access_control:
+  strict_separation: true
+  rules:
+    - "Malta agents (Matthew, Claire) may NOT access Rwanda resources"
+    - "Rwanda agents (Emmanuel, Chantal) may NOT access Malta resources"
+    - "Governance agents (Aline, Marco, Diane) may access all resources"
+    - "Global engine agents may access only global resources"
+    - "Pack leakage = critical incident requiring immediate escalation"
+
+# =============================================================================
+# EVIDENCE TYPE TAXONOMY
+# =============================================================================
+
+evidence_types:
+  - id: CLIENT_INSTRUCTION
+    description: "Written instruction from client authorizing work"
+    
+  - id: FINANCIAL_RECORDS
+    description: "Trial balance, ledgers, bank statements, supporting schedules"
+    
+  - id: SOURCE_DOCUMENTS
+    description: "Invoices, contracts, receipts, external confirmations"
+    
+  - id: WORKPAPER_TRAIL
+    description: "Internal working papers with cross-references"
+    
+  - id: LEGAL_SOURCES
+    description: "Statutes, regulations, case law, authoritative guidance"
+    
+  - id: IDENTITY_AUTHORITY
+    description: "Identity documents, POAs, resolutions authorizing signatories"
+    
+  - id: REGISTRY_EXTRACTS
+    description: "Official registry extracts (MBR, RDB, etc.)"

@@ -1,0 +1,172 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openclaw.ai/schema/agents_catalog.schema.json",
+    "title": "FirmOS Agents Catalog",
+    "description": "Schema for validating FirmOS agents catalog YAML files",
+    "type": "object",
+    "required": [
+        "version",
+        "name"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$",
+            "description": "Catalog version in semver format (e.g., '1.0')"
+        },
+        "name": {
+            "type": "string",
+            "description": "Human-readable catalog name"
+        },
+        "governance_agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent"
+            },
+            "description": "Governance-level agents (orchestrator, governor, guardian)"
+        },
+        "global_engine_agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent"
+            },
+            "description": "Global service delivery agents"
+        },
+        "malta_engine_agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent"
+            },
+            "description": "Malta jurisdiction agents"
+        },
+        "rwanda_engine_agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent"
+            },
+            "description": "Rwanda jurisdiction agents"
+        },
+        "service_ownership": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string",
+                "pattern": "^agent_[a-z]+$"
+            },
+            "description": "Mapping of service IDs to owning agent IDs"
+        },
+        "tool_groups": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/tool_group"
+            },
+            "description": "Tool group definitions"
+        }
+    },
+    "definitions": {
+        "agent": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "title",
+                "role",
+                "allowed_packs",
+                "allowed_tools"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^agent_[a-z]+$",
+                    "description": "Unique agent identifier"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Agent display name"
+                },
+                "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Agent role title"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "orchestration",
+                        "policy_governance",
+                        "quality_assurance",
+                        "service_delivery"
+                    ],
+                    "description": "Agent role type"
+                },
+                "owns_services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^svc_"
+                    },
+                    "description": "Services this agent owns"
+                },
+                "supports_services": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "pattern": "^svc_"
+                    },
+                    "description": "Services this agent supports"
+                },
+                "allowed_packs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "GLOBAL",
+                            "MT_TAX",
+                            "MT_CSP_MBR",
+                            "RW_TAX",
+                            "RW_PRIVATE_NOTARY"
+                        ]
+                    },
+                    "minItems": 1,
+                    "description": "Country packs this agent can access"
+                },
+                "allowed_tools": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "CORE_CASE_MGMT",
+                            "EVIDENCE",
+                            "DOC_FACTORY",
+                            "QC_GATES",
+                            "RELEASE_GATED"
+                        ]
+                    },
+                    "minItems": 1,
+                    "description": "Tool groups this agent can use"
+                }
+            }
+        },
+        "tool_group": {
+            "type": "object",
+            "required": [
+                "description",
+                "tools"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "description": "Tool group description"
+                },
+                "tools": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1,
+                    "description": "List of tools in this group"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "name": "@firmos/root",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./modules/index.ts",
+    "exports": {
+        ".": "./modules/index.ts",
+        "./modules": "./modules/index.ts",
+        "./modules/*": "./modules/*/index.ts",
+        "./schemas": "./schemas/validation.ts"
+    },
+    "scripts": {
+        "build": "pnpm -r build",
+        "test": "vitest run",
+        "dev": "pnpm --filter @firmos/api dev",
+        "validate": "npx ts-node schemas/validation.ts catalogs"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3",
+        "vitest": "^4.0.18",
+        "yaml": "^2.3.4"
+    },
+    "dependencies": {
+        "zod": "^4.3.6"
+    }
+}

@@ -1,0 +1,190 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openclaw.ai/schema/service_catalog.schema.json",
+    "title": "FirmOS Service Catalog",
+    "description": "Schema for validating FirmOS service catalog YAML files",
+    "type": "object",
+    "required": [
+        "version",
+        "name",
+        "services"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "name": {
+            "type": "string"
+        },
+        "mode": {
+            "type": "string",
+            "enum": [
+                "additive_only",
+                "replace"
+            ]
+        },
+        "goal": {
+            "type": "string"
+        },
+        "autonomy_tiers": {
+            "type": "object",
+            "properties": {
+                "AUTO": {
+                    "type": "string"
+                },
+                "AUTO_CHECK": {
+                    "type": "string"
+                },
+                "ESCALATE": {
+                    "type": "string"
+                }
+            }
+        },
+        "global_quality_rules": {
+            "type": "object",
+            "properties": {
+                "version_control": {
+                    "type": "string"
+                },
+                "evidence_minimum": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "guardian_pass_required": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pack_separation": {
+                    "type": "string"
+                },
+                "traceability": {
+                    "type": "string"
+                }
+            }
+        },
+        "services": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/service"
+            }
+        },
+        "integration_notes": {
+            "type": "object",
+            "properties": {
+                "routing_rules": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "release_controls": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "service": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "scope",
+                "owner_agent",
+                "phases",
+                "task_graph"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^svc_"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string",
+                    "enum": [
+                        "global",
+                        "malta",
+                        "rwanda"
+                    ]
+                },
+                "owner_agent": {
+                    "type": "string",
+                    "pattern": "^agent_"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "phases": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                },
+                "task_graph": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/task"
+                    },
+                    "minItems": 1
+                },
+                "escalation_triggers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "task": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "autonomy",
+                "depends_on",
+                "outputs"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "autonomy": {
+                    "type": "string",
+                    "enum": [
+                        "AUTO",
+                        "AUTO_CHECK",
+                        "ESCALATE"
+                    ]
+                },
+                "depends_on": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "outputs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 1
+                }
+            }
+        }
+    }
+}

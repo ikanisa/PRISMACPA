@@ -98,10 +98,10 @@ export type TeamMessage = {
   timestamp: number;
 
   /** Source of message: "user" or agent ID. */
-  from: "user" | string;
+  from: string;
 
   /** Target: "all" (broadcast), or specific agent ID for @mention. */
-  to: "all" | string;
+  to: string;
 
   /** Message content. */
   content: string;

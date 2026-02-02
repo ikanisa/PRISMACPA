@@ -27,7 +27,7 @@ export async function hashString(text: string): Promise<string> {
  * Simply concatenates hashes and hashes the result.
  */
 export async function combineHashes(hashes: string[]): Promise<string> {
-    const sorted = [...hashes].sort(); // Deterministic ordering
+    const sorted = hashes.toSorted(); // Deterministic ordering (non-mutating)
     return hashString(sorted.join(''));
 }
 

@@ -1,0 +1,267 @@
+# FirmOS Agents Catalog v1.0
+# Agent → Services mapping extracted from L5 manifests
+
+version: "1.0"
+name: "FirmOS Agents Catalog"
+
+# =============================================================================
+# GOVERNANCE AGENTS (No services owned, but govern all)
+# =============================================================================
+
+governance_agents:
+  - id: agent_aline
+    name: Aline
+    title: Firm Orchestrator
+    role: orchestration
+    owns_services: []
+    supports_services:
+      - svc_audit_assurance
+      - svc_accounting_fin_reporting
+      - svc_advisory_consulting
+      - svc_risk_controls_internal_audit
+      - svc_mt_tax
+      - svc_mt_csp_mbr
+      - svc_rw_tax
+      - svc_rw_private_notary
+    allowed_packs:
+      - GLOBAL
+      - MT_TAX
+      - MT_CSP_MBR
+      - RW_TAX
+      - RW_PRIVATE_NOTARY
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - QC_GATES
+
+  - id: agent_marco
+    name: Marco
+    title: Autonomy & Policy Governor
+    role: policy_governance
+    owns_services: []
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - MT_TAX
+      - MT_CSP_MBR
+      - RW_TAX
+      - RW_PRIVATE_NOTARY
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - QC_GATES
+      - RELEASE_GATED
+
+  - id: agent_diane
+    name: Diane
+    title: Quality, Risk & Evidence Guardian
+    role: quality_assurance
+    owns_services: []
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - MT_TAX
+      - MT_CSP_MBR
+      - RW_TAX
+      - RW_PRIVATE_NOTARY
+    allowed_tools:
+      - EVIDENCE
+      - QC_GATES
+      - CORE_CASE_MGMT
+
+# =============================================================================
+# GLOBAL ENGINE AGENTS
+# =============================================================================
+
+global_engine_agents:
+  - id: agent_patrick
+    name: Patrick
+    title: Audit & Assurance Engine
+    role: service_delivery
+    owns_services:
+      - svc_audit_assurance
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+  - id: agent_sofia
+    name: Sofia
+    title: Accounting & Financial Reporting Engine
+    role: service_delivery
+    owns_services:
+      - svc_accounting_fin_reporting
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+  - id: agent_james
+    name: James
+    title: Advisory & Consulting Engine (CFO/Transformation)
+    role: service_delivery
+    owns_services:
+      - svc_advisory_consulting
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+  - id: agent_fatima
+    name: Fatima
+    title: Risk, Controls & Internal Audit Engine
+    role: service_delivery
+    owns_services:
+      - svc_risk_controls_internal_audit
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+# =============================================================================
+# MALTA ENGINE AGENTS
+# =============================================================================
+
+malta_engine_agents:
+  - id: agent_matthew
+    name: Matthew
+    title: Malta Tax Engine
+    role: service_delivery
+    owns_services:
+      - svc_mt_tax
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - MT_TAX
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+  - id: agent_claire
+    name: Claire
+    title: Malta CSP / MBR Corporate Services Engine
+    role: service_delivery
+    owns_services:
+      - svc_mt_csp_mbr
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - MT_CSP_MBR
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+# =============================================================================
+# RWANDA ENGINE AGENTS
+# =============================================================================
+
+rwanda_engine_agents:
+  - id: agent_emmanuel
+    name: Emmanuel
+    title: Rwanda Tax Engine
+    role: service_delivery
+    owns_services:
+      - svc_rw_tax
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - RW_TAX
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+  - id: agent_chantal
+    name: Chantal
+    title: Rwanda Private Notary Engine
+    role: service_delivery
+    owns_services:
+      - svc_rw_private_notary
+    supports_services: []
+    allowed_packs:
+      - GLOBAL
+      - RW_PRIVATE_NOTARY
+    allowed_tools:
+      - CORE_CASE_MGMT
+      - EVIDENCE
+      - DOC_FACTORY
+      - QC_GATES
+
+# =============================================================================
+# AGENT → SERVICE QUICK LOOKUP
+# =============================================================================
+
+service_ownership:
+  svc_audit_assurance: agent_patrick
+  svc_accounting_fin_reporting: agent_sofia
+  svc_advisory_consulting: agent_james
+  svc_risk_controls_internal_audit: agent_fatima
+  svc_mt_tax: agent_matthew
+  svc_mt_csp_mbr: agent_claire
+  svc_rw_tax: agent_emmanuel
+  svc_rw_private_notary: agent_chantal
+
+# =============================================================================
+# TOOL GROUPS REFERENCE
+# =============================================================================
+
+tool_groups:
+  CORE_CASE_MGMT:
+    description: "Core case management tools"
+    tools:
+      - create_engagement
+      - create_workstream
+      - create_task
+      - update_task_status
+      - get_case_status
+      - log_event
+
+  EVIDENCE:
+    description: "Evidence collection and validation"
+    tools:
+      - collect_evidence
+      - validate_evidence
+      - link_evidence
+      - get_evidence_map
+
+  DOC_FACTORY:
+    description: "Document production"
+    tools:
+      - create_document
+      - update_document
+      - version_document
+      - finalize_document
+
+  QC_GATES:
+    description: "Quality control gates"
+    tools:
+      - run_guardian_checks
+      - get_gate_status
+      - request_review
+
+  RELEASE_GATED:
+    description: "Release control (Marco only)"
+    tools:
+      - authorize_release
+      - deny_release
+      - execute_release_action

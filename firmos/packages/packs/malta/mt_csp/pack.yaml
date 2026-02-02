@@ -1,0 +1,206 @@
+# Malta CSP/MBR Pack (MT_CSP)
+# Corporate Services Provider - Company Secretarial & MBR Registry
+
+version: "1.0"
+pack_id: mt_csp
+jurisdiction: MT
+name: Malta CSP/MBR Corporate Services Pack
+description: >
+  Malta corporate services including company secretarial, MBR filings,
+  annual returns, and corporate governance. Human performs all registry submissions.
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+services:
+  - COMPANY_SECRETARIAL
+  - MBR_REGISTRY
+  - CORPORATE_GOVERNANCE
+  - ANNUAL_RETURNS
+
+# =============================================================================
+# WORKFLOW TEMPLATES
+# =============================================================================
+workflows:
+  annual_return:
+    name: Annual Return Filing
+    phases:
+      - id: data_collection
+        name: Data Collection
+        tasks:
+          - name: Verify company details
+            autonomy_tier: A
+            required_outputs: [company_details_verified]
+          - name: Check shareholder register
+            autonomy_tier: A
+            required_outputs: [shareholder_register]
+          - name: Verify director details
+            autonomy_tier: A
+            required_outputs: [director_details]
+
+      - id: preparation
+        name: Return Preparation
+        tasks:
+          - name: Generate annual return draft
+            autonomy_tier: B
+            required_outputs: [annual_return_draft]
+          - name: Calculate filing fees
+            autonomy_tier: A
+            required_outputs: [fee_calculation]
+
+      - id: review
+        name: Review
+        tasks:
+          - name: Director review
+            autonomy_tier: C
+            required_outputs: [director_approval]
+
+      - id: filing
+        name: MBR Filing (Human)
+        tasks:
+          - name: Human submits to MBR
+            autonomy_tier: C
+            required_evidence: [filing_screenshot, payment_receipt]
+
+  board_minutes:
+    name: Board Meeting Minutes
+    phases:
+      - id: preparation
+        name: Meeting Preparation
+        tasks:
+          - name: Draft agenda
+            autonomy_tier: B
+            required_outputs: [agenda_draft]
+          - name: Prepare resolutions
+            autonomy_tier: B
+            required_outputs: [resolution_drafts]
+
+      - id: post_meeting
+        name: Post-Meeting
+        tasks:
+          - name: Draft minutes
+            autonomy_tier: B
+            required_outputs: [minutes_draft]
+          - name: Circulate for approval
+            autonomy_tier: A
+            required_outputs: [circulation_record]
+
+      - id: finalization
+        name: Finalization
+        tasks:
+          - name: Director sign-off
+            autonomy_tier: C
+            required_evidence: [signed_minutes]
+          - name: Update minute book
+            autonomy_tier: A
+            required_outputs: [minute_book_updated]
+
+  change_of_director:
+    name: Change of Director
+    phases:
+      - id: documentation
+        name: Documentation
+        tasks:
+          - name: Prepare resignation letter
+            autonomy_tier: B
+            required_outputs: [resignation_letter]
+          - name: Prepare appointment letter
+            autonomy_tier: B
+            required_outputs: [appointment_letter]
+          - name: Draft board resolution
+            autonomy_tier: B
+            required_outputs: [board_resolution]
+
+      - id: compliance
+        name: Compliance Checks
+        tasks:
+          - name: AML screening
+            autonomy_tier: B
+            required_outputs: [aml_screening_result]
+          - name: Fit & proper check
+            autonomy_tier: B
+            required_outputs: [fit_proper_check]
+
+      - id: filing
+        name: MBR Filing
+        tasks:
+          - name: Prepare Form C
+            autonomy_tier: B
+            required_outputs: [form_c_draft]
+          - name: Human submits to MBR
+            autonomy_tier: C
+            required_evidence: [filing_confirmation]
+
+  ubo_register_update:
+    name: UBO Register Update
+    phases:
+      - id: identification
+        name: UBO Identification
+        tasks:
+          - name: Identify beneficial owners
+            autonomy_tier: B
+            required_outputs: [ubo_identification]
+          - name: Collect UBO documentation
+            autonomy_tier: A
+            required_evidence: [ubo_passport, ubo_proof_address]
+
+      - id: registration
+        name: Registration
+        tasks:
+          - name: Prepare UBO filing
+            autonomy_tier: B
+            required_outputs: [ubo_filing_draft]
+          - name: Human submits to MBR
+            autonomy_tier: C
+            required_evidence: [ubo_filing_confirmation]
+
+# =============================================================================
+# DEADLINES
+# =============================================================================
+obligations:
+  annual_return:
+    frequency: annual
+    due_offset_months: 10
+    description: Annual return due within 10 months of financial year end
+
+  ubo_update:
+    frequency: event_driven
+    due_offset_days: 14
+    description: UBO changes must be filed within 14 days
+
+  director_change:
+    frequency: event_driven
+    due_offset_days: 14
+    description: Director changes must be filed within 14 days
+
+# =============================================================================
+# DOCUMENT TEMPLATES
+# =============================================================================
+templates:
+  - id: annual_return_form
+    name: MBR Annual Return Form
+    format: pdf
+  - id: board_resolution
+    name: Board Resolution Template
+    format: docx
+  - id: board_minutes
+    name: Board Minutes Template
+    format: docx
+  - id: resignation_letter
+    name: Director Resignation Letter
+    format: docx
+  - id: appointment_letter
+    name: Director Appointment Letter
+    format: docx
+  - id: form_c
+    name: MBR Form C (Director Changes)
+    format: pdf
+
+# =============================================================================
+# CONSTRAINTS
+# =============================================================================
+constraints:
+  no_registry_automation: true
+  human_filing: true
+  aml_screening_required: true
+  maker_checker: true

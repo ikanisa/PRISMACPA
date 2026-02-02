@@ -1,0 +1,78 @@
+# Advisory CFO Program
+# CFO Advisory and Consulting engagement
+
+version: "1.0"
+program_id: advisory_cfo_program
+name: Advisory & Consulting Program
+description: >
+  CFO advisory services including financial planning, strategic advice.
+  Controlled by James (Advisory & Consulting Engine).
+
+assigned_agent: james
+
+# =============================================================================
+# PHASES
+# =============================================================================
+phases:
+  - id: discovery
+    name: Discovery & Assessment
+    default_autonomy_tier: B
+    tasks:
+      - name: Understand client needs
+        required_outputs: [needs_assessment]
+
+      - name: Review current state
+        required_outputs: [current_state_analysis]
+
+      - name: Identify opportunities
+        required_outputs: [opportunity_register]
+
+  - id: planning
+    name: Strategic Planning
+    default_autonomy_tier: B
+    tasks:
+      - name: Financial modeling
+        required_outputs: [financial_model]
+
+      - name: Scenario analysis
+        required_outputs: [scenario_analysis]
+
+      - name: Recommendations development
+        required_outputs: [recommendations_draft]
+
+  - id: reporting
+    name: Reporting & Delivery
+    default_autonomy_tier: C
+    tasks:
+      - name: Draft advisory report
+        required_outputs: [advisory_report_draft]
+
+      - name: Partner review
+        required_outputs: [partner_sign_off]
+
+      - name: Client presentation
+        required_outputs: [presentation_materials]
+
+      - name: Deliver recommendations
+        required_outputs: [delivery_record]
+
+  - id: implementation_support
+    name: Implementation Support
+    default_autonomy_tier: B
+    tasks:
+      - name: Implementation planning
+        required_outputs: [implementation_plan]
+
+      - name: Progress monitoring
+        required_outputs: [progress_reports]
+
+      - name: Issue resolution
+        required_outputs: [issue_log]
+        autonomy_tier: C
+
+# =============================================================================
+# QUALITY REQUIREMENTS
+# =============================================================================
+quality_requirements:
+  partner_review: true
+  client_sign_off: true

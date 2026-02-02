@@ -8,8 +8,7 @@
  */
 
 import type { OpenClawConfig } from "../config/config.js";
-import type { AgentConfig } from "../config/types.agents.js";
-import type { TeamConfig, TeamMessage } from "../config/types.team.js";
+import type { TeamMessage } from "../config/types.team.js";
 import {
   getTeamConfig,
   getTeamContext,

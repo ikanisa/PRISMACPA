@@ -15,6 +15,7 @@ import { logsHandlers } from "./server-methods/logs.js";
 import { modelsHandlers } from "./server-methods/models.js";
 import { nodeHandlers } from "./server-methods/nodes.js";
 import { sendHandlers } from "./server-methods/send.js";
+import { servicesHandlers } from "./server-methods/services.js";
 import { sessionsHandlers } from "./server-methods/sessions.js";
 import { skillsHandlers } from "./server-methods/skills.js";
 import { systemHandlers } from "./server-methods/system.js";
@@ -72,6 +73,11 @@ const READ_METHODS = new Set([
   "node.list",
   "node.describe",
   "chat.history",
+  // Services catalog (read-only)
+  "services.list",
+  "services.get",
+  "services.route",
+  "services.validate",
 ]);
 const WRITE_METHODS = new Set([
   "send",
@@ -185,6 +191,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...agentHandlers,
   ...agentsHandlers,
   ...browserHandlers,
+  ...servicesHandlers,
 };
 
 export async function handleGatewayRequest(

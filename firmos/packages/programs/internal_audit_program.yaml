@@ -1,0 +1,78 @@
+# Internal Audit Program
+# Risk-based internal audit procedures
+
+version: "1.0"
+program_id: internal_audit_program
+name: Risk, Controls & Internal Audit Program
+description: >
+  Risk-based internal audit and controls assessment.
+  Controlled by Fatima (Risk, Controls & Internal Audit Engine).
+
+assigned_agent: fatima
+
+# =============================================================================
+# PHASES
+# =============================================================================
+phases:
+  - id: planning
+    name: Audit Planning
+    default_autonomy_tier: B
+    tasks:
+      - name: Risk assessment
+        required_outputs: [risk_assessment]
+
+      - name: Develop audit universe
+        required_outputs: [audit_universe]
+
+      - name: Prepare annual audit plan
+        required_outputs: [annual_audit_plan]
+        autonomy_tier: C
+
+  - id: fieldwork
+    name: Fieldwork
+    default_autonomy_tier: B
+    tasks:
+      - name: Document processes
+        required_outputs: [process_documentation]
+
+      - name: Identify controls
+        required_outputs: [control_identification]
+
+      - name: Test controls
+        required_outputs: [control_testing_workpapers]
+        required_evidence: [control_evidence]
+
+      - name: Document findings
+        required_outputs: [findings_register]
+
+  - id: reporting
+    name: Reporting
+    default_autonomy_tier: C
+    tasks:
+      - name: Draft audit report
+        required_outputs: [internal_audit_report_draft]
+
+      - name: Management response
+        required_outputs: [management_response]
+
+      - name: Final report
+        required_outputs: [final_internal_audit_report]
+
+  - id: follow_up
+    name: Follow-up
+    default_autonomy_tier: B
+    tasks:
+      - name: Track remediation
+        required_outputs: [remediation_tracker]
+
+      - name: Verify closure
+        required_outputs: [closure_verification]
+        required_evidence: [remediation_evidence]
+
+# =============================================================================
+# QUALITY REQUIREMENTS
+# =============================================================================
+quality_requirements:
+  risk_based_approach: true
+  management_response: true
+  follow_up_required: true

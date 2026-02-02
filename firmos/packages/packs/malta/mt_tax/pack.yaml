@@ -1,0 +1,164 @@
+# Malta Tax Pack (MT_TAX)
+# CFR Malta VAT/Income Tax compliance workflows
+
+version: "1.0"
+pack_id: mt_tax
+jurisdiction: MT
+name: Malta Tax Pack
+description: >
+  Malta tax compliance including VAT returns, income tax, and CFR filing.
+  Human performs all portal submissions.
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+services:
+  - VAT
+  - INCOME_TAX
+  - PROVISIONAL_TAX
+
+# =============================================================================
+# WORKFLOW TEMPLATES
+# =============================================================================
+workflows:
+  vat_return:
+    name: VAT Return Preparation
+    phases:
+      - id: intake
+        name: Document Intake
+        tasks:
+          - name: Collect invoices
+            autonomy_tier: A
+            required_outputs: [invoice_register]
+            required_evidence: [invoice_pdf, receipt_pdf]
+          - name: Import bank statements
+            autonomy_tier: A
+            required_outputs: [bank_statement_import]
+            required_evidence: [bank_statement_csv]
+
+      - id: coding
+        name: Transaction Coding
+        tasks:
+          - name: Classify transactions
+            autonomy_tier: B
+            required_outputs: [coding_proposals]
+          - name: Apply VAT rates
+            autonomy_tier: B
+            required_outputs: [vat_calculations]
+          - name: Flag exceptions
+            autonomy_tier: A
+            required_outputs: [exception_report]
+
+      - id: reconciliation
+        name: Bank Reconciliation
+        tasks:
+          - name: Match bank to ledger
+            autonomy_tier: B
+            required_outputs: [reconciliation_report]
+          - name: Review unmatched items
+            autonomy_tier: C
+            required_outputs: [unmatched_review]
+
+      - id: draft
+        name: Draft VAT Pack
+        tasks:
+          - name: Generate VAT summary
+            autonomy_tier: B
+            required_outputs: [vat_summary_draft]
+          - name: Compile supporting schedules
+            autonomy_tier: A
+            required_outputs: [supporting_schedules]
+          - name: Generate pack hash
+            autonomy_tier: A
+            required_outputs: [pack_hash]
+
+      - id: review
+        name: Human Review
+        tasks:
+          - name: Maker-checker review
+            autonomy_tier: C
+            required_outputs: [approval_record]
+
+      - id: filing
+        name: Filing (Human Portal)
+        tasks:
+          - name: Human submits to CFR portal
+            autonomy_tier: C
+            required_outputs: [filing_confirmation]
+            required_evidence: [portal_screenshot]
+
+  income_tax_return:
+    name: Income Tax Return Preparation
+    phases:
+      - id: data_collection
+        name: Data Collection
+        tasks:
+          - name: Gather financial statements
+            autonomy_tier: A
+            required_evidence: [financial_statements]
+          - name: Collect tax adjustments
+            autonomy_tier: B
+            required_outputs: [adjustment_schedule]
+
+      - id: computation
+        name: Tax Computation
+        tasks:
+          - name: Prepare computation
+            autonomy_tier: B
+            required_outputs: [tax_computation_draft]
+          - name: Calculate liability
+            autonomy_tier: B
+            required_outputs: [liability_calculation]
+
+      - id: review
+        name: Review & Filing
+        tasks:
+          - name: Partner review
+            autonomy_tier: C
+            required_outputs: [partner_approval]
+          - name: Human files return
+            autonomy_tier: C
+            required_evidence: [filing_screenshot]
+
+# =============================================================================
+# DEADLINES
+# =============================================================================
+obligations:
+  vat_quarterly:
+    frequency: quarterly
+    due_offset_days: 45
+    description: VAT return due 45 days after quarter end
+
+  income_tax_annual:
+    frequency: annual
+    due_date: "09-30"
+    description: Income tax return due September 30
+
+  provisional_tax:
+    frequency: triannual
+    due_dates: ["04-30", "08-31", "12-21"]
+    description: Provisional tax installments
+
+# =============================================================================
+# DOCUMENT TEMPLATES
+# =============================================================================
+templates:
+  - id: vat_return_summary
+    name: VAT Return Summary
+    format: pdf
+  - id: tax_computation
+    name: Tax Computation Schedule
+    format: xlsx
+  - id: exception_report
+    name: Exception Report
+    format: pdf
+
+# =============================================================================
+# CONSTRAINTS
+# =============================================================================
+constraints:
+  no_portal_automation: true
+  no_auto_pay: true
+  no_auto_journals: true
+  human_filing: true
+  maker_checker: true

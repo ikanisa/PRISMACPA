@@ -86,6 +86,12 @@ jobs:
           - runtime: node
             task: format
             command: pnpm format
+          - runtime: node
+            task: firmos-test
+            command: cd firmos && npx vitest run
+          - runtime: node
+            task: firmos-validate
+            command: cd firmos && npx tsx schemas/validation.ts catalogs
           - runtime: bun
             task: test
             command: pnpm canvas:a2ui:bundle && bunx vitest run

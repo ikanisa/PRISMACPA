@@ -1,0 +1,115 @@
+# Accounting Close Program
+# Month-end and year-end close procedures
+
+version: "1.0"
+program_id: accounting_close_program
+name: Accounting & Financial Reporting Program
+description: >
+  Month-end and year-end close procedures with financial reporting.
+  Controlled by Sofia (Accounting & Financial Reporting Engine).
+
+assigned_agent: sofia
+
+# =============================================================================
+# PHASES
+# =============================================================================
+phases:
+  - id: pre_close
+    name: Pre-Close Preparation
+    default_autonomy_tier: A
+    tasks:
+      - name: Cutoff reminders
+        required_outputs: [cutoff_notification]
+
+      - name: Collect outstanding invoices
+        required_outputs: [outstanding_invoice_list]
+
+      - name: Review open POs
+        required_outputs: [open_po_review]
+
+  - id: transaction_processing
+    name: Transaction Processing
+    default_autonomy_tier: B
+    tasks:
+      - name: Process accruals
+        required_outputs: [accruals_schedule]
+
+      - name: Process prepayments
+        required_outputs: [prepayments_schedule]
+
+      - name: Process depreciation
+        required_outputs: [depreciation_schedule]
+
+      - name: Process payroll journals
+        required_outputs: [payroll_journal]
+
+      - name: Intercompany eliminations
+        required_outputs: [intercompany_elimination_journal]
+
+  - id: reconciliation
+    name: Account Reconciliation
+    default_autonomy_tier: B
+    tasks:
+      - name: Bank reconciliation
+        required_outputs: [bank_reconciliation]
+        required_evidence: [bank_statement]
+
+      - name: Accounts receivable reconciliation
+        required_outputs: [ar_reconciliation]
+
+      - name: Accounts payable reconciliation
+        required_outputs: [ap_reconciliation]
+
+      - name: Fixed assets reconciliation
+        required_outputs: [fa_reconciliation]
+
+      - name: Intercompany reconciliation
+        required_outputs: [ic_reconciliation]
+
+  - id: review
+    name: Review & Adjustments
+    default_autonomy_tier: C
+    tasks:
+      - name: Trial balance review
+        required_outputs: [tb_review_notes]
+
+      - name: Variance analysis
+        required_outputs: [variance_analysis]
+
+      - name: Propose adjustments
+        required_outputs: [adjustment_proposals]
+
+      - name: Manager approval
+        required_outputs: [adjustment_approval]
+
+  - id: reporting
+    name: Financial Reporting
+    default_autonomy_tier: B
+    tasks:
+      - name: Generate financial statements
+        required_outputs: [financial_statements_draft]
+
+      - name: Prepare management reports
+        required_outputs: [management_reports]
+
+      - name: CFO review
+        required_outputs: [cfo_sign_off]
+        autonomy_tier: C
+
+  - id: close
+    name: Period Close
+    default_autonomy_tier: C
+    tasks:
+      - name: Close period
+        required_outputs: [period_close_confirmation]
+
+      - name: Archive workpapers
+        required_outputs: [archive_record]
+
+# =============================================================================
+# QUALITY REQUIREMENTS
+# =============================================================================
+quality_requirements:
+  maker_checker: true
+  four_eyes_principle: true
+  reconciliation_required: true

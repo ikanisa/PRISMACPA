@@ -1,0 +1,102 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://openclaw.ai/schema/template_catalog.schema.json",
+    "title": "FirmOS Template Catalog",
+    "description": "Schema for validating FirmOS template catalog YAML files",
+    "type": "object",
+    "required": [
+        "version",
+        "name"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "templates": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/template"
+            }
+        }
+    },
+    "definitions": {
+        "template": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "pack",
+                "status"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^tpl_"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pack": {
+                    "type": "string",
+                    "enum": [
+                        "GLOBAL",
+                        "MT_TAX",
+                        "MT_CSP_MBR",
+                        "RW_TAX",
+                        "RW_PRIVATE_NOTARY"
+                    ]
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "draft",
+                        "pending_qc",
+                        "approved",
+                        "deprecated"
+                    ]
+                },
+                "version": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "author_agent": {
+                    "type": "string",
+                    "pattern": "^agent_"
+                },
+                "qc_passed": {
+                    "type": "boolean"
+                },
+                "qc_agent": {
+                    "type": "string",
+                    "pattern": "^agent_"
+                },
+                "content_hash": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

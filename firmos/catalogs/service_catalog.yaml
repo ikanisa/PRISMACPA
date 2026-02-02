@@ -1,0 +1,428 @@
+# FirmOS Service Catalog v1.0
+# Exported from firmos/packages/programs/service-catalog.ts
+
+version: "1.0"
+name: "FirmOS Service Catalog — Programs + Outputs + Evidence + Autonomy (MT/RW)"
+mode: additive_only
+goal: |
+  Provide a complete Big Four-level service catalog for OpenClaw / Antigravity implementation.
+  Each service includes: process phases, task graph, required outputs, required evidence, default
+  autonomy (AUTO / AUTO+CHECK / ESCALATE), and escalation triggers. Country-specific pillars:
+  Malta: Tax + CSP/MBR Corporate Services
+  Rwanda: Tax + Private Notary (legal advisory + document preparation + execution support)
+
+autonomy_tiers:
+  AUTO: "Agent completes without operator"
+  AUTO_CHECK: "Agent completes; Guardian must PASS before release/external use"
+  ESCALATE: "Requires operator attention (exception/high-risk/irreversible)"
+
+global_quality_rules:
+  version_control: "All work products must follow draft -> review -> final lifecycle"
+  evidence_minimum:
+    - CLIENT_INSTRUCTION
+    - FINANCIAL_RECORDS
+    - SOURCE_DOCUMENTS
+    - WORKPAPER_TRAIL
+    - LEGAL_SOURCES
+  guardian_pass_required:
+    - "All client-facing finals"
+    - "All external submissions"
+    - "All formal opinions"
+  pack_separation: "Hard; no Malta logic in RW and vice versa"
+  traceability: "Output -> Working -> Evidence -> Source Shelf"
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # GLOBAL SERVICES
+  # ---------------------------------------------------------------------------
+  - id: svc_audit_assurance
+    name: "Audit & Assurance"
+    scope: global
+    owner_agent: agent_patrick
+    description: "ISA-compliant audit and assurance services"
+    phases:
+      - planning
+      - risk_assessment
+      - testing
+      - completion
+      - reporting
+    task_graph:
+      - id: audit_planning
+        name: "Audit Planning"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [audit_plan, materiality_memo, pbc_tracker]
+      - id: risk_assessment
+        name: "Risk Assessment"
+        autonomy: AUTO
+        depends_on: [audit_planning]
+        outputs: [risk_assessment, scoping_memo]
+      - id: testing_execution
+        name: "Testing Execution"
+        autonomy: AUTO_CHECK
+        depends_on: [risk_assessment]
+        outputs: [testing_workpapers, exceptions_log]
+      - id: completion
+        name: "Audit Completion"
+        autonomy: AUTO_CHECK
+        depends_on: [testing_execution]
+        outputs: [completion_memo, misstatement_summary]
+      - id: reporting
+        name: "Audit Reporting"
+        autonomy: ESCALATE
+        depends_on: [completion]
+        outputs: [audit_report_pack, management_letter]
+    escalation_triggers:
+      - "Fraud indicators / management override"
+      - "Going concern uncertainty"
+      - "Scope limitation"
+      - "Material weakness in ICOFR"
+
+  - id: svc_accounting_fin_reporting
+    name: "Accounting & Financial Reporting"
+    scope: global
+    owner_agent: agent_sofia
+    description: "Close cycle management and financial statement production"
+    phases:
+      - close_preparation
+      - reconciliations
+      - adjustments
+      - fs_production
+      - review
+    task_graph:
+      - id: close_prep
+        name: "Close Preparation"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [close_checklist, data_validation_report]
+      - id: reconciliations
+        name: "Reconciliations"
+        autonomy: AUTO
+        depends_on: [close_prep]
+        outputs: [reconciliation_pack, break_resolution_log]
+      - id: adjusting_entries
+        name: "Adjusting Entries"
+        autonomy: AUTO_CHECK
+        depends_on: [reconciliations]
+        outputs: [je_log, adjustment_support]
+      - id: fs_production
+        name: "FS Production"
+        autonomy: AUTO_CHECK
+        depends_on: [adjusting_entries]
+        outputs: [financial_statements, notes_pack, disclosure_checklist]
+      - id: fs_review
+        name: "FS Review"
+        autonomy: ESCALATE
+        depends_on: [fs_production]
+        outputs: [review_memo, sign_off]
+    escalation_triggers:
+      - "Material unexplained variance"
+      - "Policy choice without authoritative support"
+      - "Large unreconciled difference"
+
+  - id: svc_advisory_consulting
+    name: "Advisory & Consulting"
+    scope: global
+    owner_agent: agent_james
+    description: "CFO services, transformation, and strategic advisory"
+    phases:
+      - problem_framing
+      - diagnosis
+      - modeling
+      - recommendation
+      - implementation_support
+    task_graph:
+      - id: problem_framing
+        name: "Problem Framing"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [engagement_brief, success_metrics]
+      - id: diagnosis
+        name: "Diagnosis"
+        autonomy: AUTO
+        depends_on: [problem_framing]
+        outputs: [diagnostic_summary, baseline_kpis]
+      - id: modeling
+        name: "Scenario Modeling"
+        autonomy: AUTO_CHECK
+        depends_on: [diagnosis]
+        outputs: [scenario_model, sensitivity_analysis]
+      - id: recommendation
+        name: "Recommendation"
+        autonomy: AUTO_CHECK
+        depends_on: [modeling]
+        outputs: [recommendation_memo, options_matrix]
+      - id: implementation
+        name: "Implementation Planning"
+        autonomy: ESCALATE
+        depends_on: [recommendation]
+        outputs: [implementation_roadmap, board_pack]
+    escalation_triggers:
+      - "High-stakes decision with weak evidence"
+      - "Request for tax/legal opinion"
+
+  - id: svc_risk_controls_internal_audit
+    name: "Risk, Controls & Internal Audit"
+    scope: global
+    owner_agent: agent_fatima
+    description: "Internal audit, risk management, and controls testing"
+    phases:
+      - planning
+      - rcm_design
+      - testing
+      - reporting
+      - remediation
+    task_graph:
+      - id: ia_planning
+        name: "IA Planning"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [audit_universe, annual_plan]
+      - id: rcm_design
+        name: "RCM Design"
+        autonomy: AUTO
+        depends_on: [ia_planning]
+        outputs: [risk_register, rcm_matrix]
+      - id: controls_testing
+        name: "Controls Testing"
+        autonomy: AUTO_CHECK
+        depends_on: [rcm_design]
+        outputs: [testing_results, exceptions_log]
+      - id: ia_reporting
+        name: "IA Reporting"
+        autonomy: AUTO_CHECK
+        depends_on: [controls_testing]
+        outputs: [finding_report, action_plan]
+      - id: remediation_tracking
+        name: "Remediation Tracking"
+        autonomy: AUTO
+        depends_on: [ia_reporting]
+        outputs: [remediation_tracker, closure_evidence]
+    escalation_triggers:
+      - "Critical control failure"
+      - "Suspected fraud"
+      - "Repeat findings without management action"
+
+  # ---------------------------------------------------------------------------
+  # MALTA SERVICES
+  # ---------------------------------------------------------------------------
+  - id: svc_mt_tax
+    name: "Malta Tax Compliance"
+    scope: malta
+    owner_agent: agent_matthew
+    description: "Malta tax compliance, computations, and filings"
+    phases:
+      - data_collection
+      - computation
+      - position_analysis
+      - pack_production
+      - submission
+      - archive
+    task_graph:
+      - id: mt_data_collection
+        name: "Data Collection"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [data_validation_report, pbc_status]
+      - id: mt_computation
+        name: "Tax Computation"
+        autonomy: AUTO
+        depends_on: [mt_data_collection]
+        outputs: [tax_computation, book_to_tax_bridge]
+      - id: mt_position_analysis
+        name: "Position Analysis"
+        autonomy: AUTO_CHECK
+        depends_on: [mt_computation]
+        outputs: [position_memo, risk_flags]
+      - id: mt_pack_production
+        name: "Filing Pack Production"
+        autonomy: AUTO_CHECK
+        depends_on: [mt_position_analysis]
+        outputs: [filing_pack, evidence_map]
+      - id: mt_submission
+        name: "Submission"
+        autonomy: ESCALATE
+        depends_on: [mt_pack_production]
+        outputs: [submission_confirmation, archive_index]
+    escalation_triggers:
+      - "Contentious/uncertain tax position"
+      - "Missing support for material adjustment"
+      - "External submission (always)"
+
+  - id: svc_mt_csp_mbr
+    name: "Malta CSP / MBR Corporate Services"
+    scope: malta
+    owner_agent: agent_claire
+    description: "Malta corporate services, MBR filings, and registers maintenance"
+    phases:
+      - intake
+      - drafting
+      - validation
+      - packing
+      - submission
+      - outcome_tracking
+      - archive
+    task_graph:
+      - id: csp_intake
+        name: "Intake"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [company_profile, instruction_record]
+      - id: csp_drafting
+        name: "Document Drafting"
+        autonomy: AUTO
+        depends_on: [csp_intake]
+        outputs: [resolution_draft, minutes_draft, mbr_forms]
+      - id: csp_validation
+        name: "Validation"
+        autonomy: AUTO_CHECK
+        depends_on: [csp_drafting]
+        outputs: [completeness_check, consistency_report]
+      - id: csp_packing
+        name: "Pack Production"
+        autonomy: AUTO_CHECK
+        depends_on: [csp_validation]
+        outputs: [filing_pack, signing_checklist, evidence_map]
+      - id: csp_submission
+        name: "Submission"
+        autonomy: ESCALATE
+        depends_on: [csp_packing]
+        outputs: [submission_confirmation]
+      - id: csp_outcome
+        name: "Outcome Tracking"
+        autonomy: AUTO
+        depends_on: [csp_submission]
+        outputs: [acceptance_rejection_record, remediation_notes]
+      - id: csp_archive
+        name: "Archive"
+        autonomy: AUTO
+        depends_on: [csp_outcome]
+        outputs: [registers_update, archive_index]
+    escalation_triggers:
+      - "Registry rejection requiring non-routine interpretation"
+      - "Inconsistent ownership/directorship records"
+      - "External filing (always)"
+
+  # ---------------------------------------------------------------------------
+  # RWANDA SERVICES
+  # ---------------------------------------------------------------------------
+  - id: svc_rw_tax
+    name: "Rwanda Tax Compliance"
+    scope: rwanda
+    owner_agent: agent_emmanuel
+    description: "Rwanda tax compliance, computations, and filings"
+    phases:
+      - data_integrity
+      - computation
+      - risk_scan
+      - pack_production
+      - submission
+      - archive
+    task_graph:
+      - id: rw_data_integrity
+        name: "Data Integrity Check"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [ledger_bank_reconciliation, contradiction_log]
+      - id: rw_computation
+        name: "Tax Computation"
+        autonomy: AUTO
+        depends_on: [rw_data_integrity]
+        outputs: [tax_computation, schedules_pack]
+      - id: rw_risk_scan
+        name: "Risk Scan"
+        autonomy: AUTO_CHECK
+        depends_on: [rw_computation]
+        outputs: [risk_memo, penalty_exposure_flags]
+      - id: rw_pack_production
+        name: "Filing Pack Production"
+        autonomy: AUTO_CHECK
+        depends_on: [rw_risk_scan]
+        outputs: [filing_pack, evidence_map]
+      - id: rw_submission
+        name: "Submission"
+        autonomy: ESCALATE
+        depends_on: [rw_pack_production]
+        outputs: [submission_confirmation, archive_index]
+    escalation_triggers:
+      - "Contentious position or material penalty exposure"
+      - "Unresolved bank/ledger mismatch"
+      - "External submission (always)"
+
+  - id: svc_rw_private_notary
+    name: "Rwanda Private Notary Services"
+    scope: rwanda
+    owner_agent: agent_chantal
+    description: "Legal advisory, document preparation, and execution support"
+    phases:
+      - legal_intake
+      - advisory
+      - drafting
+      - qc
+      - finalization
+      - execution_support
+      - archive
+    task_graph:
+      - id: notary_intake
+        name: "Legal Intake"
+        autonomy: AUTO
+        depends_on: []
+        outputs: [matter_brief, missing_info_list]
+      - id: notary_advisory
+        name: "Legal Advisory"
+        autonomy: AUTO_CHECK
+        depends_on: [notary_intake]
+        outputs: [options_matrix, advisory_memo]
+      - id: notary_drafting
+        name: "Document Drafting"
+        autonomy: AUTO
+        depends_on: [notary_advisory]
+        outputs: [draft_pack, definitions_schedule]
+      - id: notary_qc
+        name: "QC Review"
+        autonomy: AUTO_CHECK
+        depends_on: [notary_drafting]
+        outputs: [qc_report, contradiction_resolution]
+      - id: notary_finalization
+        name: "Finalization"
+        autonomy: AUTO_CHECK
+        depends_on: [notary_qc]
+        outputs: [final_pack, change_log]
+      - id: notary_execution
+        name: "Execution Support"
+        autonomy: ESCALATE
+        depends_on: [notary_finalization]
+        outputs: [execution_pack, signing_checklist]
+      - id: notary_archive
+        name: "Archive"
+        autonomy: AUTO
+        depends_on: [notary_execution]
+        outputs: [archive_index, precedent_tags]
+    escalation_triggers:
+      - "Dispute/litigation threat"
+      - "Adversarial negotiations"
+      - "Identity/capacity uncertainty"
+      - "Novel clause beyond policy boundaries"
+      - "Cross-border legalization complexity"
+
+# =============================================================================
+# ROUTING RULES
+# =============================================================================
+
+integration_notes:
+  routing_rules:
+    - "If jurisdiction=malta and service=tax -> svc_mt_tax"
+    - "If jurisdiction=malta and service=csp -> svc_mt_csp_mbr"
+    - "If jurisdiction=rwanda and service=tax -> svc_rw_tax"
+    - "If jurisdiction=rwanda and service=private_notary -> svc_rw_private_notary"
+    - "If service=audit -> svc_audit_assurance (apply local overlays if needed)"
+    - "If service=accounting -> svc_accounting_fin_reporting (apply local overlays if needed)"
+    - "If service=advisory -> svc_advisory_consulting (apply local overlays if needed)"
+    - "If service=risk_internal_audit -> svc_risk_controls_internal_audit"
+  release_controls:
+    - "External submissions/filings default to ESCALATE unless policy explicitly enables auto-release"
+    - "All client-facing delivery requires Guardian PASS"

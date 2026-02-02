@@ -1,0 +1,239 @@
+# FirmOS Template Factory Configuration v1.0
+# Agent-Generated Precedents System
+
+version: "1.0"
+name: "FirmOS Template Factory Configuration"
+mode: "additive_only"
+goal: >
+  Enable agents to autonomously generate and evolve templates/precedents/checklists/workpapers
+  per service, without humans pre-authoring them.
+
+# =============================================================================
+# RISK CLASSIFICATION
+# =============================================================================
+
+risk_classification:
+  LOW:
+    examples:
+      - "internal checklists"
+      - "PBC lists"
+      - "working paper shells"
+    publish_gate:
+      - "DIANE_PASS"
+
+  MEDIUM:
+    examples:
+      - "client deliverable shells (non-filing)"
+      - "standard memos"
+    publish_gate:
+      - "DIANE_PASS"
+
+  HIGH:
+    examples:
+      - "external filing packs"
+      - "tax position memos that guide submissions"
+      - "legal opinion shells"
+    publish_gate:
+      - "DIANE_PASS"
+      - "MARCO_POLICY_REVIEW"
+      - "operator_ack_optional"
+
+# =============================================================================
+# TEMPLATE CREATION TRIGGERS
+# =============================================================================
+
+template_triggers:
+  no_template_found:
+    id: "TRG_NO_TEMPLATE_FOUND"
+    when: "task starts AND template_search(service_id, task_type, pack) returns none"
+    action: "Aline opens Template-Creation Workstream"
+    owner: "aline"
+
+  high_deviation_rate:
+    id: "TRG_HIGH_DEVIATION_RATE"
+    when: "deviation_notes_count(template_id, last_30_cases) > threshold"
+    threshold_cases: 30
+    action: "Owner agent must propose template vNext"
+    owner: "template_owner_agent"
+
+  repeat_defects:
+    id: "TRG_REPEAT_DEFECTS"
+    when: "Diane defects for same output_type > threshold"
+    threshold_count: 5
+    action: "Template remediation sprint"
+    owner: "template_owner_agent"
+
+# =============================================================================
+# DIANE QC CHECKS
+# =============================================================================
+
+diane_qc_checks:
+  - id: "QC_DETERMINISM"
+    name: "Determinism Check"
+    description: "Clear placeholders; no ambiguous instructions like 'do the usual'"
+    severity: "blocking"
+
+  - id: "QC_COMPLETENESS"
+    name: "Completeness Check"
+    description: "required_inputs and outputs defined"
+    severity: "blocking"
+
+  - id: "QC_EVIDENCE_DISCIPLINE"
+    name: "Evidence Discipline Check"
+    description: "Each output type lists evidence minimums"
+    severity: "blocking"
+
+  - id: "QC_SAFE_LANGUAGE"
+    name: "Safe Language Check"
+    description: "No overclaiming; assumptions fields mandatory"
+    severity: "warning"
+
+  - id: "QC_PACK_CORRECTNESS"
+    name: "Pack Correctness Check"
+    description: "Correct jurisdiction shelf references only"
+    severity: "blocking"
+
+  - id: "QC_ESCALATION_TRIGGERS"
+    name: "Escalation Triggers Check"
+    description: "Present and sensible for risk class"
+    severity: "blocking"
+
+  - id: "QC_NO_CLIENT_LEAKAGE"
+    name: "No Client Data Leakage Check"
+    description: "No client data in template body"
+    severity: "blocking"
+
+# =============================================================================
+# TEMPLATE LIFECYCLE WORKFLOW
+# =============================================================================
+
+template_lifecycle:
+  steps:
+    - step: "discover_need"
+      owner: "aline"
+      outputs:
+        - "template_need_ticket"
+      description: "Detect when a service/task lacks a suitable template"
+
+    - step: "draft_template"
+      owner: "service_owner_agent"
+      outputs:
+        - "template_draft"
+        - "deidentified_example_instance"
+        - "rationale_memo"
+      description: "Create template with required_inputs, placeholders, outputs, escalation triggers"
+
+    - step: "qc_review"
+      owner: "diane"
+      outputs:
+        - "qc_report_pass_fail"
+        - "fix_list_or_publish_recommendation"
+      description: "Run all QC checks on template"
+
+    - step: "policy_review_if_high"
+      owner: "marco"
+      condition: "risk_class == HIGH"
+      outputs:
+        - "policy_approve_or_deny"
+        - "constraints"
+      description: "Policy review for templates that can trigger external actions"
+
+    - step: "publish_or_iterate"
+      owner: "diane"
+      outputs:
+        - "template_published_or_returned"
+      description: "Approve (PUBLISH) or reject (return fixes)"
+
+    - step: "usage_and_learning"
+      owner: "owner_agent"
+      outputs:
+        - "usage_logs"
+        - "deviation_notes"
+        - "improvement_proposals"
+      description: "Track usage and propose improvements"
+
+# =============================================================================
+# TEMPLATE SEARCH RULES
+# =============================================================================
+
+template_search:
+  selection_rules:
+    - "Match by service_id + task_type + jurisdiction_pack first"
+    - "Prefer latest PUBLISHED version"
+    - "If multiple match: choose highest Diane quality_score"
+    - "If none: trigger TRG_NO_TEMPLATE_FOUND"
+
+  pack_enforcement:
+    - "Hard block if template.jurisdiction_pack != case.jurisdiction_pack"
+    - "GLOBAL templates can be used for any case"
+
+# =============================================================================
+# AGENT ROLES IN TEMPLATE FACTORY
+# =============================================================================
+
+roles:
+  aline:
+    responsibilities:
+      - "Detect when a service/task lacks a suitable template"
+      - "Trigger template creation workstream and assign to owner agent"
+      - "Ensure templates are created in correct pack and routed to Diane"
+
+  owner_engine_agents:
+    agents:
+      - "patrick"
+      - "sofia"
+      - "james"
+      - "fatima"
+      - "matthew"
+      - "claire"
+      - "emmanuel"
+      - "chantal"
+    responsibilities:
+      - "Create templates and improve them through real-case learnings"
+      - "Define required_inputs, placeholders, outputs, and escalation triggers"
+      - "Write generation_instructions as executable steps (not narrative)"
+      - "Provide a rationale memo + example instantiation from a de-identified case"
+
+  diane:
+    responsibilities:
+      - "QC templates: completeness, consistency, evidence requirements, safe wording, determinism"
+      - "Approve (PUBLISH) or reject (return fixes)"
+      - "Audit template drift: when agents deviate frequently, require template update proposal"
+
+  marco:
+    responsibilities:
+      - "Policy review for templates that can trigger external actions or formal opinions"
+      - "Approve/deny publish for HIGH-RISK templates"
+      - "Enforce pack separation and block leakage attempts"
+
+# =============================================================================
+# METRICS
+# =============================================================================
+
+metrics:
+  - id: "template_coverage_rate_by_service"
+    description: "Percentage of services with at least one PUBLISHED template"
+
+  - id: "average_time_to_first_template"
+    description: "Time from trigger to first PUBLISHED version"
+
+  - id: "deviation_rate_per_template"
+    description: "Average deviation notes per template instance"
+
+  - id: "defect_rate_per_template"
+    description: "Diane defects per template"
+
+  - id: "pack_leakage_attempts"
+    description: "Count of blocked cross-pack usage attempts"
+
+  - id: "time_to_publish_vnext"
+    description: "Time from improvement proposal to next PUBLISHED version"
+
+# =============================================================================
+# CONTROLS
+# =============================================================================
+
+controls:
+  - "No PUBLISHED template can be edited; only versioned"
+  - "All template usage is logged to EventLog"
+  - "Any bypass attempt triggers incident + Marco notification"

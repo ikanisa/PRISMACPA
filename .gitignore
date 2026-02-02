@@ -71,3 +71,10 @@ USER.md
 
 # local tooling
 .serena/
+
+# Antigravity local config
+.agent/
+
+# FirmOS nested node_modules (should be installed via pnpm)
+firmos/apps/*/node_modules/
+firmos/packages/*/node_modules/

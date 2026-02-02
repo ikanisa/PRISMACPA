@@ -1,0 +1,355 @@
+# Rwanda Private Notary Pack (RW_PRIVATE_NOTARY)
+# Legal Advisory + Document Factory + Execution Support
+
+version: "1.0"
+pack_id: rw_private_notary
+jurisdiction: RW
+name: Rwanda Private Notary Pack
+description: >
+  Rwanda Private Notary services with three core modules:
+  1. LEGAL ADVISORY — advice, opinions, risk assessment
+  2. DOCUMENT FACTORY — contracts, articles, corporate docs
+  3. EXECUTION SUPPORT — scheduling, checklists, archiving
+  Human performs all notarization and official submissions.
+
+# =============================================================================
+# SERVICES
+# =============================================================================
+services:
+  - LEGAL_ADVISORY
+  - DOCUMENT_DRAFTING
+  - CONTRACT_REVIEW
+  - CORPORATE_FORMATION
+  - EXECUTION_SUPPORT
+  - NOTARIZATION
+
+# =============================================================================
+# MODULE 1: LEGAL ADVISORY
+# =============================================================================
+modules:
+  legal_advisory:
+    name: Legal Advisory
+    description: Legal advice, opinions, and risk assessment
+
+    workflows:
+      legal_opinion:
+        name: Legal Opinion Preparation
+        phases:
+          - id: intake
+            name: Matter Intake
+            tasks:
+              - name: Document client query
+                autonomy_tier: A
+                required_outputs: [query_summary]
+              - name: Identify legal issues
+                autonomy_tier: B
+                required_outputs: [issue_identification]
+
+          - id: research
+            name: Legal Research
+            tasks:
+              - name: Research applicable law
+                autonomy_tier: B
+                required_outputs: [legal_research_memo]
+              - name: Analyze precedents
+                autonomy_tier: B
+                required_outputs: [precedent_analysis]
+
+          - id: drafting
+            name: Opinion Drafting
+            tasks:
+              - name: Draft legal opinion
+                autonomy_tier: B
+                required_outputs: [opinion_draft]
+              - name: Review citations
+                autonomy_tier: A
+                required_outputs: [citation_check]
+
+          - id: review
+            name: Review & Delivery
+            tasks:
+              - name: Partner review
+                autonomy_tier: C
+                required_outputs: [partner_approval]
+              - name: Client delivery
+                autonomy_tier: C
+                required_outputs: [delivery_record]
+                required_evidence: [signed_opinion]
+
+      risk_assessment:
+        name: Transaction Risk Assessment
+        phases:
+          - id: assessment
+            name: Risk Assessment
+            tasks:
+              - name: Identify risk factors
+                autonomy_tier: B
+                required_outputs: [risk_factors]
+              - name: Assess regulatory risks
+                autonomy_tier: B
+                required_outputs: [regulatory_risk_assessment]
+              - name: Prepare risk matrix
+                autonomy_tier: B
+                required_outputs: [risk_matrix]
+
+          - id: recommendation
+            name: Recommendations
+            tasks:
+              - name: Draft recommendations
+                autonomy_tier: B
+                required_outputs: [recommendations_draft]
+              - name: Partner sign-off
+                autonomy_tier: C
+                required_outputs: [sign_off]
+
+# =============================================================================
+# MODULE 2: DOCUMENT FACTORY
+# =============================================================================
+  document_factory:
+    name: Document Factory
+    description: Contract drafting, articles of association, corporate documents
+
+    workflows:
+      contract_drafting:
+        name: Contract Drafting
+        phases:
+          - id: instructions
+            name: Client Instructions
+            tasks:
+              - name: Document client requirements
+                autonomy_tier: A
+                required_outputs: [instruction_summary]
+              - name: Identify key terms
+                autonomy_tier: B
+                required_outputs: [key_terms_list]
+
+          - id: drafting
+            name: Drafting
+            tasks:
+              - name: Select template
+                autonomy_tier: A
+                required_outputs: [template_selection]
+              - name: Draft contract
+                autonomy_tier: B
+                required_outputs: [contract_draft]
+              - name: Insert special clauses
+                autonomy_tier: B
+                required_outputs: [special_clauses]
+
+          - id: review
+            name: Review
+            tasks:
+              - name: Legal review
+                autonomy_tier: B
+                required_outputs: [legal_review_notes]
+              - name: Client review
+                autonomy_tier: C
+                required_outputs: [client_feedback]
+
+          - id: finalization
+            name: Finalization
+            tasks:
+              - name: Incorporate feedback
+                autonomy_tier: B
+                required_outputs: [final_draft]
+              - name: Partner approval
+                autonomy_tier: C
+                required_outputs: [partner_sign_off]
+
+      company_formation:
+        name: Company Formation Documents
+        phases:
+          - id: preparation
+            name: Document Preparation
+            tasks:
+              - name: Draft Memorandum of Association
+                autonomy_tier: B
+                required_outputs: [moa_draft]
+              - name: Draft Articles of Association
+                autonomy_tier: B
+                required_outputs: [aoa_draft]
+              - name: Prepare shareholder agreement
+                autonomy_tier: B
+                required_outputs: [sha_draft]
+
+          - id: review
+            name: Review
+            tasks:
+              - name: Partner review
+                autonomy_tier: C
+                required_outputs: [formation_docs_approved]
+
+          - id: registration
+            name: Registration (Human)
+            tasks:
+              - name: Human submits to RDB
+                autonomy_tier: C
+                required_evidence: [rdb_registration_certificate]
+
+# =============================================================================
+# MODULE 3: EXECUTION SUPPORT
+# =============================================================================
+  execution_support:
+    name: Execution Support
+    description: Scheduling, checklists, archiving, notarization coordination
+
+    workflows:
+      signing_coordination:
+        name: Signing Coordination
+        phases:
+          - id: preparation
+            name: Preparation
+            tasks:
+              - name: Prepare signing checklist
+                autonomy_tier: A
+                required_outputs: [signing_checklist]
+              - name: Coordinate signing schedule
+                autonomy_tier: A
+                required_outputs: [signing_schedule]
+              - name: Verify signatory identification
+                autonomy_tier: B
+                required_evidence: [signatory_id_copies]
+
+          - id: execution
+            name: Execution
+            tasks:
+              - name: Prepare signing pack
+                autonomy_tier: A
+                required_outputs: [signing_pack]
+              - name: Document execution (Human witnesses)
+                autonomy_tier: C
+                required_evidence: [executed_document]
+
+          - id: post_execution
+            name: Post-Execution
+            tasks:
+              - name: Verify signatures
+                autonomy_tier: A
+                required_outputs: [signature_verification]
+              - name: Archive executed document
+                autonomy_tier: A
+                required_outputs: [archive_record]
+                required_evidence: [archived_document]
+
+      notarization_support:
+        name: Notarization Support
+        phases:
+          - id: preparation
+            name: Preparation
+            tasks:
+              - name: Prepare notarization checklist
+                autonomy_tier: A
+                required_outputs: [notarization_checklist]
+              - name: Coordinate with notary
+                autonomy_tier: A
+                required_outputs: [notary_appointment]
+
+          - id: notarization
+            name: Notarization (Human)
+            tasks:
+              - name: Human attends notarization
+                autonomy_tier: C
+                required_evidence: [notarized_document]
+
+          - id: archiving
+            name: Archiving
+            tasks:
+              - name: Archive notarized document
+                autonomy_tier: A
+                required_outputs: [archive_record]
+                required_evidence: [archived_notarized_doc]
+
+      matter_archival:
+        name: Matter Archival
+        phases:
+          - id: completion
+            name: Matter Completion
+            tasks:
+              - name: Complete closing checklist
+                autonomy_tier: A
+                required_outputs: [closing_checklist]
+              - name: Compile matter file
+                autonomy_tier: A
+                required_outputs: [matter_file_index]
+
+          - id: archival
+            name: Archival
+            tasks:
+              - name: Archive all documents
+                autonomy_tier: A
+                required_outputs: [archive_manifest]
+                required_evidence: [matter_archive]
+              - name: Generate closing memo
+                autonomy_tier: B
+                required_outputs: [closing_memo]
+
+# =============================================================================
+# DEADLINES
+# =============================================================================
+obligations:
+  opinion_delivery:
+    frequency: event_driven
+    due_offset_days: 5
+    description: Legal opinions delivered within 5 business days of matter open
+
+  document_review:
+    frequency: event_driven
+    due_offset_days: 3
+    description: Document reviews completed within 3 business days
+
+# =============================================================================
+# DOCUMENT TEMPLATES
+# =============================================================================
+templates:
+  # Legal Advisory
+  - id: legal_opinion
+    name: Legal Opinion Template
+    format: docx
+  - id: risk_assessment
+    name: Risk Assessment Template
+    format: docx
+
+  # Document Factory
+  - id: sale_agreement
+    name: Sale Agreement Template
+    format: docx
+  - id: lease_agreement
+    name: Lease Agreement Template
+    format: docx
+  - id: loan_agreement
+    name: Loan Agreement Template
+    format: docx
+  - id: moa_template
+    name: Memorandum of Association
+    format: docx
+  - id: aoa_template
+    name: Articles of Association
+    format: docx
+  - id: shareholder_agreement
+    name: Shareholder Agreement
+    format: docx
+  - id: power_of_attorney
+    name: Power of Attorney
+    format: docx
+
+  # Execution Support
+  - id: signing_checklist
+    name: Signing Checklist
+    format: docx
+  - id: notarization_checklist
+    name: Notarization Checklist
+    format: docx
+  - id: closing_memo
+    name: Matter Closing Memo
+    format: docx
+
+# =============================================================================
+# CONSTRAINTS
+# =============================================================================
+constraints:
+  no_notarization_automation: true
+  no_registry_automation: true
+  human_execution: true
+  human_notarization: true
+  lawyer_sign_off_required: true
+  matter_conflict_check: true

@@ -86,8 +86,8 @@ export function getOrCreateTeamSession(teamId: string): TeamSession {
  */
 export function addTeamMessage(params: {
   teamId: string;
-  from: "user" | string;
-  to: "all" | string;
+  from: string;
+  to: string;
   content: string;
   silent?: boolean;
 }): TeamMessage {

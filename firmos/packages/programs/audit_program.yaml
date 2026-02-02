@@ -1,0 +1,140 @@
+# Audit Program
+# Big Four-level audit program for statutory audits
+
+version: "1.0"
+program_id: audit_program
+name: Audit & Assurance Program
+description: >
+  Comprehensive audit program following ISA standards.
+  Controlled by Patrick (Audit & Assurance Engine).
+
+assigned_agent: patrick
+
+# =============================================================================
+# PHASES
+# =============================================================================
+phases:
+  - id: planning
+    name: Audit Planning
+    default_autonomy_tier: B
+    tasks:
+      - name: Understand entity and environment
+        required_outputs: [entity_understanding_memo]
+        required_evidence: [financial_statements, entity_docs]
+
+      - name: Assess risks of material misstatement
+        required_outputs: [risk_assessment]
+
+      - name: Determine materiality
+        required_outputs: [materiality_memo]
+
+      - name: Design audit approach
+        required_outputs: [audit_strategy]
+
+      - name: Prepare audit plan
+        required_outputs: [audit_plan]
+        autonomy_tier: C
+
+  - id: risk_assessment
+    name: Risk Assessment Procedures
+    default_autonomy_tier: B
+    tasks:
+      - name: Inquiries of management
+        required_outputs: [management_inquiry_notes]
+
+      - name: Analytical procedures
+        required_outputs: [analytical_review]
+
+      - name: Observation and inspection
+        required_outputs: [observation_notes]
+
+      - name: Document significant risks
+        required_outputs: [significant_risks_register]
+
+  - id: controls_testing
+    name: Tests of Controls
+    default_autonomy_tier: B
+    tasks:
+      - name: Understand internal controls
+        required_outputs: [controls_documentation]
+
+      - name: Evaluate control design
+        required_outputs: [control_design_assessment]
+
+      - name: Test operating effectiveness
+        required_outputs: [controls_testing_workpaper]
+        required_evidence: [control_evidence]
+
+      - name: Document control deficiencies
+        required_outputs: [control_deficiencies]
+        autonomy_tier: C
+
+  - id: substantive_testing
+    name: Substantive Procedures
+    default_autonomy_tier: B
+    tasks:
+      - name: Revenue testing
+        required_outputs: [revenue_workpaper]
+        required_evidence: [revenue_samples]
+
+      - name: Expenses testing
+        required_outputs: [expenses_workpaper]
+        required_evidence: [expense_samples]
+
+      - name: Assets testing
+        required_outputs: [assets_workpaper]
+        required_evidence: [asset_confirmations]
+
+      - name: Liabilities testing
+        required_outputs: [liabilities_workpaper]
+        required_evidence: [liability_confirmations]
+
+      - name: Equity testing
+        required_outputs: [equity_workpaper]
+
+  - id: completion
+    name: Audit Completion
+    default_autonomy_tier: C
+    tasks:
+      - name: Evaluate misstatements
+        required_outputs: [misstatement_summary]
+
+      - name: Review going concern
+        required_outputs: [going_concern_memo]
+
+      - name: Subsequent events review
+        required_outputs: [subsequent_events_memo]
+
+      - name: Management representations
+        required_outputs: [management_rep_letter]
+        required_evidence: [signed_rep_letter]
+
+      - name: Draft audit report
+        required_outputs: [audit_report_draft]
+
+      - name: Partner review
+        required_outputs: [partner_sign_off]
+        autonomy_tier: C
+
+  - id: reporting
+    name: Reporting
+    default_autonomy_tier: C
+    tasks:
+      - name: Finalize audit report
+        required_outputs: [final_audit_report]
+
+      - name: Management letter
+        required_outputs: [management_letter]
+
+      - name: Release report
+        required_outputs: [release_record]
+        required_evidence: [signed_report]
+
+# =============================================================================
+# QUALITY REQUIREMENTS
+# =============================================================================
+quality_requirements:
+  partner_review: true
+  second_partner_review: false
+  documentation_retention_years: 7
+  isa_compliance: true

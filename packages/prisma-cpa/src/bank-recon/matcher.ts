@@ -86,7 +86,7 @@ export function findMatchCandidates(
     }
 
     // Sort by score descending
-    return candidates.sort((a, b) => b.score - a.score);
+    return candidates.toSorted((a, b) => b.score - a.score);
 }
 
 /** Check if amounts match */
@@ -113,7 +113,9 @@ function matchDate(bankDate: Date, recordDate: Date, toleranceDays: number): boo
 
 /** Fuzzy reference matching */
 function matchReference(bankRef?: string, recordRef?: string): boolean {
-    if (!bankRef || !recordRef) return false;
+    if (!bankRef || !recordRef) {
+        return false;
+    }
 
     const normalizedBank = bankRef.toLowerCase().replace(/\s+/g, '');
     const normalizedRecord = recordRef.toLowerCase().replace(/\s+/g, '');
