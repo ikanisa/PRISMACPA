@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@firmos/core": "workspace:*",
-        "@firmos/policies": "workspace:*"
+        "@firmos/policies": "workspace:*",
+        "@firmos/programs": "workspace:*"
     }
 }

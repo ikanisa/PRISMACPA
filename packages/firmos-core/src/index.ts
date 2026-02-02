@@ -79,3 +79,5 @@ export {
     getQCSummary
 } from './template-qc.js';
 
+// FirmOS Configuration (loads from firmos/ directory)
+export * from './firmos-config.js';

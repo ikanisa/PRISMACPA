@@ -27,6 +27,18 @@ openclaw/
 │   ├── firmos-tools/         # Tool registry
 │   ├── moltbot-official/     # Moltbot package
 │   └── clawdbot/             # Clawdbot package
+├── modules/                  # Business logic modules (extraction layer)
+│   ├── routing/              # Request routing
+│   ├── qc_gates/             # Diane QC gate (re-exports from programs)
+│   ├── release_gates/        # Marco release gate (re-exports from programs)
+│   ├── template_factory/     # Template management (re-exports from programs)
+│   ├── evidence/             # Evidence collection
+│   ├── audit_log/            # Audit trail
+│   └── case_mgmt/            # Case management
+├── firmos/                   # FirmOS configuration (YAML catalogs + policies)
+│   ├── catalogs/             # service_catalog, agents_catalog, jurisdictions
+│   └── policies/             # gate_policy, autonomy_policy, evidence_policy
+├── schemas/                  # JSON schemas for YAML validation
 ├── apps/                     # Applications
 │   ├── dashboard/            # Vite + React dashboard
 │   ├── firmos/               # FirmOS control app

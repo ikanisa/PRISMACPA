@@ -192,10 +192,28 @@ export function attachGatewayWsMessageHandler(params: {
 
   const configSnapshot = loadConfig();
   const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];
+  const trustedDevicesConfig = configSnapshot.gateway?.trustedDevices ?? {};
   const clientIp = resolveGatewayClientIp({ remoteAddr, forwardedFor, realIp, trustedProxies });
 
+  // Check if the client is from a trusted device IP for auto-pairing
+  const isTrustedDeviceIp = (ip: string | undefined): boolean => {
+    if (!ip) {
+      return false;
+    }
+    const trustedIps = trustedDevicesConfig.trustedIps ?? [];
+    return trustedIps.includes(ip);
+  };
+
+  // Check if the device ID is in the trusted devices list
+  const isTrustedDeviceId = (deviceId: string | undefined): boolean => {
+    if (!deviceId) {
+      return false;
+    }
+    const trustedDeviceIds = trustedDevicesConfig.trustedDeviceIds ?? [];
+    return trustedDeviceIds.includes(deviceId);
+  };
+
   // If proxy headers are present but the remote address isn't trusted, don't treat
-  // the connection as local. This prevents auth bypass when running behind a reverse
   // proxy without proper configuration - the proxy's loopback connection would otherwise
   // cause all external requests to be treated as trusted local clients.
   const hasProxyHeaders = Boolean(forwardedFor || realIp);
@@ -206,6 +224,7 @@ export function attachGatewayWsMessageHandler(params: {
   const hostIsTailscaleServe = hostName.endsWith(".ts.net");
   const hostIsLocalish = hostIsLocal || hostIsTailscaleServe;
   const isLocalClient = isLocalDirectRequest(upgradeReq, trustedProxies);
+  const isTrustedClient = isLocalClient || isTrustedDeviceIp(clientIp);
   const reportedClientIp =
     isLocalClient || hasUntrustedProxyHeaders
       ? undefined
@@ -373,8 +392,12 @@ export function attachGatewayWsMessageHandler(params: {
         const isControlUi = connectParams.client.id === GATEWAY_CLIENT_IDS.CONTROL_UI;
         const allowInsecureControlUi =
           isControlUi && configSnapshot.gateway?.controlUi?.allowInsecureAuth === true;
+        // Support both config and env var for disabling device auth
+        const disableDeviceAuthEnv = process.env.OPENCLAW_DISABLE_DEVICE_AUTH === "true";
         const disableControlUiDeviceAuth =
-          isControlUi && configSnapshot.gateway?.controlUi?.dangerouslyDisableDeviceAuth === true;
+          isControlUi &&
+          (configSnapshot.gateway?.controlUi?.dangerouslyDisableDeviceAuth === true ||
+            disableDeviceAuthEnv);
         const allowControlUiBypass = allowInsecureControlUi || disableControlUiDeviceAuth;
         const device = disableControlUiDeviceAuth ? null : deviceRaw;
         if (!device) {
@@ -626,6 +649,8 @@ export function attachGatewayWsMessageHandler(params: {
 
         const skipPairing = allowControlUiBypass && hasSharedAuth;
         if (device && devicePublicKey && !skipPairing) {
+          // Auto-approve (silent pairing) for: local clients, trusted IPs, or trusted device IDs
+          const shouldAutoPair = isTrustedClient || isTrustedDeviceId(device.id);
           const requirePairing = async (reason: string, _paired?: { deviceId: string }) => {
             const pairing = await requestDevicePairing({
               deviceId: device.id,
@@ -637,7 +662,7 @@ export function attachGatewayWsMessageHandler(params: {
               role,
               scopes,
               remoteIp: reportedClientIp,
-              silent: isLocalClient,
+              silent: shouldAutoPair,
             });
             const context = buildRequestContext();
             if (pairing.request.silent === true) {

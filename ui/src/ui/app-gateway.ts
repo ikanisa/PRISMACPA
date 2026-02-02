@@ -22,6 +22,8 @@ import {
 import { loadNodes } from "./controllers/nodes";
 import { loadSessions } from "./controllers/sessions";
 import { GatewayBrowserClient } from "./gateway";
+import { clearStaleTokensIfConfigChanged } from "./gateway-config-guard";
+import { fetchGatewayConfig, clearGatewayConfigCache } from "./gateway-config-fetch";
 
 type GatewayHost = {
   settings: UiSettings;
@@ -110,12 +112,28 @@ function applySessionDefaults(host: GatewayHost, defaults?: SessionDefaultsSnaps
   }
 }
 
-export function connectGateway(host: GatewayHost) {
+export async function connectGateway(host: GatewayHost) {
   host.lastError = null;
   host.hello = null;
   host.connected = false;
   host.execApprovalQueue = [];
   host.execApprovalError = null;
+
+  // Always fetch fresh gateway config to ensure we have the correct URL and token
+  try {
+    clearGatewayConfigCache();
+    const config = await fetchGatewayConfig();
+
+    // Clear stale device tokens if config changed (hash-based detection)
+    clearStaleTokensIfConfigChanged(config.url, config.token);
+
+    host.settings.token = config.token;
+    host.settings.gatewayUrl = config.url;
+  } catch (err) {
+    host.lastError = `Failed to fetch gateway config: ${err instanceof Error ? err.message : String(err)}`;
+    console.error('[gateway] Config fetch failed:', err);
+    // Continue anyway - will fail auth but shows meaningful error
+  }
 
   host.client?.stop();
   host.client = new GatewayBrowserClient({
@@ -254,10 +272,10 @@ function handleGatewayEventUnsafe(host: GatewayHost, evt: GatewayEventFrame) {
 export function applySnapshot(host: GatewayHost, hello: GatewayHelloOk) {
   const snapshot = hello.snapshot as
     | {
-        presence?: PresenceEntry[];
-        health?: HealthSnapshot;
-        sessionDefaults?: SessionDefaultsSnapshot;
-      }
+      presence?: PresenceEntry[];
+      health?: HealthSnapshot;
+      sessionDefaults?: SessionDefaultsSnapshot;
+    }
     | undefined;
   if (snapshot?.presence && Array.isArray(snapshot.presence)) {
     host.presenceEntries = snapshot.presence;

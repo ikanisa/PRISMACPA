@@ -1,5 +1,5 @@
 /**
- * Protected Route — Allows access if device is authorized
+ * Protected Route — Requires Supabase session authentication
  */
 
 import { Navigate, useLocation } from 'react-router-dom';
@@ -24,14 +24,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
                     background: 'var(--bg-primary)',
                 }}
             >
-                <div className="text-secondary">Checking device authorization...</div>
+                <div className="text-secondary">Checking authentication...</div>
             </div>
         );
     }
 
     if (!isAuthenticated) {
-        // Device not authorized, redirect to device registration
-        return <Navigate to="/register-device" state={{ from: location }} replace />;
+        // Not authenticated, redirect to login
+        return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
     return <>{children}</>;

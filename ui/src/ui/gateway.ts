@@ -5,7 +5,7 @@ import {
   type GatewayClientMode,
   type GatewayClientName,
 } from "../../../src/gateway/protocol/client-info.js";
-import { clearDeviceAuthToken, loadDeviceAuthToken, storeDeviceAuthToken } from "./device-auth";
+import { storeDeviceAuthToken } from "./device-auth";
 import { loadOrCreateDeviceIdentity, signDevicePayload } from "./device-identity";
 import { generateUUID } from "./uuid";
 
@@ -72,7 +72,7 @@ export class GatewayBrowserClient {
   private connectTimer: number | null = null;
   private backoffMs = 800;
 
-  constructor(private opts: GatewayBrowserClientOptions) {}
+  constructor(private opts: GatewayBrowserClientOptions) { }
 
   start() {
     this.closed = false;
@@ -143,34 +143,31 @@ export class GatewayBrowserClient {
     const scopes = ["operator.admin", "operator.approvals", "operator.pairing"];
     const role = "operator";
     let deviceIdentity: Awaited<ReturnType<typeof loadOrCreateDeviceIdentity>> | null = null;
-    let canFallbackToShared = false;
-    let authToken = this.opts.token;
+
+    // Gateway auth uses the gateway token from config (opts.token)
+    // Supabase auth is only for UI access control, NOT gateway connection
+    // The gateway validates against OPENCLAW_GATEWAY_TOKEN env var
+    const authToken = this.opts.token;
 
     if (isSecureContext) {
       deviceIdentity = await loadOrCreateDeviceIdentity();
-      const storedToken = loadDeviceAuthToken({
-        deviceId: deviceIdentity.deviceId,
-        role,
-      })?.token;
-      authToken = storedToken ?? this.opts.token;
-      canFallbackToShared = Boolean(storedToken && this.opts.token);
     }
     const auth =
       authToken || this.opts.password
         ? {
-            token: authToken,
-            password: this.opts.password,
-          }
+          token: authToken,
+          password: this.opts.password,
+        }
         : undefined;
 
     let device:
       | {
-          id: string;
-          publicKey: string;
-          signature: string;
-          signedAt: number;
-          nonce: string | undefined;
-        }
+        id: string;
+        publicKey: string;
+        signature: string;
+        signedAt: number;
+        nonce: string | undefined;
+      }
       | undefined;
 
     if (isSecureContext && deviceIdentity) {
@@ -228,9 +225,6 @@ export class GatewayBrowserClient {
         this.opts.onHello?.(hello);
       })
       .catch(() => {
-        if (canFallbackToShared && deviceIdentity) {
-          clearDeviceAuthToken({ deviceId: deviceIdentity.deviceId, role });
-        }
         this.ws?.close(CONNECT_FAILED_CLOSE_CODE, "connect failed");
       });
   }

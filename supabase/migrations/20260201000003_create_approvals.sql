@@ -56,12 +56,13 @@ CREATE TABLE approvals (
   
   -- Timestamps
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  
-  -- Prevent duplicate pending approvals
-  CONSTRAINT unique_pending_approval UNIQUE NULLS NOT DISTINCT (target_type, target_id, approval_type, status)
-    WHERE (status = 'pending')
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Partial unique index for preventing duplicate pending approvals
+CREATE UNIQUE INDEX unique_pending_approval 
+  ON approvals(target_type, target_id, approval_type) 
+  WHERE (status = 'pending');
 
 -- Approval audit log
 CREATE TABLE approval_audit_log (

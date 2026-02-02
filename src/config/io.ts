@@ -57,6 +57,7 @@ const SHELL_ENV_EXPECTED_KEYS = [
 
 const CONFIG_BACKUP_COUNT = 5;
 const loggedInvalidConfigs = new Set<string>();
+const loggedVersionWarnings = new Set<string>();
 
 export type ParseConfigJson5Result = { ok: true; parsed: unknown } | { ok: false; error: string };
 
@@ -155,6 +156,11 @@ function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console
     return;
   }
   if (cmp < 0) {
+    const key = `${VERSION}:${touched}`;
+    if (loggedVersionWarnings.has(key)) {
+      return;
+    }
+    loggedVersionWarnings.add(key);
     logger.warn(
       `Config was last written by a newer OpenClaw (${touched}); current version is ${VERSION}.`,
     );

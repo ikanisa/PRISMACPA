@@ -5,7 +5,12 @@
     "forceConsistentCasingInFileNames": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["DOM", "DOM.Iterable", "ES2023", "ScriptHost"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2023",
+      "ScriptHost"
+    ],
     "noEmit": true,
     "declaration": true,
     "noEmitOnError": true,
@@ -13,9 +18,31 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2023"
+    "target": "es2023",
+    "paths": {
+      "@firmos/core": [
+        "./packages/firmos-core/src/index.ts"
+      ],
+      "@firmos/core/*": [
+        "./packages/firmos-core/src/*"
+      ],
+      "@firmos/programs": [
+        "./packages/firmos-programs/src/index.ts"
+      ],
+      "@firmos/programs/*": [
+        "./packages/firmos-programs/src/*"
+      ],
+      "@firmos/modules": [
+        "./modules/index.ts"
+      ],
+      "@firmos/modules/*": [
+        "./modules/*"
+      ]
+    }
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "dist",

@@ -1,11 +1,34 @@
 /**
  * QC Gates Module
  * 
- * Diane's quality control gate execution.
- * Will be extracted from packages/firmos-programs/qc-gate-runner.ts
+ * Re-exports Diane's QC gate runner from @firmos/programs.
+ * Integrates with FirmOS config for policy-driven QC gates.
+ * In v2027+, implementations will live here directly.
  */
 
-// Types
+// Re-export types and functions from canonical source
+export {
+    type QCStatus,
+    type QCCheckResult,
+    type QCGateResult,
+    type QCCheck,
+    type QCContext,
+    registerQCCheck,
+    getAllChecks,
+    runQCGate,
+    runServiceQC
+} from "@firmos/programs/qc-gate-runner.js";
+
+// Config integration
+import {
+    loadFirmOSConfig,
+    requiresQCGate,
+    getQCGateOwner,
+    getAgentById,
+    type AutonomyLevel
+} from "@firmos/core";
+
+// Additional types for module API (future expansion)
 export type QCOutcome = "PASS" | "FAIL" | "ESCALATE";
 
 export interface QCRequest {
@@ -30,13 +53,47 @@ export interface QCFinding {
     message?: string;
 }
 
-// Public API (stubs for now)
-export async function executeQCGate(_request: QCRequest): Promise<QCResult> {
-    throw new Error("Not implemented - pending extraction from firmos-programs");
+/**
+ * Check if QC is required for an agent's autonomy level (policy-driven)
+ */
+export function isQCRequired(autonomyLevel: string): boolean {
+    return requiresQCGate(autonomyLevel as AutonomyLevel);
 }
 
-export function isQCRequired(autonomyLevel: string): boolean {
-    return autonomyLevel === "AUTO+CHECK" || autonomyLevel === "ESCALATE";
+/**
+ * Check if a specific agent requires QC gate based on their config
+ */
+export function agentRequiresQC(agentId: string): boolean {
+    const agent = getAgentById(agentId);
+    if (!agent) { return true; } // Fail safe: require QC if agent unknown
+    return requiresQCGate(agent.autonomy);
+}
+
+/**
+ * Get the QC gate owner agent ID from policy (typically "diane")
+ */
+export function getQCOwner(): string {
+    return getQCGateOwner();
+}
+
+/**
+ * Get required QC checks from policy config
+ */
+export function getRequiredChecks(): string[] {
+    const config = loadFirmOSConfig();
+    // Convert from "key: description" format to just keys
+    return config.policies.gates.qc_gate.required_checks.map(check => {
+        if (typeof check === 'string') {
+            const [key] = check.split(':');
+            return key.trim();
+        }
+        return String(check);
+    });
+}
+
+// Future API stubs
+export async function executeQCGate(_request: QCRequest): Promise<QCResult> {
+    throw new Error("Not implemented - use runQCGate() from @firmos/programs for now");
 }
 
 export async function getQCHistory(_workpaperId: string): Promise<QCResult[]> {

@@ -5,6 +5,7 @@ packages:
   - packages/*
   - channels/*
   - extensions/*
+  - modules
 
 onlyBuiltDependencies:
   - "@whiskeysockets/baileys"

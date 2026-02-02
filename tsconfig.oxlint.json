@@ -3,9 +3,20 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "openclaw": ["./src/index.ts"],
-      "openclaw/*": ["./src/*"]
+      "openclaw": [
+        "./src/index.ts"
+      ],
+      "openclaw/plugin-sdk": [
+        "./src/plugin-sdk/index.ts"
+      ],
+      "openclaw/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src/**/*", "extensions/**/*", "packages/**/*"]
+  "include": [
+    "src/**/*",
+    "packages/**/*",
+    "modules/**/*"
+  ]
 }

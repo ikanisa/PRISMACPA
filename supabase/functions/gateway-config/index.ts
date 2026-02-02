@@ -27,7 +27,7 @@ serve(async (req) => {
     try {
         // Get environment from Supabase secrets
         const environment = Deno.env.get("GATEWAY_ENVIRONMENT") || "production";
-        const gatewayToken = Deno.env.get("GATEWAY_TOKEN") || "";
+        const gatewayToken = Deno.env.get("OPENCLAW_GATEWAY_TOKEN") || "";
         const gatewayUrl = Deno.env.get("GATEWAY_URL") || "";
 
         // Determine gateway URL based on environment
@@ -54,7 +54,7 @@ serve(async (req) => {
 
         // Validate token is set for non-local environments
         if (env !== "local" && !token) {
-            console.error("GATEWAY_TOKEN not configured for", env);
+            console.error("OPENCLAW_GATEWAY_TOKEN not configured for", env);
             return new Response(
                 JSON.stringify({ error: "Gateway not configured" }),
                 {

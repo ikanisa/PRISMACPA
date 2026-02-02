@@ -289,7 +289,7 @@ export class OpenClawApp extends LitElement {
   }
 
   connect() {
-    connectGatewayInternal(this as unknown as Parameters<typeof connectGatewayInternal>[0]);
+    void connectGatewayInternal(this as unknown as Parameters<typeof connectGatewayInternal>[0]);
   }
 
   handleChatScroll(event: Event) {

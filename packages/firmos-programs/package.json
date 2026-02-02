@@ -4,7 +4,23 @@
     "type": "module",
     "main": "./index.ts",
     "exports": {
-        ".": "./index.ts"
+        ".": "./index.ts",
+        "./routing.js": "./routing.ts",
+        "./routing": "./routing.ts",
+        "./qc-gate-runner.js": "./qc-gate-runner.ts",
+        "./qc-gate-runner": "./qc-gate-runner.ts",
+        "./release-gate-workflow.js": "./release-gate-workflow.ts",
+        "./release-gate-workflow": "./release-gate-workflow.ts",
+        "./template-factory.js": "./template-factory.ts",
+        "./template-factory": "./template-factory.ts",
+        "./validation.js": "./validation.ts",
+        "./validation": "./validation.ts",
+        "./service-catalog.js": "./service-catalog.ts",
+        "./service-catalog": "./service-catalog.ts",
+        "./service-programs.js": "./service-programs.ts",
+        "./service-programs": "./service-programs.ts",
+        "./agent-service-catalog.js": "./agent-service-catalog.ts",
+        "./agent-service-catalog": "./agent-service-catalog.ts"
     },
     "scripts": {
         "build": "tsc",

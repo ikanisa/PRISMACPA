@@ -2,8 +2,9 @@ import { Routes, Route, NavLink } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { GatewayProvider } from './contexts/GatewayContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
 import { ConnectionIndicator } from './components/ConnectionIndicator';
-import DeviceRegistration from './views/DeviceRegistration';
+import Login from './views/Login';
 import ControlTower from './views/ControlTower';
 import AIAssistant from './views/AIAssistant';
 import Services from './views/Services';
@@ -13,12 +14,13 @@ import { Incidents } from './views/Incidents';
 import { Releases } from './views/Releases';
 import NotFound from './views/NotFound';
 
-function DashboardLayout() {
-    const { operator, deviceId, revokeDeviceById } = useAuth();
 
-    const handleLogout = () => {
-        if (confirm('This will revoke this device. You will need to re-register to access the dashboard. Continue?')) {
-            revokeDeviceById(deviceId);
+function DashboardLayout() {
+    const { operator, signOut } = useAuth();
+
+    const handleLogout = async () => {
+        if (confirm('Sign out from this dashboard?')) {
+            await signOut();
         }
     };
 
@@ -61,21 +63,20 @@ function DashboardLayout() {
 
                 <div style={{ marginTop: 'auto', paddingTop: 'var(--space-xl)' }}>
                     <div className="card" style={{ padding: 'var(--space-md)' }}>
-                        <p className="text-xs text-muted">Operator Device</p>
+                        <p className="text-xs text-muted">Signed in as</p>
                         <p className="text-sm" style={{
                             fontWeight: 500,
                             marginBottom: 'var(--space-sm)',
-                            fontFamily: 'monospace',
-                            fontSize: '0.65rem',
                             wordBreak: 'break-all'
                         }}>
-                            {deviceId.slice(0, 20)}...
+                            {operator?.email || 'Operator'}
                         </p>
-                        {operator?.isPrimaryDevice && (
-                            <p className="text-xs" style={{ color: 'var(--accent-tax)', marginBottom: 'var(--space-sm)' }}>
-                                ✓ Primary Device
-                            </p>
-                        )}
+                        <p className="text-xs" style={{
+                            color: 'var(--accent-orchestrator)',
+                            marginBottom: 'var(--space-sm)'
+                        }}>
+                            ✓ {operator?.role || 'operator'}
+                        </p>
                         <button
                             onClick={handleLogout}
                             style={{
@@ -89,7 +90,7 @@ function DashboardLayout() {
                                 cursor: 'pointer',
                             }}
                         >
-                            Revoke Device
+                            Sign Out
                         </button>
                     </div>
                 </div>
@@ -103,7 +104,7 @@ function DashboardLayout() {
                     <Route path="/packs" element={<Packs />} />
                     <Route path="/releases" element={<Releases />} />
                     <Route path="/incidents" element={<Incidents />} />
-                    <Route path="/policy" element={<PolicyConsole />} />
+                    <Route path="/policy" element={<AdminRoute><PolicyConsole /></AdminRoute>} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
@@ -114,9 +115,9 @@ function DashboardLayout() {
 export default function App() {
     return (
         <Routes>
-            <Route path="/register-device" element={<DeviceRegistration />} />
-            {/* Keep /login for backwards compatibility, redirect to register-device */}
-            <Route path="/login" element={<DeviceRegistration />} />
+            <Route path="/login" element={<Login />} />
+            {/* Keep register-device for backwards compatibility */}
+            <Route path="/register-device" element={<Login />} />
             <Route
                 path="/*"
                 element={

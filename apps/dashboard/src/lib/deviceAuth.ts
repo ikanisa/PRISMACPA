@@ -1,15 +1,22 @@
 /**
- * Device-Based Authentication for FirmOS Dashboard
+ * Device Authentication — DEPRECATED
  * 
- * Operators' machines are pre-registered and can access the dashboard
- * without login prompts. This replaces Google OAuth.
+ * ⚠️ This module is deprecated and should not be used for security.
+ * Use Supabase Auth via AuthContext instead.
+ * 
+ * The deviceId functions are kept for device tracking/analytics only,
+ * NOT for authorization decisions.
  */
 
 const DEVICE_ID_KEY = 'firmos-device-id';
+
+// ⚠️ DEPRECATED: These functions are no longer used for auth
+// Keep for backwards compatibility only
 const AUTHORIZED_DEVICES_KEY = 'firmos-authorized-devices';
 
 /**
  * Generate a unique device fingerprint
+ * (Still useful for analytics/tracking)
  */
 function generateDeviceId(): string {
     const uuid = crypto.randomUUID();
@@ -18,23 +25,25 @@ function generateDeviceId(): string {
 
 /**
  * Get or create device ID for this machine
+ * (Useful for tracking, NOT for authorization)
  */
 export function getDeviceId(): string {
     let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-    
+
     if (!deviceId) {
         deviceId = generateDeviceId();
         localStorage.setItem(DEVICE_ID_KEY, deviceId);
-        console.log('[DeviceAuth] Generated new device ID:', deviceId);
+        console.log('[DeviceAuth] Generated device ID for tracking:', deviceId);
     }
-    
+
     return deviceId;
 }
 
 /**
- * Get list of authorized device IDs
+ * @deprecated Use Supabase Auth instead
  */
 export function getAuthorizedDevices(): string[] {
+    console.warn('[DeviceAuth] getAuthorizedDevices is deprecated. Use Supabase Auth.');
     const stored = localStorage.getItem(AUTHORIZED_DEVICES_KEY);
     if (!stored) {
         return [];
@@ -47,48 +56,33 @@ export function getAuthorizedDevices(): string[] {
 }
 
 /**
- * Check if the current device is authorized
+ * @deprecated Use Supabase Auth instead
+ * Authorization is NO LONGER based on device registration.
  */
 export function isDeviceAuthorized(): boolean {
-    const deviceId = getDeviceId();
-    const authorized = getAuthorizedDevices();
-    
-    // If no devices are registered yet, auto-register this one as primary
-    if (authorized.length === 0) {
-        console.log('[DeviceAuth] No devices registered. Auto-registering this device as primary operator.');
-        registerDevice(deviceId);
-        return true;
-    }
-    
-    return authorized.includes(deviceId);
+    console.warn('[DeviceAuth] isDeviceAuthorized is deprecated. Use Supabase Auth.');
+    // Always return false to prevent insecure auth
+    return false;
 }
 
 /**
- * Register a device as authorized
+ * @deprecated Use Supabase Auth instead
  */
-export function registerDevice(deviceId?: string): void {
-    const id = deviceId || getDeviceId();
-    const authorized = getAuthorizedDevices();
-    
-    if (!authorized.includes(id)) {
-        authorized.push(id);
-        localStorage.setItem(AUTHORIZED_DEVICES_KEY, JSON.stringify(authorized));
-        console.log('[DeviceAuth] Device registered:', id);
-    }
+export function registerDevice(_deviceId?: string): void {
+    console.warn('[DeviceAuth] registerDevice is deprecated. Use Supabase Auth.');
+    // No-op: Device registration no longer grants access
 }
 
 /**
- * Revoke a device's authorization
+ * @deprecated Use Supabase Auth instead
  */
-export function revokeDevice(deviceId: string): void {
-    const authorized = getAuthorizedDevices();
-    const filtered = authorized.filter(id => id !== deviceId);
-    localStorage.setItem(AUTHORIZED_DEVICES_KEY, JSON.stringify(filtered));
-    console.log('[DeviceAuth] Device revoked:', deviceId);
+export function revokeDevice(_deviceId: string): void {
+    console.warn('[DeviceAuth] revokeDevice is deprecated. Use Supabase Auth signOut.');
+    // No-op
 }
 
 /**
- * Get device info for display
+ * Get device info (for analytics/tracking only)
  */
 export function getDeviceInfo(): {
     deviceId: string;
@@ -97,15 +91,12 @@ export function getDeviceInfo(): {
     isPrimaryDevice: boolean;
 } {
     const deviceId = getDeviceId();
-    const authorized = getAuthorizedDevices();
-    const isAuthorized = authorized.includes(deviceId);
-    const isPrimaryDevice = authorized.length > 0 && authorized[0] === deviceId;
-    
+
     return {
         deviceId,
-        isAuthorized,
-        authorizedDevices: authorized,
-        isPrimaryDevice,
+        isAuthorized: false, // Always false - use Supabase Auth
+        authorizedDevices: [],
+        isPrimaryDevice: false,
     };
 }
 
@@ -115,5 +106,5 @@ export function getDeviceInfo(): {
 export function clearDeviceAuth(): void {
     localStorage.removeItem(DEVICE_ID_KEY);
     localStorage.removeItem(AUTHORIZED_DEVICES_KEY);
-    console.log('[DeviceAuth] All device auth data cleared');
+    console.log('[DeviceAuth] Device data cleared');
 }

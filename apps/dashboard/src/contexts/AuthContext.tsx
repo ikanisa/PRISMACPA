@@ -1,8 +1,9 @@
 /**
- * Auth Context — Device-Based Authentication
+ * Auth Context — Supabase Session Authentication (P0 Security Fix)
  * 
- * Operators' machines are pre-registered and can access the dashboard
- * without login prompts. No Google OAuth required.
+ * Replaces insecure localStorage-based device auth with proper
+ * Supabase session management. Operators must authenticate via
+ * email/password or OAuth.
  */
 
 import {
@@ -12,89 +13,143 @@ import {
     useState,
     type ReactNode,
 } from 'react';
-import {
-    getDeviceId,
-    isDeviceAuthorized,
-    registerDevice,
-    revokeDevice,
-    getDeviceInfo,
-    getAuthorizedDevices,
-} from '../lib/deviceAuth';
+import { supabase } from '../lib/supabase';
+import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 interface Operator {
-    deviceId: string;
-    isPrimaryDevice: boolean;
-    registeredAt: string;
+    id: string;
+    email: string;
+    role: string;
 }
 
 interface AuthContextType {
     operator: Operator | null;
+    session: Session | null;
     isAuthenticated: boolean;
     loading: boolean;
-    deviceId: string;
-    authorizedDevices: string[];
-    registerThisDevice: () => void;
-    revokeDeviceById: (deviceId: string) => void;
+    error: string | null;
+    signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signUp: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+    signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [operator, setOperator] = useState<Operator | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [deviceId, setDeviceId] = useState('');
-    const [authorizedDevices, setAuthorizedDevices] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
+
+    // Convert Supabase user to Operator
+    const userToOperator = (user: User): Operator => ({
+        id: user.id,
+        email: user.email ?? '',
+        role: (user.user_metadata?.role as string) || 'operator',
+    });
 
     useEffect(() => {
-        // Check device authorization on mount
-        const checkDevice = () => {
-            const id = getDeviceId();
-            setDeviceId(id);
+        // Check initial session
+        const initAuth = async () => {
+            try {
+                const { data: { session: initialSession }, error: sessionError } =
+                    await supabase.auth.getSession();
 
-            const authorized = isDeviceAuthorized();
-            setIsAuthenticated(authorized);
-
-            const devices = getAuthorizedDevices();
-            setAuthorizedDevices(devices);
-
-            if (authorized) {
-                const info = getDeviceInfo();
-                setOperator({
-                    deviceId: id,
-                    isPrimaryDevice: info.isPrimaryDevice,
-                    registeredAt: new Date().toISOString(),
-                });
-                console.log('[Auth] Device authenticated:', id);
-            } else {
-                console.log('[Auth] Device not authorized:', id);
+                if (sessionError) {
+                    console.error('[Auth] Session error:', sessionError);
+                    setError(sessionError.message);
+                } else if (initialSession?.user) {
+                    setSession(initialSession);
+                    setOperator(userToOperator(initialSession.user));
+                    setIsAuthenticated(true);
+                    console.log('[Auth] Session restored for:', initialSession.user.email);
+                } else {
+                    console.log('[Auth] No active session');
+                }
+            } catch (err) {
+                console.error('[Auth] Init error:', err);
+                setError((err as Error).message);
+            } finally {
+                setLoading(false);
             }
-
-            setLoading(false);
         };
 
-        checkDevice();
+        void initAuth();
+
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (_event, newSession) => {
+                if (newSession?.user) {
+                    setSession(newSession);
+                    setOperator(userToOperator(newSession.user));
+                    setIsAuthenticated(true);
+                    setError(null);
+                } else {
+                    setSession(null);
+                    setOperator(null);
+                    setIsAuthenticated(false);
+                }
+            }
+        );
+
+        return () => {
+            subscription.unsubscribe();
+        };
     }, []);
 
-    const registerThisDevice = () => {
-        registerDevice();
-        setIsAuthenticated(true);
-        setAuthorizedDevices(getAuthorizedDevices());
-        const info = getDeviceInfo();
-        setOperator({
-            deviceId: info.deviceId,
-            isPrimaryDevice: info.isPrimaryDevice,
-            registeredAt: new Date().toISOString(),
-        });
+    const signIn = async (email: string, password: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+            if (signInError) {
+                setError(signInError.message);
+            }
+            return { error: signInError };
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const revokeDeviceById = (id: string) => {
-        revokeDevice(id);
-        setAuthorizedDevices(getAuthorizedDevices());
-        // If we revoked our own device, update auth state
-        if (id === deviceId) {
-            setIsAuthenticated(false);
+    const signUp = async (email: string, password: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const { error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        role: 'operator', // Default role for new users
+                    },
+                },
+            });
+            if (signUpError) {
+                setError(signUpError.message);
+            }
+            return { error: signUpError };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const signOut = async () => {
+        setLoading(true);
+        try {
+            await supabase.auth.signOut();
+            setSession(null);
             setOperator(null);
+            setIsAuthenticated(false);
+            setError(null);
+        } catch (err) {
+            console.error('[Auth] Sign out error:', err);
+            setError((err as Error).message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -102,12 +157,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         <AuthContext.Provider
             value={{
                 operator,
+                session,
                 isAuthenticated,
                 loading,
-                deviceId,
-                authorizedDevices,
-                registerThisDevice,
-                revokeDeviceById,
+                error,
+                signIn,
+                signUp,
+                signOut,
             }}
         >
             {children}

@@ -117,3 +117,34 @@ export function clearDeviceAuthToken(params: { deviceId: string; role: string })
   delete next.tokens[role];
   writeStore(next);
 }
+
+/**
+ * Clears all device auth tokens from localStorage.
+ * Used when gateway URL or token changes to prevent stale token mismatches.
+ */
+export function clearAllDeviceAuthTokens(): void {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // best-effort
+  }
+}
+
+// Gateway config hash storage for change detection
+const GATEWAY_CONFIG_KEY = "openclaw.gateway.config.v1";
+
+export function getStoredGatewayConfigHash(): string | null {
+  try {
+    return window.localStorage.getItem(GATEWAY_CONFIG_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function storeGatewayConfigHash(hash: string): void {
+  try {
+    window.localStorage.setItem(GATEWAY_CONFIG_KEY, hash);
+  } catch {
+    // best-effort
+  }
+}

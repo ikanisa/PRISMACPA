@@ -60,21 +60,20 @@ export async function fetchGatewayConfig(): Promise<GatewayConfig> {
     } catch (err) {
         console.error('[gateway-config] Failed to fetch config:', err);
 
-        // Fallback to legacy env vars if edge function fails
+        // For local development ONLY - URL can be configured, but token must come from edge function
         const fallbackUrl = import.meta.env.VITE_GATEWAY_URL;
-        const fallbackToken = import.meta.env.VITE_GATEWAY_TOKEN;
 
         if (fallbackUrl) {
-            console.warn('[gateway-config] Using fallback env vars');
+            console.warn('[gateway-config] Using local URL fallback (no token - edge function required for auth)');
             cachedConfig = {
                 url: fallbackUrl,
-                token: fallbackToken || '',
+                token: '', // Token must come from edge function, never from client env
                 environment: 'local',
             };
             return cachedConfig;
         }
 
-        throw err;
+        throw new Error('Gateway config unavailable. Ensure edge function is deployed or VITE_GATEWAY_URL is set for local dev.', { cause: err });
     }
 }
 
