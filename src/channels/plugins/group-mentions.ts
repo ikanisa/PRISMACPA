@@ -4,7 +4,7 @@ import type {
   GroupToolPolicyBySenderConfig,
   GroupToolPolicyConfig,
 } from "../../config/types.tools.js";
-import { resolveSlackAccount } from "../../channels/slack/accounts.js";
+import { resolveSlackAccount } from "../../../channels/slack/accounts.js";
 import {
   resolveChannelGroupRequireMention,
   resolveChannelGroupToolsPolicy,

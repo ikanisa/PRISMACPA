@@ -1,13 +1,18 @@
+import type { sendMessageDiscord } from "../../../channels/discord/send.js";
+import type { sendMessageIMessage } from "../../../channels/imessage/send.js";
+import type { sendMessageSlack } from "../../../channels/slack/send.js";
+import type { sendMessageTelegram } from "../../../channels/telegram/send.js";
 import type { ReplyPayload } from "../../auto-reply/types.js";
-import type { sendMessageDiscord } from "../../channels/discord/send.js";
-import type { sendMessageIMessage } from "../../channels/imessage/send.js";
 import type { ChannelOutboundAdapter } from "../../channels/plugins/types.js";
-import type { sendMessageSlack } from "../../channels/slack/send.js";
-import type { sendMessageTelegram } from "../../channels/telegram/send.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import type { sendMessageWhatsApp } from "../../web/outbound.js";
 import type { NormalizedOutboundPayload } from "./payloads.js";
 import type { OutboundChannel } from "./targets.js";
+import {
+  markdownToSignalTextChunks,
+  type SignalTextStyleRange,
+} from "../../../channels/signal/format.js";
+import { sendMessageSignal } from "../../../channels/signal/send.js";
 import {
   chunkByParagraph,
   chunkMarkdownTextWithMode,
@@ -16,11 +21,6 @@ import {
 } from "../../auto-reply/chunk.js";
 import { resolveChannelMediaMaxBytes } from "../../channels/plugins/media-limits.js";
 import { loadChannelOutboundAdapter } from "../../channels/plugins/outbound/load.js";
-import {
-  markdownToSignalTextChunks,
-  type SignalTextStyleRange,
-} from "../../channels/signal/format.js";
-import { sendMessageSignal } from "../../channels/signal/send.js";
 import { resolveMarkdownTableMode } from "../../config/markdown-tables.js";
 import {
   appendAssistantMessageToSessionTranscript,

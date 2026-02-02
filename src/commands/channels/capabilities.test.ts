@@ -2,8 +2,8 @@ process.env.NO_COLOR = "1";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ChannelPlugin } from "../../channels/plugins/types.js";
+import { fetchSlackScopes } from "../../../channels/slack/scopes.js";
 import { getChannelPlugin, listChannelPlugins } from "../../channels/plugins/index.js";
-import { fetchSlackScopes } from "../../channels/slack/scopes.js";
 import { channelsCapabilitiesCommand } from "./capabilities.js";
 
 const logs: string[] = [];

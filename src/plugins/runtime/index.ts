@@ -1,5 +1,57 @@
 import { createRequire } from "node:module";
 import type { PluginRuntime } from "./types.js";
+import { auditDiscordChannelPermissions } from "../../../channels/discord/audit.js";
+import {
+  listDiscordDirectoryGroupsLive,
+  listDiscordDirectoryPeersLive,
+} from "../../../channels/discord/directory-live.js";
+import { monitorDiscordProvider } from "../../../channels/discord/monitor.js";
+import { probeDiscord } from "../../../channels/discord/probe.js";
+import { resolveDiscordChannelAllowlist } from "../../../channels/discord/resolve-channels.js";
+import { resolveDiscordUserAllowlist } from "../../../channels/discord/resolve-users.js";
+import { sendMessageDiscord, sendPollDiscord } from "../../../channels/discord/send.js";
+import { monitorIMessageProvider } from "../../../channels/imessage/monitor.js";
+import { probeIMessage } from "../../../channels/imessage/probe.js";
+import { sendMessageIMessage } from "../../../channels/imessage/send.js";
+import {
+  listLineAccountIds,
+  normalizeAccountId as normalizeLineAccountId,
+  resolveDefaultLineAccountId,
+  resolveLineAccount,
+} from "../../../channels/line/accounts.js";
+import { monitorLineProvider } from "../../../channels/line/monitor.js";
+import { probeLineBot } from "../../../channels/line/probe.js";
+import {
+  createQuickReplyItems,
+  pushMessageLine,
+  pushMessagesLine,
+  pushFlexMessage,
+  pushTemplateMessage,
+  pushLocationMessage,
+  pushTextMessageWithQuickReplies,
+  sendMessageLine,
+} from "../../../channels/line/send.js";
+import { buildTemplateMessageFromPayload } from "../../../channels/line/template-messages.js";
+import { monitorSignalProvider } from "../../../channels/signal/index.js";
+import { probeSignal } from "../../../channels/signal/probe.js";
+import { sendMessageSignal } from "../../../channels/signal/send.js";
+import {
+  listSlackDirectoryGroupsLive,
+  listSlackDirectoryPeersLive,
+} from "../../../channels/slack/directory-live.js";
+import { monitorSlackProvider } from "../../../channels/slack/index.js";
+import { probeSlack } from "../../../channels/slack/probe.js";
+import { resolveSlackChannelAllowlist } from "../../../channels/slack/resolve-channels.js";
+import { resolveSlackUserAllowlist } from "../../../channels/slack/resolve-users.js";
+import { sendMessageSlack } from "../../../channels/slack/send.js";
+import {
+  auditTelegramGroupMembership,
+  collectTelegramUnmentionedGroupIds,
+} from "../../../channels/telegram/audit.js";
+import { monitorTelegramProvider } from "../../../channels/telegram/monitor.js";
+import { probeTelegram } from "../../../channels/telegram/probe.js";
+import { sendMessageTelegram } from "../../../channels/telegram/send.js";
+import { resolveTelegramToken } from "../../../channels/telegram/token.js";
 import { resolveEffectiveMessagesConfig, resolveHumanDelayConfig } from "../../agents/identity.js";
 import { createMemoryGetTool, createMemorySearchTool } from "../../agents/tools/memory-tool.js";
 import { handleSlackAction } from "../../agents/tools/slack-actions.js";
@@ -39,63 +91,11 @@ import { dispatchReplyWithBufferedBlockDispatcher } from "../../auto-reply/reply
 import { createReplyDispatcherWithTyping } from "../../auto-reply/reply/reply-dispatcher.js";
 import { removeAckReactionAfterReply, shouldAckReaction } from "../../channels/ack-reactions.js";
 import { resolveCommandAuthorizedFromAuthorizers } from "../../channels/command-gating.js";
-import { auditDiscordChannelPermissions } from "../../channels/discord/audit.js";
-import {
-  listDiscordDirectoryGroupsLive,
-  listDiscordDirectoryPeersLive,
-} from "../../channels/discord/directory-live.js";
-import { monitorDiscordProvider } from "../../channels/discord/monitor.js";
-import { probeDiscord } from "../../channels/discord/probe.js";
-import { resolveDiscordChannelAllowlist } from "../../channels/discord/resolve-channels.js";
-import { resolveDiscordUserAllowlist } from "../../channels/discord/resolve-users.js";
-import { sendMessageDiscord, sendPollDiscord } from "../../channels/discord/send.js";
-import { monitorIMessageProvider } from "../../channels/imessage/monitor.js";
-import { probeIMessage } from "../../channels/imessage/probe.js";
-import { sendMessageIMessage } from "../../channels/imessage/send.js";
-import {
-  listLineAccountIds,
-  normalizeAccountId as normalizeLineAccountId,
-  resolveDefaultLineAccountId,
-  resolveLineAccount,
-} from "../../channels/line/accounts.js";
-import { monitorLineProvider } from "../../channels/line/monitor.js";
-import { probeLineBot } from "../../channels/line/probe.js";
-import {
-  createQuickReplyItems,
-  pushMessageLine,
-  pushMessagesLine,
-  pushFlexMessage,
-  pushTemplateMessage,
-  pushLocationMessage,
-  pushTextMessageWithQuickReplies,
-  sendMessageLine,
-} from "../../channels/line/send.js";
-import { buildTemplateMessageFromPayload } from "../../channels/line/template-messages.js";
 import { discordMessageActions } from "../../channels/plugins/actions/discord.js";
 import { signalMessageActions } from "../../channels/plugins/actions/signal.js";
 import { telegramMessageActions } from "../../channels/plugins/actions/telegram.js";
 import { createWhatsAppLoginTool } from "../../channels/plugins/agent-tools/whatsapp-login.js";
 import { recordInboundSession } from "../../channels/session.js";
-import { monitorSignalProvider } from "../../channels/signal/index.js";
-import { probeSignal } from "../../channels/signal/probe.js";
-import { sendMessageSignal } from "../../channels/signal/send.js";
-import {
-  listSlackDirectoryGroupsLive,
-  listSlackDirectoryPeersLive,
-} from "../../channels/slack/directory-live.js";
-import { monitorSlackProvider } from "../../channels/slack/index.js";
-import { probeSlack } from "../../channels/slack/probe.js";
-import { resolveSlackChannelAllowlist } from "../../channels/slack/resolve-channels.js";
-import { resolveSlackUserAllowlist } from "../../channels/slack/resolve-users.js";
-import { sendMessageSlack } from "../../channels/slack/send.js";
-import {
-  auditTelegramGroupMembership,
-  collectTelegramUnmentionedGroupIds,
-} from "../../channels/telegram/audit.js";
-import { monitorTelegramProvider } from "../../channels/telegram/monitor.js";
-import { probeTelegram } from "../../channels/telegram/probe.js";
-import { sendMessageTelegram } from "../../channels/telegram/send.js";
-import { resolveTelegramToken } from "../../channels/telegram/token.js";
 import { monitorWebChannel } from "../../channels/web/index.js";
 import { registerMemoryCli } from "../../cli/memory-cli.js";
 import { loadConfig, writeConfigFile } from "../../config/config.js";

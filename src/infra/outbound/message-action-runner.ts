@@ -9,6 +9,7 @@ import type {
 import type { OpenClawConfig } from "../../config/config.js";
 import type { OutboundSendDeps } from "./deliver.js";
 import type { MessagePollResult, MessageSendResult } from "./message.js";
+import { parseSlackTarget } from "../../../channels/slack/targets.js";
 import { resolveSessionAgentId } from "../../agents/agent-scope.js";
 import {
   readNumberParam,
@@ -17,7 +18,6 @@ import {
 } from "../../agents/tools/common.js";
 import { parseReplyDirectives } from "../../auto-reply/reply/reply-directives.js";
 import { dispatchChannelMessageAction } from "../../channels/plugins/message-actions.js";
-import { parseSlackTarget } from "../../channels/slack/targets.js";
 import { extensionForMime } from "../../media/mime.js";
 import {
   isDeliverableMessageChannel,

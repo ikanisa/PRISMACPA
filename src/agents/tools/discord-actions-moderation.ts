@@ -4,7 +4,7 @@ import {
   banMemberDiscord,
   kickMemberDiscord,
   timeoutMemberDiscord,
-} from "../../channels/discord/send.js";
+} from "../../../channels/discord/send.js";
 import { type ActionGate, jsonResult, readStringParam } from "./common.js";
 
 export async function handleDiscordModerationAction(

@@ -2,22 +2,28 @@ import type { MsgContext } from "../../auto-reply/templating.js";
 import type { ChannelId } from "../../channels/plugins/types.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import type { ResolvedMessagingTarget } from "./target-resolver.js";
-import { parseDiscordTarget } from "../../channels/discord/targets.js";
-import { parseIMessageTarget, normalizeIMessageHandle } from "../../channels/imessage/targets.js";
-import { getChannelPlugin } from "../../channels/plugins/index.js";
+import { parseDiscordTarget } from "../../../channels/discord/targets.js";
+import {
+  parseIMessageTarget,
+  normalizeIMessageHandle,
+} from "../../../channels/imessage/targets.js";
 import {
   resolveSignalPeerId,
   resolveSignalRecipient,
   resolveSignalSender,
-} from "../../channels/signal/identity.js";
-import { resolveSlackAccount } from "../../channels/slack/accounts.js";
-import { createSlackWebClient } from "../../channels/slack/client.js";
-import { normalizeAllowListLower } from "../../channels/slack/monitor/allow-list.js";
-import { parseSlackTarget } from "../../channels/slack/targets.js";
-import { buildTelegramGroupPeerId } from "../../channels/telegram/bot/helpers.js";
-import { resolveTelegramTargetChatType } from "../../channels/telegram/inline-buttons.js";
-import { parseTelegramTarget } from "../../channels/telegram/targets.js";
-import { isWhatsAppGroupJid, normalizeWhatsAppTarget } from "../../channels/whatsapp/normalize.js";
+} from "../../../channels/signal/identity.js";
+import { resolveSlackAccount } from "../../../channels/slack/accounts.js";
+import { createSlackWebClient } from "../../../channels/slack/client.js";
+import { normalizeAllowListLower } from "../../../channels/slack/monitor/allow-list.js";
+import { parseSlackTarget } from "../../../channels/slack/targets.js";
+import { buildTelegramGroupPeerId } from "../../../channels/telegram/bot/helpers.js";
+import { resolveTelegramTargetChatType } from "../../../channels/telegram/inline-buttons.js";
+import { parseTelegramTarget } from "../../../channels/telegram/targets.js";
+import {
+  isWhatsAppGroupJid,
+  normalizeWhatsAppTarget,
+} from "../../../channels/whatsapp/normalize.js";
+import { getChannelPlugin } from "../../channels/plugins/index.js";
 import { recordSessionMetaFromInbound, resolveStorePath } from "../../config/sessions.js";
 import {
   buildAgentSessionKey,

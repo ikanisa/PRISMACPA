@@ -10,6 +10,7 @@ import { connectHandlers } from "./server-methods/connect.js";
 import { cronHandlers } from "./server-methods/cron.js";
 import { deviceHandlers } from "./server-methods/devices.js";
 import { execApprovalsHandlers } from "./server-methods/exec-approvals.js";
+import { firmosHandlers } from "./server-methods/firmos.js";
 import { healthHandlers } from "./server-methods/health.js";
 import { logsHandlers } from "./server-methods/logs.js";
 import { modelsHandlers } from "./server-methods/models.js";
@@ -78,6 +79,16 @@ const READ_METHODS = new Set([
   "services.get",
   "services.route",
   "services.validate",
+  // FirmOS dashboard (read-only)
+  "firmos.tower.get",
+  "firmos.packs.list",
+  "firmos.releases.list",
+  "firmos.incidents.list",
+  "firmos.policy.decisions",
+  "firmos.agents.list",
+  "firmos.agents.subscribe",
+  "firmos.team.get",
+  "firmos.delegations.list",
 ]);
 const WRITE_METHODS = new Set([
   "send",
@@ -192,6 +203,7 @@ export const coreGatewayHandlers: GatewayRequestHandlers = {
   ...agentsHandlers,
   ...browserHandlers,
   ...servicesHandlers,
+  ...firmosHandlers,
 };
 
 export async function handleGatewayRequest(

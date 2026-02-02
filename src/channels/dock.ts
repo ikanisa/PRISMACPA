@@ -10,13 +10,13 @@ import type {
   ChannelPlugin,
   ChannelThreadingAdapter,
 } from "./plugins/types.js";
-import { resolveDiscordAccount } from "../channels/discord/accounts.js";
-import { resolveIMessageAccount } from "../channels/imessage/accounts.js";
-import { resolveSignalAccount } from "../channels/signal/accounts.js";
-import { resolveSlackAccount, resolveSlackReplyToMode } from "../channels/slack/accounts.js";
-import { buildSlackThreadingToolContext } from "../channels/slack/threading-tool-context.js";
-import { resolveTelegramAccount } from "../channels/telegram/accounts.js";
-import { normalizeWhatsAppTarget } from "../channels/whatsapp/normalize.js";
+import { resolveDiscordAccount } from "../../channels/discord/accounts.js";
+import { resolveIMessageAccount } from "../../channels/imessage/accounts.js";
+import { resolveSignalAccount } from "../../channels/signal/accounts.js";
+import { resolveSlackAccount, resolveSlackReplyToMode } from "../../channels/slack/accounts.js";
+import { buildSlackThreadingToolContext } from "../../channels/slack/threading-tool-context.js";
+import { resolveTelegramAccount } from "../../channels/telegram/accounts.js";
+import { normalizeWhatsAppTarget } from "../../channels/whatsapp/normalize.js";
 import { requireActivePluginRegistry } from "../plugins/runtime.js";
 import { normalizeAccountId } from "../routing/session-key.js";
 import { normalizeE164 } from "../utils.js";

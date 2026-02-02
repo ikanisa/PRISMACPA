@@ -1,5 +1,5 @@
+import type { StickerMetadata } from "../../channels/telegram/bot/types.js";
 import type { ChannelId } from "../channels/plugins/types.js";
-import type { StickerMetadata } from "../channels/telegram/bot/types.js";
 import type {
   MediaUnderstandingDecision,
   MediaUnderstandingOutput,

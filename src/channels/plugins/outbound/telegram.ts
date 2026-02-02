@@ -1,6 +1,6 @@
 import type { ChannelOutboundAdapter } from "../types.js";
-import { markdownToTelegramHtmlChunks } from "../../../telegram/format.js";
-import { sendMessageTelegram } from "../../../telegram/send.js";
+import { markdownToTelegramHtmlChunks } from "../../../../channels/telegram/format.js";
+import { sendMessageTelegram } from "../../../../channels/telegram/send.js";
 
 function parseReplyToMessageId(replyToId?: string | null) {
   if (!replyToId) {

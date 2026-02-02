@@ -1,17 +1,17 @@
 import type { ChannelId } from "../../channels/plugins/types.js";
 import type { OpenClawConfig } from "../../config/config.js";
 import type { CommandHandler } from "./commands-types.js";
-import { resolveDiscordAccount } from "../../channels/discord/accounts.js";
-import { resolveDiscordUserAllowlist } from "../../channels/discord/resolve-users.js";
+import { resolveDiscordAccount } from "../../../channels/discord/accounts.js";
+import { resolveDiscordUserAllowlist } from "../../../channels/discord/resolve-users.js";
+import { resolveIMessageAccount } from "../../../channels/imessage/accounts.js";
+import { resolveSignalAccount } from "../../../channels/signal/accounts.js";
+import { resolveSlackAccount } from "../../../channels/slack/accounts.js";
+import { resolveSlackUserAllowlist } from "../../../channels/slack/resolve-users.js";
+import { resolveTelegramAccount } from "../../../channels/telegram/accounts.js";
 import { getChannelDock } from "../../channels/dock.js";
-import { resolveIMessageAccount } from "../../channels/imessage/accounts.js";
 import { resolveChannelConfigWrites } from "../../channels/plugins/config-writes.js";
 import { listPairingChannels } from "../../channels/plugins/pairing.js";
 import { normalizeChannelId } from "../../channels/registry.js";
-import { resolveSignalAccount } from "../../channels/signal/accounts.js";
-import { resolveSlackAccount } from "../../channels/slack/accounts.js";
-import { resolveSlackUserAllowlist } from "../../channels/slack/resolve-users.js";
-import { resolveTelegramAccount } from "../../channels/telegram/accounts.js";
 import {
   readConfigFileSnapshot,
   validateConfigObjectWithPlugins,

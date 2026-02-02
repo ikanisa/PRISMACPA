@@ -1,10 +1,10 @@
 import type { OutboundSendDeps } from "../infra/outbound/deliver.js";
-import { sendMessageDiscord } from "../channels/discord/send.js";
-import { sendMessageIMessage } from "../channels/imessage/send.js";
-import { sendMessageSignal } from "../channels/signal/send.js";
-import { sendMessageSlack } from "../channels/slack/send.js";
-import { sendMessageTelegram } from "../channels/telegram/send.js";
-import { logWebSelfId, sendMessageWhatsApp } from "../channels/web/index.js";
+import { sendMessageDiscord } from "../../channels/discord/send.js";
+import { sendMessageIMessage } from "../../channels/imessage/send.js";
+import { sendMessageSignal } from "../../channels/signal/send.js";
+import { sendMessageSlack } from "../../channels/slack/send.js";
+import { sendMessageTelegram } from "../../channels/telegram/send.js";
+import { logWebSelfId, sendMessageWhatsApp } from "../web/index.js";
 
 export type CliDeps = {
   sendMessageWhatsApp: typeof sendMessageWhatsApp;

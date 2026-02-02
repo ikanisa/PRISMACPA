@@ -255,8 +255,8 @@ export {
   resolveDefaultDiscordAccountId,
   resolveDiscordAccount,
   type ResolvedDiscordAccount,
-} from "../channels/discord/accounts.js";
-export { collectDiscordAuditChannelIds } from "../channels/discord/audit.js";
+} from "../../channels/discord/accounts.js";
+export { collectDiscordAuditChannelIds } from "../../channels/discord/audit.js";
 export { discordOnboardingAdapter } from "../channels/plugins/onboarding/discord.js";
 export {
   looksLikeDiscordTargetId,
@@ -270,7 +270,7 @@ export {
   resolveDefaultIMessageAccountId,
   resolveIMessageAccount,
   type ResolvedIMessageAccount,
-} from "../channels/imessage/accounts.js";
+} from "../../channels/imessage/accounts.js";
 export { imessageOnboardingAdapter } from "../channels/plugins/onboarding/imessage.js";
 export {
   looksLikeIMessageTargetId,
@@ -285,13 +285,13 @@ export {
   resolveSlackAccount,
   resolveSlackReplyToMode,
   type ResolvedSlackAccount,
-} from "../channels/slack/accounts.js";
+} from "../../channels/slack/accounts.js";
 export { slackOnboardingAdapter } from "../channels/plugins/onboarding/slack.js";
 export {
   looksLikeSlackTargetId,
   normalizeSlackMessagingTarget,
 } from "../channels/plugins/normalize/slack.js";
-export { buildSlackThreadingToolContext } from "../channels/slack/threading-tool-context.js";
+export { buildSlackThreadingToolContext } from "../../channels/slack/threading-tool-context.js";
 
 // Channel: Telegram
 export {
@@ -299,7 +299,7 @@ export {
   resolveDefaultTelegramAccountId,
   resolveTelegramAccount,
   type ResolvedTelegramAccount,
-} from "../channels/telegram/accounts.js";
+} from "../../channels/telegram/accounts.js";
 export { telegramOnboardingAdapter } from "../channels/plugins/onboarding/telegram.js";
 export {
   looksLikeTelegramTargetId,
@@ -313,7 +313,7 @@ export {
   resolveDefaultSignalAccountId,
   resolveSignalAccount,
   type ResolvedSignalAccount,
-} from "../channels/signal/accounts.js";
+} from "../../channels/signal/accounts.js";
 export { signalOnboardingAdapter } from "../channels/plugins/onboarding/signal.js";
 export {
   looksLikeSignalTargetId,
@@ -327,7 +327,7 @@ export {
   resolveWhatsAppAccount,
   type ResolvedWhatsAppAccount,
 } from "../web/accounts.js";
-export { isWhatsAppGroupJid, normalizeWhatsAppTarget } from "../channels/whatsapp/normalize.js";
+export { isWhatsAppGroupJid, normalizeWhatsAppTarget } from "../../channels/whatsapp/normalize.js";
 export { whatsappOnboardingAdapter } from "../channels/plugins/onboarding/whatsapp.js";
 export { resolveWhatsAppHeartbeatRecipients } from "../channels/plugins/whatsapp-heartbeat.js";
 export {
@@ -345,14 +345,14 @@ export {
   normalizeAccountId as normalizeLineAccountId,
   resolveDefaultLineAccountId,
   resolveLineAccount,
-} from "../channels/line/accounts.js";
-export { LineConfigSchema } from "../channels/line/config-schema.js";
+} from "../../channels/line/accounts.js";
+export { LineConfigSchema } from "../../channels/line/config-schema.js";
 export type {
   LineConfig,
   LineAccountConfig,
   ResolvedLineAccount,
   LineChannelData,
-} from "../channels/line/types.js";
+} from "../../channels/line/types.js";
 export {
   createInfoCard,
   createListCard,
@@ -361,13 +361,13 @@ export {
   createReceiptCard,
   type CardAction,
   type ListItem,
-} from "../channels/line/flex-templates.js";
+} from "../../channels/line/flex-templates.js";
 export {
   processLineMessage,
   hasMarkdownToConvert,
   stripMarkdown,
-} from "../channels/line/markdown-to-line.js";
-export type { ProcessedLineMessage } from "../channels/line/markdown-to-line.js";
+} from "../../channels/line/markdown-to-line.js";
+export type { ProcessedLineMessage } from "../../channels/line/markdown-to-line.js";
 
 // Media utilities
 export { loadWebMedia, type WebMediaResult } from "../web/media.js";
