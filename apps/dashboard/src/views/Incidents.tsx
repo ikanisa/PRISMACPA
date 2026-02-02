@@ -32,8 +32,12 @@ export function Incidents() {
     }, []);
 
     const filteredIncidents = incidents.filter(inc => {
-        if (filter === 'open') return inc.status !== 'resolved';
-        if (filter === 'critical') return inc.severity === 'critical';
+        if (filter === 'open') {
+            return inc.status !== 'resolved';
+        }
+        if (filter === 'critical') {
+            return inc.severity === 'critical';
+        }
         return true;
     });
 

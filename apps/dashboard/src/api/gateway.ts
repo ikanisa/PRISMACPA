@@ -68,37 +68,43 @@ export class GatewayClient {
     }
 
     private connect() {
-        if (this.closed) return;
+        if (this.closed) {
+            return;
+        }
         this.ws = new WebSocket(this.opts.url);
 
-        this.ws.onopen = () => {
-            this.sendConnect();
-        };
+        this.ws.addEventListener("open", () => {
+            void this.sendConnect();
+        });
 
-        this.ws.onmessage = (ev) => this.handleMessage(String(ev.data ?? ""));
+        this.ws.addEventListener("message", (ev) => this.handleMessage(String(ev.data ?? "")));
 
-        this.ws.onclose = (ev) => {
+        this.ws.addEventListener("close", (ev) => {
             this._connected = false;
             this.ws = null;
             this.flushPending(new Error(`gateway closed (${ev.code}): ${ev.reason}`));
             this.opts.onClose?.({ code: ev.code, reason: ev.reason });
             this.scheduleReconnect();
-        };
+        });
 
-        this.ws.onerror = () => {
+        this.ws.addEventListener("error", () => {
             // Close handler will fire
-        };
+        });
     }
 
     private scheduleReconnect() {
-        if (this.closed) return;
+        if (this.closed) {
+            return;
+        }
         const delay = this.backoffMs;
         this.backoffMs = Math.min(this.backoffMs * 1.7, 15_000);
         window.setTimeout(() => this.connect(), delay);
     }
 
     private flushPending(err: Error) {
-        for (const [, p] of this.pending) p.reject(err);
+        for (const [, p] of this.pending) {
+            p.reject(err);
+        }
         this.pending.clear();
     }
 
@@ -151,10 +157,15 @@ export class GatewayClient {
         if (frame.type === "res") {
             const res = parsed as GatewayResponseFrame;
             const pending = this.pending.get(res.id);
-            if (!pending) return;
+            if (!pending) {
+                return;
+            }
             this.pending.delete(res.id);
-            if (res.ok) pending.resolve(res.payload);
-            else pending.reject(new Error(res.error?.message ?? "request failed"));
+            if (res.ok) {
+                pending.resolve(res.payload);
+            } else {
+                pending.reject(new Error(res.error?.message ?? "request failed"));
+            }
             return;
         }
     }

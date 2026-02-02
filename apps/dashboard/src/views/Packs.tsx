@@ -21,7 +21,9 @@ export default function Packs() {
     }, []);
 
     const filteredPacks = packs.filter(pack => {
-        if (filter === 'all') return true;
+        if (filter === 'all') {
+            return true;
+        }
         return pack.scope === filter;
     });
 
