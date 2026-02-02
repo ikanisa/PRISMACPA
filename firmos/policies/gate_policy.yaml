@@ -1,0 +1,62 @@
+# FirmOS Gate Policy
+# Rules for QC and Release gates
+
+version: "1.0"
+updated: "2026-02-02"
+
+qc_gate:
+  owner: diane
+  description: Quality control gate executed before any deliverable release
+  
+  required_checks:
+    - completeness: All required fields populated
+    - accuracy: Calculations verified
+    - evidence: Supporting evidence attached
+    - compliance: Regulatory requirements met
+    - ethics: No ethical concerns
+  
+  outcomes:
+    PASS:
+      description: Work meets quality standards
+      next_action: proceed_to_release
+      
+    FAIL:
+      description: Work requires revision
+      next_action: return_to_agent
+      requires_comment: true
+      
+    ESCALATE:
+      description: Requires operator review
+      next_action: notify_operator
+      requires_comment: true
+
+release_gate:
+  owner: marco
+  description: Final authorization before external release
+  
+  prerequisites:
+    - qc_gate: PASS
+    
+  authorization_levels:
+    standard:
+      auto_approve: true
+      conditions:
+        - qc_passed: true
+        - risk_level: low
+        
+    elevated:
+      auto_approve: false
+      conditions:
+        - risk_level: [medium, high]
+        - regulatory_filing: true
+      requires:
+        - operator_approval: true
+        
+    critical:
+      auto_approve: false
+      conditions:
+        - risk_level: critical
+        - financial_impact: ">100000"
+      requires:
+        - operator_approval: true
+        - dual_authorization: true

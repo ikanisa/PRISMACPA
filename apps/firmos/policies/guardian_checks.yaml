@@ -1,0 +1,21 @@
+version: "1.0"
+
+required_checks:
+  - completeness:
+      rule: all_required_outputs_present
+  - evidence_sufficiency:
+      rule: all_required_evidence_types_present
+  - consistency:
+      rule: no_contradictions_in_names_dates_amounts_ids
+  - pack_match:
+      rule: jurisdiction_pack_matches_engagement
+  - risk_language:
+      rule: detect_dispute_regulatory_keywords
+
+pass_conditions:
+  - all_checks_pass: true
+  - evidence_quality_score: ">= 0.8"
+
+fail_actions:
+  - block_release: true
+  - return_to_agent_with_fixes: true

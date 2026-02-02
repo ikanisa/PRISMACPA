@@ -1,0 +1,38 @@
+# FirmOS Jurisdictions
+# Supported jurisdictions and their configuration
+
+version: "1.0"
+updated: "2026-02-02"
+
+jurisdictions:
+  MT:
+    name: Malta
+    engine: malta
+    timezone: Europe/Malta
+    currency: EUR
+    tax_authority: CFR
+    agents:
+      - matthew
+      - claire
+    packs:
+      - malta
+    regulatory_bodies:
+      - CFR (Commissioner for Revenue)
+      - MFSA (Malta Financial Services Authority)
+      - MBR (Malta Business Registry)
+    
+  RW:
+    name: Rwanda
+    engine: rwanda
+    timezone: Africa/Kigali
+    currency: RWF
+    tax_authority: RRA
+    agents:
+      - emmanuel
+      - chantal
+    packs:
+      - rwanda
+    regulatory_bodies:
+      - RRA (Rwanda Revenue Authority)
+      - RDB (Rwanda Development Board)
+      - MINIJUST (Ministry of Justice)

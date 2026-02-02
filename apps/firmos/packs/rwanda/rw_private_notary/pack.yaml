@@ -1,0 +1,37 @@
+version: "1.0"
+pack_id: RW_PRIVATE_NOTARY
+jurisdiction: rwanda
+service: private_notary
+owner_agent: chantal
+
+mandatory_modules:
+  - legal_advisory
+  - document_preparation
+  - execution_support
+
+workflows:
+  - id: rw_notary_full_service
+    phases:
+      - legal_intake
+      - advisory_options_analysis
+      - document_drafting
+      - quality_checks
+      - finalization
+      - execution_support
+      - archive_and_precedent
+
+required_evidence:
+  - CLIENT_INSTRUCTION
+  - IDENTITY_AUTHORITY
+  - LEGAL_SOURCES
+  - WORKPAPER_TRAIL
+
+outputs:
+  - matter_brief
+  - options_matrix
+  - advisory_memo_or_opinion
+  - draft_document_pack
+  - qc_report
+  - final_document_pack
+  - execution_checklist
+  - archive_index

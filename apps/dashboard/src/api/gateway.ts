@@ -47,6 +47,8 @@ export class GatewayClient {
     private idCounter = 0;
     private backoffMs = 800;
     private _connected = false;
+    private connectSent = false;
+    private connectTimer: ReturnType<typeof setTimeout> | null = null;
 
     constructor(private opts: GatewayClientOptions) { }
 
@@ -62,6 +64,10 @@ export class GatewayClient {
     stop() {
         this.closed = true;
         this._connected = false;
+        if (this.connectTimer) {
+            clearTimeout(this.connectTimer);
+            this.connectTimer = null;
+        }
         this.ws?.close();
         this.ws = null;
         this.flushPending(new Error("gateway client stopped"));
@@ -71,10 +77,12 @@ export class GatewayClient {
         if (this.closed) {
             return;
         }
+        this.connectSent = false;
         this.ws = new WebSocket(this.opts.url);
 
         this.ws.addEventListener("open", () => {
-            void this.sendConnect();
+            // Queue connect - wait briefly for challenge or send immediately
+            this.queueConnect();
         });
 
         this.ws.addEventListener("message", (ev) => this.handleMessage(String(ev.data ?? "")));
@@ -82,6 +90,10 @@ export class GatewayClient {
         this.ws.addEventListener("close", (ev) => {
             this._connected = false;
             this.ws = null;
+            if (this.connectTimer) {
+                clearTimeout(this.connectTimer);
+                this.connectTimer = null;
+            }
             this.flushPending(new Error(`gateway closed (${ev.code}): ${ev.reason}`));
             this.opts.onClose?.({ code: ev.code, reason: ev.reason });
             this.scheduleReconnect();
@@ -90,6 +102,16 @@ export class GatewayClient {
         this.ws.addEventListener("error", () => {
             // Close handler will fire
         });
+    }
+
+    private queueConnect() {
+        // Wait 750ms for a challenge event, or send connect immediately if timeout
+        if (this.connectTimer) {
+            clearTimeout(this.connectTimer);
+        }
+        this.connectTimer = setTimeout(() => {
+            void this.sendConnect();
+        }, 750);
     }
 
     private scheduleReconnect() {
@@ -109,14 +131,25 @@ export class GatewayClient {
     }
 
     private async sendConnect() {
+        if (this.connectSent) {
+            return;
+        }
+        this.connectSent = true;
+        if (this.connectTimer) {
+            clearTimeout(this.connectTimer);
+            this.connectTimer = null;
+        }
+
+        // Use a valid client ID from GATEWAY_CLIENT_IDS
+        // Valid IDs: webchat-ui, webchat, cli, openclaw-control-ui, etc.
         const params = {
             minProtocol: 3,
             maxProtocol: 3,
             client: {
-                id: "firmos-dashboard",
+                id: "openclaw-control-ui",  // Control UI client for full feature access
                 version: "1.0.0",
                 platform: navigator.platform ?? "web",
-                mode: "webchat",
+                mode: "control-ui",   // Control UI mode for dashboard
             },
             role: "operator",
             scopes: ["operator.admin"],
@@ -144,8 +177,19 @@ export class GatewayClient {
 
         const frame = parsed as { type?: unknown };
 
+        // Handle connect.challenge event - triggers early connect with nonce
         if (frame.type === "event") {
             const evt = parsed as GatewayEventFrame;
+
+            // If the server sends a challenge, we should send connect immediately
+            // For webchat clients without device identity, we can skip the nonce signing
+            if (evt.event === "connect.challenge") {
+                // Send connect immediately without waiting for timeout
+                void this.sendConnect();
+                return;
+            }
+
+            // Forward other events to handler
             try {
                 this.opts.onEvent?.(evt);
             } catch (err) {

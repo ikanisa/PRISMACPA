@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://firmos.app/schemas/service_catalog.schema.json",
+  "title": "FirmOS Service Catalog",
+  "type": "object",
+  "required": ["version", "services"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/service"
+      }
+    }
+  },
+  "definitions": {
+    "service": {
+      "type": "object",
+      "required": ["id", "name", "agent", "tier"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z_]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string",
+          "enum": ["aline", "marco", "diane", "patrick", "sofia", "james", "fatima", "matthew", "claire", "emmanuel", "chantal"]
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["governance", "global", "malta", "rwanda"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "skill": {
+          "type": "string",
+          "pattern": "^firmos-[a-z]+$"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "enum": ["MT", "RW"]
+        },
+        "programs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

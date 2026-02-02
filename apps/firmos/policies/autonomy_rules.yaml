@@ -1,0 +1,29 @@
+version: "1.0"
+
+autonomy_tiers:
+  AUTO: "Agent completes without operator"
+  AUTO_CHECK: "Agent completes; Guardian PASS required"
+  ESCALATE: "Requires operator review"
+
+tier_rules:
+  - condition: routine_template_based
+    tier: AUTO_CHECK
+  - condition: novel_clause_or_uncertainty
+    tier: ESCALATE
+  - condition: dispute_or_regulatory_signal
+    tier: ESCALATE
+  - condition: external_filing_or_submission
+    tier: ESCALATE
+    requires:
+      - marco_authorization
+      - diane_pass
+      - policy_allows_release
+
+universal_gates:
+  - id: G1_DIANE_PASS_FOR_FINALS
+    trigger: client_facing_delivery
+    enforced_by: diane
+  - id: G2_MARCO_FOR_RELEASES
+    trigger: external_action
+    enforced_by: marco
+    prerequisite: diane_pass

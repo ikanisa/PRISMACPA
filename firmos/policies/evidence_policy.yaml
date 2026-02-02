@@ -1,0 +1,71 @@
+# FirmOS Evidence Policy
+# Rules for evidence collection, storage, and scoring
+
+version: "1.0"
+updated: "2026-02-02"
+
+evidence_requirements:
+  # Minimum evidence by service type
+  audit:
+    required_types:
+      - source_document
+      - confirmation
+      - analytical_procedure
+    min_items: 3
+    retention_years: 7
+    
+  tax:
+    required_types:
+      - source_document
+      - calculation_workpaper
+      - regulatory_form
+    min_items: 2
+    retention_years: 7
+    
+  accounting:
+    required_types:
+      - source_document
+      - reconciliation
+    min_items: 1
+    retention_years: 5
+    
+  advisory:
+    required_types:
+      - analysis_memo
+      - supporting_data
+    min_items: 1
+    retention_years: 3
+
+evidence_scoring:
+  # Reliability weights
+  weights:
+    external_confirmation: 1.0
+    source_document: 0.9
+    signed_attestation: 0.85
+    system_generated: 0.75
+    analytical_procedure: 0.7
+    client_representation: 0.5
+    verbal_inquiry: 0.3
+    
+  # Sufficiency thresholds
+  thresholds:
+    pass: 0.8
+    marginal: 0.6
+    fail: 0.0
+
+storage:
+  format: 
+    - pdf
+    - json
+    - csv
+  max_size_mb: 50
+  encryption: required
+  immutable: true
+  
+audit_trail:
+  track:
+    - upload_timestamp
+    - uploader_agent
+    - linked_workpaper
+    - qc_review_status
+    - access_log

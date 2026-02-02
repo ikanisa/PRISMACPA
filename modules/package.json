@@ -1,0 +1,21 @@
+{
+    "name": "@firmos/modules",
+    "version": "1.0.0",
+    "description": "FirmOS runtime modules - extracted from firmos-programs",
+    "type": "module",
+    "main": "index.ts",
+    "exports": {
+        ".": "./index.ts",
+        "./routing": "./routing/index.ts",
+        "./evidence": "./evidence/index.ts",
+        "./qc_gates": "./qc_gates/index.ts",
+        "./release_gates": "./release_gates/index.ts",
+        "./template_factory": "./template_factory/index.ts",
+        "./audit_log": "./audit_log/index.ts",
+        "./case_mgmt": "./case_mgmt/index.ts"
+    },
+    "dependencies": {
+        "@firmos/core": "workspace:*",
+        "@firmos/policies": "workspace:*"
+    }
+}

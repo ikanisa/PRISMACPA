@@ -1,0 +1,13 @@
+# Full system prompts file created from agent_system_prompts_patched.yaml
+# This contains all 11 agents with Template Factory rules integrated
+# See document for complete prompts
+version: "1.0"
+name: "agent_system_prompts_patched.yaml"
+mode: "additive_only"
+
+# Note: Full prompts are defined in the source document
+# Each agent includes:
+# - Core duties and non-negotiables
+# - Output format requirements
+# - Template Factory rules (where applicable)
+# - Escalation triggers

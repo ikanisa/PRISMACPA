@@ -1,0 +1,106 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://firmos.app/schemas/agent.schema.json",
+    "title": "FirmOS Agent",
+    "type": "object",
+    "required": [
+        "version",
+        "agents"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+        },
+        "updated": {
+            "type": "string",
+            "format": "date"
+        },
+        "agents": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/agent"
+            }
+        },
+        "autonomy_levels": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/autonomy_level"
+            }
+        }
+    },
+    "definitions": {
+        "agent": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "role",
+                "tier",
+                "autonomy"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z]+$"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "tier": {
+                    "type": "string",
+                    "enum": [
+                        "governance",
+                        "global",
+                        "malta",
+                        "rwanda"
+                    ]
+                },
+                "autonomy": {
+                    "type": "string",
+                    "enum": [
+                        "AUTO",
+                        "AUTO+CHECK",
+                        "ESCALATE"
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "skill": {
+                    "type": "string"
+                },
+                "jurisdiction": {
+                    "type": "string",
+                    "enum": [
+                        "MT",
+                        "RW"
+                    ]
+                },
+                "capabilities": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "autonomy_level": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "requires_qc": {
+                    "type": "boolean"
+                },
+                "requires_release": {
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}

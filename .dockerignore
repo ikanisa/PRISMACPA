@@ -1,24 +1,25 @@
+# Docker build ignore file - minimal version for Cloud Run deployment
+# Excludes large/unnecessary files while keeping source code
+
+# Git metadata
 .git
+.gitignore
 .worktrees
+
+# Development config
+.env
+.env.*
 .bun-cache
 .bun
-.tmp
-**/.tmp
-.DS_Store
-**/.DS_Store
-*.png
-*.jpg
-*.jpeg
-*.webp
-*.gif
-*.mp4
-*.mov
-*.wav
-*.mp3
+.local
+.vscode
+.serena
+.agent
+
+# Build caches and artifacts
 node_modules
 **/node_modules
 .pnpm-store
-**/.pnpm-store
 .turbo
 **/.turbo
 .cache
@@ -27,22 +28,42 @@ node_modules
 **/.next
 coverage
 **/coverage
+.DS_Store
+**/.DS_Store
+
+# Platform-specific apps (not needed for gateway)
+apps/macos
+apps/ios
+apps/shared
+
+# Large asset directories
+assets
+Peekaboo
+Swabble
+Core
+Users
+vendor/a2ui
+
+# Binary and media files
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
+# Test artifacts
+ui/playwright-report
+ui/test-results
+ui/src/ui/__screenshots__
+
+# Logs and temp files
 *.log
+*.trace
 tmp
 **/tmp
-
-# build artifacts
-dist
-**/dist
-apps/macos/.build
-apps/ios/build
-**/*.trace
-
-# large app trees not needed for CLI build
-apps/
-assets/
-Peekaboo/
-Swabble/
-Core/
-Users/
-vendor/
+.tmp
+**/.tmp

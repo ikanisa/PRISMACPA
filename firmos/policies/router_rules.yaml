@@ -1,0 +1,91 @@
+# FirmOS Router Rules
+# Task routing configuration for Aline orchestrator
+
+version: "1.0"
+updated: "2026-02-02"
+
+routing_rules:
+  # Route by service type
+  by_service:
+    audit:
+      primary: patrick
+      backup: diane
+      
+    accounting:
+      primary: sofia
+      backup: james
+      
+    tax:
+      primary_by_jurisdiction:
+        MT: matthew
+        RW: emmanuel
+      backup: sofia
+      
+    advisory:
+      primary: james
+      backup: fatima
+      
+    risk:
+      primary: fatima
+      backup: diane
+      
+    csp:
+      primary: claire
+      jurisdiction: MT
+      
+    notary:
+      primary: chantal
+      jurisdiction: RW
+
+  # Route by task type
+  by_task_type:
+    qc_review:
+      always: diane
+      
+    policy_check:
+      always: marco
+      
+    release_request:
+      always: marco
+      
+    escalation:
+      always: aline
+      then: marco
+
+priority_rules:
+  # Priority scoring factors
+  factors:
+    deadline_urgency:
+      weight: 0.4
+      scoring:
+        overdue: 1.0
+        due_today: 0.9
+        due_this_week: 0.5
+        due_this_month: 0.2
+        no_deadline: 0.0
+        
+    regulatory_filing:
+      weight: 0.3
+      scoring:
+        true: 1.0
+        false: 0.0
+        
+    client_tier:
+      weight: 0.2
+      scoring:
+        platinum: 1.0
+        gold: 0.7
+        silver: 0.4
+        bronze: 0.2
+        
+    complexity:
+      weight: 0.1
+      scoring:
+        high: 0.2  # Lower priority for complex tasks (need more time)
+        medium: 0.5
+        low: 0.8
+
+load_balancing:
+  enabled: true
+  max_concurrent_per_agent: 5
+  rebalance_interval_minutes: 15

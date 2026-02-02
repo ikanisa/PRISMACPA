@@ -1,0 +1,17 @@
+version: "1.0"
+program_id: accounting_fin_reporting
+owner_agent: sofia
+jurisdiction: global
+
+phases:
+  - intake_and_close
+  - reconciliations
+  - journals
+  - reporting
+
+required_outputs:
+  - close_pack
+  - reconciliations_pack
+  - je_log
+  - fs_pack
+  - variance_analysis

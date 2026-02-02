@@ -117,3 +117,63 @@ export type PoliciesListResult = {
     policies: Policy[];
     totalCount: number;
 };
+
+// ============================================================================
+// Chat Types
+// ============================================================================
+
+export type ChatMessageContent = {
+    type: string;
+    text?: string;
+};
+
+export type ChatMessage = {
+    role: 'user' | 'assistant';
+    content: ChatMessageContent[];
+    timestamp?: number;
+    stopReason?: string;
+    usage?: {
+        input?: number;
+        output?: number;
+        totalTokens?: number;
+    };
+};
+
+export type ChatHistoryResult = {
+    sessionKey: string;
+    sessionId?: string;
+    messages: ChatMessage[];
+    thinkingLevel?: string;
+};
+
+export type ChatSendResult = {
+    runId: string;
+    status: 'started' | 'in_flight' | 'ok' | 'error';
+    summary?: string;
+};
+
+// ============================================================================
+// Session Types
+// ============================================================================
+
+export type Session = {
+    key: string;
+    sessionId?: string;
+    updatedAt?: number | null;
+    thinkingLevel?: string;
+    model?: string;
+    modelProvider?: string;
+    label?: string;
+    displayName?: string;
+    provider?: string;
+    derivedTitle?: string;
+    lastMessagePreview?: string;
+};
+
+export type SessionsListResult = {
+    ts: number;
+    path: string;
+    count: number;
+    sessions: Session[];
+};
+

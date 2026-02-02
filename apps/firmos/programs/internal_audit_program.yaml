@@ -1,0 +1,17 @@
+version: "1.0"
+program_id: risk_controls_internal_audit
+owner_agent: fatima
+jurisdiction: global
+
+phases:
+  - planning
+  - execution
+  - reporting
+  - followup
+
+required_outputs:
+  - risk_register
+  - rcm_matrix
+  - testing_results
+  - internal_audit_report
+  - remediation_tracker

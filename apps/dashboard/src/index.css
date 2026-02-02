@@ -299,3 +299,9 @@ h3 {
 .animate-in {
   animation: fadeIn 0.3s ease;
 }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+

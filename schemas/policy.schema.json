@@ -1,0 +1,124 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://firmos.app/schemas/policy.schema.json",
+    "title": "FirmOS Policy",
+    "type": "object",
+    "required": [
+        "version"
+    ],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+        },
+        "updated": {
+            "type": "string",
+            "format": "date"
+        },
+        "qc_gate": {
+            "$ref": "#/definitions/qc_gate"
+        },
+        "release_gate": {
+            "$ref": "#/definitions/release_gate"
+        },
+        "autonomy_tiers": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/autonomy_tier"
+            }
+        },
+        "escalation_rules": {
+            "$ref": "#/definitions/escalation_rules"
+        },
+        "evidence_requirements": {
+            "type": "object"
+        },
+        "evidence_scoring": {
+            "type": "object"
+        },
+        "routing_rules": {
+            "type": "object"
+        }
+    },
+    "definitions": {
+        "qc_gate": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "required_checks": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "outcomes": {
+                    "type": "object"
+                }
+            }
+        },
+        "release_gate": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "prerequisites": {
+                    "type": "array"
+                },
+                "authorization_levels": {
+                    "type": "object"
+                }
+            }
+        },
+        "autonomy_tier": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3
+                },
+                "description": {
+                    "type": "string"
+                },
+                "qc_required": {
+                    "type": "boolean"
+                },
+                "release_required": {
+                    "type": "boolean"
+                },
+                "operator_notification": {
+                    "type": [
+                        "boolean",
+                        "string"
+                    ]
+                },
+                "applies_to": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "escalation_rules": {
+            "type": "object",
+            "properties": {
+                "triggers": {
+                    "type": "array"
+                },
+                "chain": {
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

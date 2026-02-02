@@ -1,10 +1,10 @@
 packages:
   - .
+  - ui
   - apps/*
   - packages/*
   - channels/*
   - extensions/*
-  - apps/firmos
 
 onlyBuiltDependencies:
   - "@whiskeysockets/baileys"

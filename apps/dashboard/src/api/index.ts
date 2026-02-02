@@ -22,4 +22,8 @@ export type { Pack, PackScope } from './packs';
 export { loadPolicyDecisions } from './policy';
 export type { PolicyDecision, PolicyDecisionOutcome, AutonomyTier } from './policy';
 
+export { sendChatMessage, loadChatHistory, abortChatRun, listSessions, listAgents } from './chat';
+export type { ChatSendOptions } from './chat';
+
 export type * from './types';
+

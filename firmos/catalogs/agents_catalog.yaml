@@ -1,0 +1,131 @@
+# FirmOS Agents Catalog
+# Master catalog of all FirmOS agents
+
+version: "1.0"
+updated: "2026-02-02"
+
+agents:
+  # Governance Tier
+  - id: aline
+    name: Aline
+    role: Orchestrator
+    tier: governance
+    autonomy: AUTO
+    description: Routes tasks to appropriate agents, manages priorities and deadlines
+    capabilities:
+      - task_routing
+      - priority_management
+      - deadline_tracking
+      - escalation_handling
+    
+  - id: marco
+    name: Marco
+    role: Governor
+    tier: governance
+    autonomy: ESCALATE
+    description: Policy enforcement, release authorization, compliance oversight
+    capabilities:
+      - policy_enforcement
+      - release_authorization
+      - compliance_oversight
+      - incident_management
+    
+  - id: diane
+    name: Diane
+    role: Guardian
+    tier: governance
+    autonomy: AUTO+CHECK
+    description: Quality control gates, ethics validation, risk assessment
+    capabilities:
+      - qc_gate_execution
+      - ethics_review
+      - risk_assessment
+      - evidence_validation
+
+  # Global Engine
+  - id: patrick
+    name: Patrick
+    role: Audit Lead
+    tier: global
+    autonomy: AUTO+CHECK
+    skill: firmos-audit
+    description: External audit programs, evidence gathering, QC coordination
+    
+  - id: sofia
+    name: Sofia
+    role: Accounting Manager
+    tier: global
+    autonomy: AUTO
+    skill: firmos-accounting
+    description: Bookkeeping, monthly close, reconciliation
+    
+  - id: james
+    name: James
+    role: CFO Advisor
+    tier: global
+    autonomy: AUTO+CHECK
+    skill: firmos-advisory
+    description: Financial advisory, M&A, valuations, CFO services
+    
+  - id: fatima
+    name: Fatima
+    role: Risk Manager
+    tier: global
+    autonomy: AUTO+CHECK
+    skill: firmos-risk
+    description: ERM, internal controls, SOC reporting, AML/CFT
+
+  # Malta Engine
+  - id: matthew
+    name: Matthew
+    role: Tax Specialist
+    tier: malta
+    autonomy: AUTO+CHECK
+    skill: firmos-tax
+    jurisdiction: MT
+    description: Malta VAT, income tax, tax advisory
+    
+  - id: claire
+    name: Claire
+    role: CSP Specialist
+    tier: malta
+    autonomy: AUTO
+    skill: firmos-csp
+    jurisdiction: MT
+    description: Company secretarial, MBR filings, corporate services
+
+  # Rwanda Engine
+  - id: emmanuel
+    name: Emmanuel
+    role: Tax Specialist
+    tier: rwanda
+    autonomy: AUTO+CHECK
+    skill: firmos-tax
+    jurisdiction: RW
+    description: Rwanda tax compliance, RRA filings
+    
+  - id: chantal
+    name: Chantal
+    role: Private Notary
+    tier: rwanda
+    autonomy: AUTO+CHECK
+    skill: firmos-notary
+    jurisdiction: RW
+    description: Notarial services, RDB filings, contracts
+
+# Autonomy Tiers
+autonomy_levels:
+  AUTO:
+    description: Agent completes task autonomously
+    requires_qc: false
+    requires_release: false
+    
+  AUTO+CHECK:
+    description: Guardian (Diane) must PASS before release
+    requires_qc: true
+    requires_release: false
+    
+  ESCALATE:
+    description: Requires operator attention/approval
+    requires_qc: true
+    requires_release: true

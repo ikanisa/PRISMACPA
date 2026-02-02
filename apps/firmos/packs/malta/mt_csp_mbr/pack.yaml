@@ -1,0 +1,22 @@
+version: "1.0"
+pack_id: MT_CSP_MBR
+jurisdiction: malta
+service: corporate_services
+owner_agent: claire
+
+workflows:
+  - id: mt_csp_corporate_actions
+    phases:
+      - intake_and_registers
+      - draft_action_pack
+      - validate
+      - filing_bundle
+      - outcome_tracking
+      - register_updates
+
+required_evidence:
+  - CLIENT_INSTRUCTION
+  - IDENTITY_AUTHORITY
+  - REGISTRY_EXTRACTS
+  - LEGAL_SOURCES
+  - WORKPAPER_TRAIL

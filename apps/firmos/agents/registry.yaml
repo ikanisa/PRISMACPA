@@ -1,0 +1,44 @@
+version: "1.0"
+agents:
+  orchestrator:
+    - id: aline
+      name: Aline
+      role: Firm Orchestrator
+      
+  governance:
+    - id: marco
+      name: Marco
+      role: Autonomy & Policy Governor
+    - id: diane
+      name: Diane
+      role: Quality, Risk & Evidence Guardian
+      
+  global_engines:
+    - id: patrick
+      name: Patrick
+      role: Audit & Assurance Engine
+    - id: sofia
+      name: Sofia
+      role: Accounting & Financial Reporting Engine
+    - id: james
+      name: James
+      role: Advisory & Consulting Engine
+    - id: fatima
+      name: Fatima
+      role: Risk, Controls & Internal Audit Engine
+      
+  malta_engines:
+    - id: matthew
+      name: Matthew
+      role: Malta Tax Engine
+    - id: claire
+      name: Claire
+      role: Malta CSP/MBR Engine
+      
+  rwanda_engines:
+    - id: emmanuel
+      name: Emmanuel
+      role: Rwanda Tax Engine
+    - id: chantal
+      name: Chantal
+      role: Rwanda Private Notary Engine

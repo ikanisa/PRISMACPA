@@ -1,0 +1,63 @@
+# FirmOS Autonomy Policy
+# Defines agent autonomy tiers and escalation rules
+
+version: "1.0"
+updated: "2026-02-02"
+
+autonomy_tiers:
+  AUTO:
+    level: 1
+    description: Agent completes task autonomously
+    qc_required: false
+    release_required: false
+    operator_notification: false
+    applies_to:
+      - routine_bookkeeping
+      - standard_reconciliation
+      - document_preparation
+      - data_entry
+    
+  AUTO_CHECK:
+    level: 2
+    description: Guardian (Diane) must PASS before completion
+    qc_required: true
+    release_required: false
+    operator_notification: on_fail
+    applies_to:
+      - financial_reports
+      - tax_calculations
+      - audit_workpapers
+      - regulatory_filings
+    
+  ESCALATE:
+    level: 3
+    description: Requires operator attention and approval
+    qc_required: true
+    release_required: true
+    operator_notification: always
+    applies_to:
+      - release_authorization
+      - policy_changes
+      - new_client_onboarding
+      - high_risk_transactions
+      - incident_response
+
+escalation_rules:
+  # When to auto-escalate
+  triggers:
+    - consecutive_failures: 3
+    - risk_score: ">0.8"
+    - deadline_breach: imminent
+    - compliance_flag: true
+    - unknown_task_type: true
+    
+  # Escalation path
+  chain:
+    - level: agent
+      timeout_minutes: 30
+    - level: diane_qc
+      timeout_minutes: 60
+    - level: marco_governance
+      timeout_minutes: 120
+    - level: operator
+      timeout_minutes: null  # No timeout, waits for human
