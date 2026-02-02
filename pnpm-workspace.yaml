@@ -1,9 +1,10 @@
 packages:
   - .
-  - ui
-  - packages/*
-  - extensions/*
   - apps/*
+  - packages/*
+  - channels/*
+  - extensions/*
+  - firmos
 
 onlyBuiltDependencies:
   - "@whiskeysockets/baileys"
