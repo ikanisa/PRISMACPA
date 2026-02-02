@@ -5,7 +5,7 @@ vi.mock("../globals.js", () => ({
   logVerbose: vi.fn(),
 }));
 
-import { logVerbose } from "../globals.js";
+import { logVerbose } from "../../src/globals.js";
 import { attachDiscordGatewayLogging } from "./gateway-logging.js";
 
 const makeRuntime = () => ({

@@ -1,22 +1,22 @@
 import type { Client } from "@buape/carbon";
-import type { HistoryEntry } from "../../auto-reply/reply/history.js";
-import type { ReplyToMode } from "../../config/config.js";
-import type { RuntimeEnv } from "../../runtime.js";
+import type { HistoryEntry } from "../../../src/auto-reply/reply/history.js";
+import type { ReplyToMode } from "../../../src/config/config.js";
+import type { RuntimeEnv } from "../../../src/runtime.js";
 import type { DiscordGuildEntryResolved } from "./allow-list.js";
 import type { DiscordMessageEvent, DiscordMessageHandler } from "./listeners.js";
-import { hasControlCommand } from "../../auto-reply/command-detection.js";
+import { hasControlCommand } from "../../../src/auto-reply/command-detection.js";
 import {
   createInboundDebouncer,
   resolveInboundDebounceMs,
-} from "../../auto-reply/inbound-debounce.js";
-import { danger } from "../../globals.js";
+} from "../../../src/auto-reply/inbound-debounce.js";
+import { danger } from "../../../src/globals.js";
 import { preflightDiscordMessage } from "./message-handler.preflight.js";
 import { processDiscordMessage } from "./message-handler.process.js";
 import { resolveDiscordMessageText } from "./message-utils.js";
 
-type LoadedConfig = ReturnType<typeof import("../../config/config.js").loadConfig>;
+type LoadedConfig = ReturnType<typeof import("../../../src/config/config.js").loadConfig>;
 type DiscordConfig = NonNullable<
-  import("../../config/config.js").OpenClawConfig["channels"]
+  import("../../../src/config/config.js").OpenClawConfig["channels"]
 >["discord"];
 
 export function createDiscordMessageHandler(params: {

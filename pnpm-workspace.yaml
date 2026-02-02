@@ -4,7 +4,7 @@ packages:
   - packages/*
   - channels/*
   - extensions/*
-  - firmos
+  - apps/firmos
 
 onlyBuiltDependencies:
   - "@whiskeysockets/baileys"

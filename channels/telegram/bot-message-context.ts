@@ -1,37 +1,37 @@
 import type { Bot } from "grammy";
-import type { OpenClawConfig } from "../config/config.js";
-import type { DmPolicy, TelegramGroupConfig, TelegramTopicConfig } from "../config/types.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { DmPolicy, TelegramGroupConfig, TelegramTopicConfig } from "../../src/config/types.js";
 import type { TelegramContext } from "./bot/types.js";
-import { resolveAckReaction } from "../agents/identity.js";
+import { resolveAckReaction } from "../../src/agents/identity.js";
 import {
   findModelInCatalog,
   loadModelCatalog,
   modelSupportsVision,
-} from "../agents/model-catalog.js";
-import { resolveDefaultModelForAgent } from "../agents/model-selection.js";
-import { hasControlCommand } from "../auto-reply/command-detection.js";
-import { normalizeCommandBody } from "../auto-reply/commands-registry.js";
-import { formatInboundEnvelope, resolveEnvelopeFormatOptions } from "../auto-reply/envelope.js";
+} from "../../src/agents/model-catalog.js";
+import { resolveDefaultModelForAgent } from "../../src/agents/model-selection.js";
+import { hasControlCommand } from "../../src/auto-reply/command-detection.js";
+import { normalizeCommandBody } from "../../src/auto-reply/commands-registry.js";
+import { formatInboundEnvelope, resolveEnvelopeFormatOptions } from "../../src/auto-reply/envelope.js";
 import {
   buildPendingHistoryContextFromMap,
   recordPendingHistoryEntryIfEnabled,
   type HistoryEntry,
-} from "../auto-reply/reply/history.js";
-import { finalizeInboundContext } from "../auto-reply/reply/inbound-context.js";
-import { buildMentionRegexes, matchesMentionWithExplicit } from "../auto-reply/reply/mentions.js";
-import { shouldAckReaction as shouldAckReactionGate } from "../channels/ack-reactions.js";
-import { resolveControlCommandGate } from "../channels/command-gating.js";
-import { formatLocationText, toLocationContext } from "../channels/location.js";
-import { logInboundDrop } from "../channels/logging.js";
-import { resolveMentionGatingWithBypass } from "../channels/mention-gating.js";
-import { recordInboundSession } from "../channels/session.js";
-import { formatCliCommand } from "../cli/command-format.js";
-import { readSessionUpdatedAt, resolveStorePath } from "../config/sessions.js";
-import { logVerbose, shouldLogVerbose } from "../globals.js";
-import { recordChannelActivity } from "../infra/channel-activity.js";
-import { upsertChannelPairingRequest } from "../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../routing/resolve-route.js";
-import { resolveThreadSessionKeys } from "../routing/session-key.js";
+} from "../../src/auto-reply/reply/history.js";
+import { finalizeInboundContext } from "../../src/auto-reply/reply/inbound-context.js";
+import { buildMentionRegexes, matchesMentionWithExplicit } from "../../src/auto-reply/reply/mentions.js";
+import { shouldAckReaction as shouldAckReactionGate } from "../../src/channels/ack-reactions.js";
+import { resolveControlCommandGate } from "../../src/channels/command-gating.js";
+import { formatLocationText, toLocationContext } from "../../src/channels/location.js";
+import { logInboundDrop } from "../../src/channels/logging.js";
+import { resolveMentionGatingWithBypass } from "../../src/channels/mention-gating.js";
+import { recordInboundSession } from "../../src/channels/session.js";
+import { formatCliCommand } from "../../src/cli/command-format.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../src/config/sessions.js";
+import { logVerbose, shouldLogVerbose } from "../../src/globals.js";
+import { recordChannelActivity } from "../../src/infra/channel-activity.js";
+import { upsertChannelPairingRequest } from "../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../src/routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../src/routing/session-key.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import {
   firstDefined,

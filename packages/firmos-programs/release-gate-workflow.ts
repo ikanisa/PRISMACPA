@@ -87,7 +87,7 @@ export function createReleaseRequest(request: ReleaseRequest): ReleaseWorkflow {
  */
 export async function runReleaseQC(releaseId: string): Promise<ReleaseWorkflow | null> {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return null;
+    if (!workflow) { return null; }
 
     // Update status
     workflow.current_status = 'qc_in_progress';
@@ -135,7 +135,7 @@ export function authorizeRelease(
     conditions?: string[]
 ): ReleaseWorkflow | null {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return null;
+    if (!workflow) { return null; }
 
     // Only authorize if QC passed
     if (workflow.current_status !== 'qc_passed') {
@@ -165,7 +165,7 @@ export function denyRelease(
     reason: string
 ): ReleaseWorkflow | null {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return null;
+    if (!workflow) { return null; }
 
     workflow.decisions.push({
         release_id: releaseId,
@@ -189,7 +189,7 @@ export function executeRelease(
     notes?: string
 ): ReleaseWorkflow | null {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return null;
+    if (!workflow) { return null; }
 
     // Only execute if authorized
     if (workflow.current_status !== 'authorized') {
@@ -219,7 +219,7 @@ export function rollbackRelease(
     reason: string
 ): ReleaseWorkflow | null {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return null;
+    if (!workflow) { return null; }
 
     // Only rollback if executed
     if (workflow.current_status !== 'executed') {
@@ -262,12 +262,12 @@ export function getPendingReleases(): ReleaseWorkflow[] {
  */
 export function validateReleasePackAccess(releaseId: string): boolean {
     const workflow = workflows.get(releaseId);
-    if (!workflow) return false;
+    if (!workflow) { return false; }
 
     const config = loadConfig();
     const agent = config.agents[workflow.request.requester_agent];
 
-    if (!agent) return false;
+    if (!agent) { return false; }
 
     return agent.pack_access.includes(workflow.request.pack_id) ||
         agent.pack_access.includes('*');

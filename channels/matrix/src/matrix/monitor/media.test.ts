@@ -1,6 +1,6 @@
 import type { PluginRuntime } from "openclaw/plugin-sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { setMatrixRuntime } from "../../runtime.js";
+import { setMatrixRuntime } from "../../src/runtime.js";
 import { downloadMatrixMedia } from "./media.js";
 
 describe("downloadMatrixMedia", () => {

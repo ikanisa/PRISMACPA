@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { resolveFetch } from "../infra/fetch.js";
+import { resolveFetch } from "../../src/infra/fetch.js";
 
 export type SignalRpcOptions = {
   baseUrl: string;

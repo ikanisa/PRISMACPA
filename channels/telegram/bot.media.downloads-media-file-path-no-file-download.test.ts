@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { resetInboundDedupe } from "../auto-reply/reply/inbound-dedupe.js";
+import { resetInboundDedupe } from "../../src/auto-reply/reply/inbound-dedupe.js";
 import { MEDIA_GROUP_TIMEOUT_MS } from "./bot-updates.js";
 
 const useSpy = vi.fn();

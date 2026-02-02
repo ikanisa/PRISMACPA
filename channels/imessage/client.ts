@@ -1,7 +1,7 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { createInterface, type Interface } from "node:readline";
-import type { RuntimeEnv } from "../runtime.js";
-import { resolveUserPath } from "../utils.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
+import { resolveUserPath } from "../../src/utils.js";
 
 export type IMessageRpcError = {
   code?: number;

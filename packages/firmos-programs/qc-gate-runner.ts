@@ -5,12 +5,12 @@
  * Validates outputs, evidence, and compliance before release.
  */
 
-import { loadConfig, type AgentConfig, type ServiceConfig } from '../core/config-loader.js';
+import { loadConfig } from '../core/config-loader.js';
 import {
-    validateServiceDefinition,
+
     validateTaskNode,
-    runAllIntegrityChecks,
-    type ValidationResult
+
+
 } from './validation.js';
 
 // QC Gate result types
@@ -196,8 +196,8 @@ export async function runQCGate(
     const hasNeedsReview = results.some(r => r.status === 'needs_review');
 
     let overallStatus: QCStatus = 'passed';
-    if (hasFailed) overallStatus = 'failed';
-    else if (hasNeedsReview) overallStatus = 'needs_review';
+    if (hasFailed) { overallStatus = 'failed'; }
+    else if (hasNeedsReview) { overallStatus = 'needs_review'; }
 
     return {
         gate_id: gateId,

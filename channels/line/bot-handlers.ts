@@ -8,16 +8,16 @@ import type {
   PostbackEvent,
   EventSource,
 } from "@line/bot-sdk";
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
 import type { LineGroupConfig, ResolvedLineAccount } from "./types.js";
-import { danger, logVerbose } from "../globals.js";
-import { resolvePairingIdLabel } from "../pairing/pairing-labels.js";
-import { buildPairingReply } from "../pairing/pairing-messages.js";
+import { danger, logVerbose } from "../../src/globals.js";
+import { resolvePairingIdLabel } from "../../src/pairing/pairing-labels.js";
+import { buildPairingReply } from "../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../pairing/pairing-store.js";
+} from "../../src/pairing/pairing-store.js";
 import { firstDefined, isSenderAllowed, normalizeAllowFromWithStore } from "./bot-access.js";
 import {
   buildLineMessageContext,

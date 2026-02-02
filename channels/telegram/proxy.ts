@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ProxyAgent, fetch as undiciFetch } from "undici";
-import { wrapFetchWithAbortSignal } from "../infra/fetch.js";
+import { wrapFetchWithAbortSignal } from "../../src/infra/fetch.js";
 
 export function makeProxyFetch(proxyUrl: string): typeof fetch {
   const agent = new ProxyAgent(proxyUrl);

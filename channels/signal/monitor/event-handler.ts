@@ -1,38 +1,38 @@
 import type { SignalEventHandlerDeps, SignalReceivePayload } from "./event-handler.types.js";
-import { resolveHumanDelayConfig } from "../../agents/identity.js";
-import { hasControlCommand } from "../../auto-reply/command-detection.js";
-import { dispatchInboundMessage } from "../../auto-reply/dispatch.js";
+import { resolveHumanDelayConfig } from "../../../src/agents/identity.js";
+import { hasControlCommand } from "../../../src/auto-reply/command-detection.js";
+import { dispatchInboundMessage } from "../../../src/auto-reply/dispatch.js";
 import {
   formatInboundEnvelope,
   formatInboundFromLabel,
   resolveEnvelopeFormatOptions,
-} from "../../auto-reply/envelope.js";
+} from "../../../src/auto-reply/envelope.js";
 import {
   createInboundDebouncer,
   resolveInboundDebounceMs,
-} from "../../auto-reply/inbound-debounce.js";
+} from "../../../src/auto-reply/inbound-debounce.js";
 import {
   buildPendingHistoryContextFromMap,
   clearHistoryEntriesIfEnabled,
-} from "../../auto-reply/reply/history.js";
-import { finalizeInboundContext } from "../../auto-reply/reply/inbound-context.js";
-import { createReplyDispatcherWithTyping } from "../../auto-reply/reply/reply-dispatcher.js";
-import { resolveControlCommandGate } from "../../channels/command-gating.js";
-import { logInboundDrop, logTypingFailure } from "../../channels/logging.js";
-import { createReplyPrefixContext } from "../../channels/reply-prefix.js";
-import { recordInboundSession } from "../../channels/session.js";
-import { createTypingCallbacks } from "../../channels/typing.js";
-import { readSessionUpdatedAt, resolveStorePath } from "../../config/sessions.js";
-import { danger, logVerbose, shouldLogVerbose } from "../../globals.js";
-import { enqueueSystemEvent } from "../../infra/system-events.js";
-import { mediaKindFromMime } from "../../media/constants.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
+} from "../../../src/auto-reply/reply/history.js";
+import { finalizeInboundContext } from "../../../src/auto-reply/reply/inbound-context.js";
+import { createReplyDispatcherWithTyping } from "../../../src/auto-reply/reply/reply-dispatcher.js";
+import { resolveControlCommandGate } from "../../../src/channels/command-gating.js";
+import { logInboundDrop, logTypingFailure } from "../../../src/channels/logging.js";
+import { createReplyPrefixContext } from "../../../src/channels/reply-prefix.js";
+import { recordInboundSession } from "../../../src/channels/session.js";
+import { createTypingCallbacks } from "../../../src/channels/typing.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../../src/config/sessions.js";
+import { danger, logVerbose, shouldLogVerbose } from "../../../src/globals.js";
+import { enqueueSystemEvent } from "../../../src/infra/system-events.js";
+import { mediaKindFromMime } from "../../../src/media/constants.js";
+import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
-import { normalizeE164 } from "../../utils.js";
+} from "../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
+import { normalizeE164 } from "../../../src/utils.js";
 import {
   formatSignalPairingIdLine,
   formatSignalSenderDisplay,

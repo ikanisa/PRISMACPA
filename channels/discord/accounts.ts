@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { DiscordAccountConfig } from "../config/types.js";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { DiscordAccountConfig } from "../../src/config/types.js";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../src/routing/session-key.js";
 import { resolveDiscordToken } from "./token.js";
 
 export type ResolvedDiscordAccount = {

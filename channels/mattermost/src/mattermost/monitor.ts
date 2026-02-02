@@ -18,7 +18,7 @@ import {
   type HistoryEntry,
 } from "openclaw/plugin-sdk";
 import WebSocket from "ws";
-import { getMattermostRuntime } from "../runtime.js";
+import { getMattermostRuntime } from "../../src/runtime.js";
 import { resolveMattermostAccount } from "./accounts.js";
 import {
   createMattermostClient,

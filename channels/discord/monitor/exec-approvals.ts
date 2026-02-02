@@ -1,13 +1,13 @@
 import { Button, type ButtonInteraction, type ComponentData } from "@buape/carbon";
 import { ButtonStyle, Routes } from "discord-api-types/v10";
-import type { OpenClawConfig } from "../../config/config.js";
-import type { DiscordExecApprovalConfig } from "../../config/types.discord.js";
-import type { EventFrame } from "../../gateway/protocol/index.js";
-import type { ExecApprovalDecision } from "../../infra/exec-approvals.js";
-import type { RuntimeEnv } from "../../runtime.js";
-import { GatewayClient } from "../../gateway/client.js";
-import { logDebug, logError } from "../../logger.js";
-import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../../utils/message-channel.js";
+import type { OpenClawConfig } from "../../../src/config/config.js";
+import type { DiscordExecApprovalConfig } from "../../../src/config/types.discord.js";
+import type { EventFrame } from "../../../src/gateway/protocol/index.js";
+import type { ExecApprovalDecision } from "../../../src/infra/exec-approvals.js";
+import type { RuntimeEnv } from "../../../src/runtime.js";
+import { GatewayClient } from "../../../src/gateway/client.js";
+import { logDebug, logError } from "../../../src/logger.js";
+import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../../../src/utils/message-channel.js";
 import { createDiscordClient } from "../send.shared.js";
 
 const EXEC_APPROVAL_KEY = "execapproval";

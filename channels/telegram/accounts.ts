@@ -1,8 +1,8 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { TelegramAccountConfig } from "../config/types.js";
-import { isTruthyEnvValue } from "../infra/env.js";
-import { listBoundAccountIds, resolveDefaultAgentBoundAccountId } from "../routing/bindings.js";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { TelegramAccountConfig } from "../../src/config/types.js";
+import { isTruthyEnvValue } from "../../src/infra/env.js";
+import { listBoundAccountIds, resolveDefaultAgentBoundAccountId } from "../../src/routing/bindings.js";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../src/routing/session-key.js";
 import { resolveTelegramToken } from "./token.js";
 
 const debugAccounts = (...args: unknown[]) => {

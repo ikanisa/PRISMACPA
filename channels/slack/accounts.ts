@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { SlackAccountConfig } from "../config/types.js";
-import { normalizeChatType } from "../channels/chat-type.js";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { SlackAccountConfig } from "../../src/config/types.js";
+import { normalizeChatType } from "../../src/channels/chat-type.js";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../src/routing/session-key.js";
 import { resolveSlackAppToken, resolveSlackBotToken } from "./token.js";
 
 export type SlackTokenSource = "env" | "config" | "none";

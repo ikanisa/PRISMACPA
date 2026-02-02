@@ -799,7 +799,7 @@ export function getAllTasks(program: ServiceProgram): ProgramTask[] {
 export function getTask(program: ServiceProgram, taskId: string): ProgramTask | undefined {
     for (const phase of program.phases) {
         const task = phase.tasks.find(t => t.task_id === taskId);
-        if (task) return task;
+        if (task) { return task; }
     }
     return undefined;
 }

@@ -1,4 +1,4 @@
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 
 // Type for room message content with mentions
 type MessageContentWithMentions = {

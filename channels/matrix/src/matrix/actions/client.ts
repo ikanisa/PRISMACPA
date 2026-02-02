@@ -1,6 +1,6 @@
-import type { CoreConfig } from "../types.js";
+import type { CoreConfig } from "../../src/types.js";
 import type { MatrixActionClient, MatrixActionClientOpts } from "./types.js";
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 import { getActiveMatrixClient } from "../active-client.js";
 import {
   createMatrixClient,

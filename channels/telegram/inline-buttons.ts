@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { TelegramInlineButtonsScope } from "../config/types.telegram.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { TelegramInlineButtonsScope } from "../../src/config/types.telegram.js";
 import { listTelegramAccountIds, resolveTelegramAccount } from "./accounts.js";
 import { parseTelegramTarget } from "./targets.js";
 

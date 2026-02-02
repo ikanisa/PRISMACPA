@@ -1,34 +1,34 @@
 import { ChannelType } from "@buape/carbon";
-import type { ReplyPayload } from "../../auto-reply/types.js";
+import type { ReplyPayload } from "../../../src/auto-reply/types.js";
 import type { DiscordMessagePreflightContext } from "./message-handler.preflight.js";
-import { resolveAckReaction, resolveHumanDelayConfig } from "../../agents/identity.js";
-import { resolveChunkMode } from "../../auto-reply/chunk.js";
-import { dispatchInboundMessage } from "../../auto-reply/dispatch.js";
+import { resolveAckReaction, resolveHumanDelayConfig } from "../../../src/agents/identity.js";
+import { resolveChunkMode } from "../../../src/auto-reply/chunk.js";
+import { dispatchInboundMessage } from "../../../src/auto-reply/dispatch.js";
 import {
   formatInboundEnvelope,
   formatThreadStarterEnvelope,
   resolveEnvelopeFormatOptions,
-} from "../../auto-reply/envelope.js";
+} from "../../../src/auto-reply/envelope.js";
 import {
   buildPendingHistoryContextFromMap,
   clearHistoryEntriesIfEnabled,
-} from "../../auto-reply/reply/history.js";
-import { finalizeInboundContext } from "../../auto-reply/reply/inbound-context.js";
-import { createReplyDispatcherWithTyping } from "../../auto-reply/reply/reply-dispatcher.js";
+} from "../../../src/auto-reply/reply/history.js";
+import { finalizeInboundContext } from "../../../src/auto-reply/reply/inbound-context.js";
+import { createReplyDispatcherWithTyping } from "../../../src/auto-reply/reply/reply-dispatcher.js";
 import {
   removeAckReactionAfterReply,
   shouldAckReaction as shouldAckReactionGate,
-} from "../../channels/ack-reactions.js";
-import { logTypingFailure, logAckFailure } from "../../channels/logging.js";
-import { createReplyPrefixContext } from "../../channels/reply-prefix.js";
-import { recordInboundSession } from "../../channels/session.js";
-import { createTypingCallbacks } from "../../channels/typing.js";
-import { resolveMarkdownTableMode } from "../../config/markdown-tables.js";
-import { readSessionUpdatedAt, resolveStorePath } from "../../config/sessions.js";
-import { danger, logVerbose, shouldLogVerbose } from "../../globals.js";
-import { buildAgentSessionKey } from "../../routing/resolve-route.js";
-import { resolveThreadSessionKeys } from "../../routing/session-key.js";
-import { truncateUtf16Safe } from "../../utils.js";
+} from "../../../src/channels/ack-reactions.js";
+import { logTypingFailure, logAckFailure } from "../../../src/channels/logging.js";
+import { createReplyPrefixContext } from "../../../src/channels/reply-prefix.js";
+import { recordInboundSession } from "../../../src/channels/session.js";
+import { createTypingCallbacks } from "../../../src/channels/typing.js";
+import { resolveMarkdownTableMode } from "../../../src/config/markdown-tables.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../../src/config/sessions.js";
+import { danger, logVerbose, shouldLogVerbose } from "../../../src/globals.js";
+import { buildAgentSessionKey } from "../../../src/routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../../src/routing/session-key.js";
+import { truncateUtf16Safe } from "../../../src/utils.js";
 import { reactMessageDiscord, removeReactionDiscord } from "../send.js";
 import { normalizeDiscordSlug } from "./allow-list.js";
 import { resolveTimestampMs } from "./format.js";

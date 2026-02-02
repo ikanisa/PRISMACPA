@@ -97,7 +97,7 @@ export const POLICY_RULES: PolicyRule[] = [
     {
         id: 'no_direct_mutation',
         description: 'Agents never mutate core state directly',
-        enforce: (ctx) => ({
+        enforce: (_ctx) => ({
             allowed: true,
             reason: 'All mutations go through audited tool layer'
         })
@@ -105,7 +105,7 @@ export const POLICY_RULES: PolicyRule[] = [
     {
         id: 'release_dual_gate',
         description: 'Release actions require Marco authorization + Diane PASS',
-        enforce: (ctx) => {
+        enforce: (_ctx) => {
             if (ctx.toolGroup !== 'RELEASE_GATED') {
                 return { allowed: true, reason: 'Not a release-gated tool' };
             }
@@ -134,7 +134,7 @@ export const POLICY_RULES: PolicyRule[] = [
     {
         id: 'jurisdiction_isolation',
         description: 'Agents can only use tools within their allowed packs',
-        enforce: (ctx) => {
+        enforce: (_ctx) => {
             // This would check against agent's allowed_packs
             return { allowed: true, reason: 'Jurisdiction check delegated to agent layer' };
         }
@@ -142,7 +142,7 @@ export const POLICY_RULES: PolicyRule[] = [
     {
         id: 'novelty_escalation',
         description: 'High novelty scores require escalation',
-        enforce: (ctx) => {
+        enforce: (_ctx) => {
             if (ctx.noveltyScore !== undefined && ctx.noveltyScore > 0.7) {
                 return {
                     allowed: false,
@@ -157,7 +157,7 @@ export const POLICY_RULES: PolicyRule[] = [
     {
         id: 'external_action_hold',
         description: 'External actions default to HOLD',
-        enforce: (ctx) => {
+        enforce: (_ctx) => {
             if (ctx.isExternalAction && !ctx.hasMarcoApproval) {
                 return {
                     allowed: false,

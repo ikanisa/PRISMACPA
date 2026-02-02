@@ -1,5 +1,5 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { DiscordGuildChannelConfig, DiscordGuildEntry } from "../config/types.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { DiscordGuildChannelConfig, DiscordGuildEntry } from "../../src/config/types.js";
 import { resolveDiscordAccount } from "./accounts.js";
 import { fetchChannelPermissionsDiscord } from "./send.js";
 

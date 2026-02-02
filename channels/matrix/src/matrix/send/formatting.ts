@@ -1,4 +1,4 @@
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 import { markdownToMatrixHtml } from "../format.js";
 import {
   MsgType,

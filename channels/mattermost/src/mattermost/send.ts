@@ -1,4 +1,4 @@
-import { getMattermostRuntime } from "../runtime.js";
+import { getMattermostRuntime } from "../../src/runtime.js";
 import { resolveMattermostAccount } from "./accounts.js";
 import {
   createMattermostClient,

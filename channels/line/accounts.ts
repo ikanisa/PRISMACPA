@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
 import type {
   LineConfig,
   LineAccountConfig,

@@ -1,4 +1,4 @@
-import type { TelegramGroupConfig } from "../config/types.js";
+import type { TelegramGroupConfig } from "../../src/config/types.js";
 import { makeProxyFetch } from "./proxy.js";
 
 const TELEGRAM_API_BASE = "https://api.telegram.org";

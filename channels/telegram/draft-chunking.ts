@@ -1,7 +1,7 @@
-import type { OpenClawConfig } from "../config/config.js";
-import { resolveTextChunkLimit } from "../auto-reply/chunk.js";
-import { getChannelDock } from "../channels/dock.js";
-import { normalizeAccountId } from "../routing/session-key.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import { resolveTextChunkLimit } from "../../src/auto-reply/chunk.js";
+import { getChannelDock } from "../../src/channels/dock.js";
+import { normalizeAccountId } from "../../src/routing/session-key.js";
 
 const DEFAULT_TELEGRAM_DRAFT_STREAM_MIN = 200;
 const DEFAULT_TELEGRAM_DRAFT_STREAM_MAX = 800;

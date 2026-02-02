@@ -4,7 +4,7 @@ import type {
   MSTeamsGraphMediaResult,
   MSTeamsInboundMedia,
 } from "./types.js";
-import { getMSTeamsRuntime } from "../runtime.js";
+import { getMSTeamsRuntime } from "../../src/runtime.js";
 import { downloadMSTeamsAttachments } from "./download.js";
 import {
   GRAPH_ROOT,

@@ -2,7 +2,7 @@
  * Signal reactions via signal-cli JSON-RPC API
  */
 
-import { loadConfig } from "../config/config.js";
+import { loadConfig } from "../../src/config/config.js";
 import { resolveSignalAccount } from "./accounts.js";
 import { signalRpcRequest } from "./client.js";
 

@@ -1,7 +1,7 @@
 import { messagingApi } from "@line/bot-sdk";
 import { readFile } from "node:fs/promises";
-import { loadConfig } from "../config/config.js";
-import { logVerbose } from "../globals.js";
+import { loadConfig } from "../../src/config/config.js";
+import { logVerbose } from "../../src/globals.js";
 import { resolveLineAccount } from "./accounts.js";
 
 type RichMenuRequest = messagingApi.RichMenuRequest;

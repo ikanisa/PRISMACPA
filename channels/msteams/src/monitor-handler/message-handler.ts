@@ -32,9 +32,9 @@ import {
   resolveMSTeamsReplyPolicy,
   resolveMSTeamsRouteConfig,
 } from "../policy.js";
-import { extractMSTeamsPollVote } from "../polls.js";
+import { extractMSTeamsPollVote } from "../../src/polls.js";
 import { createMSTeamsReplyDispatcher } from "../reply-dispatcher.js";
-import { getMSTeamsRuntime } from "../runtime.js";
+import { getMSTeamsRuntime } from "../../src/runtime.js";
 import { recordMSTeamsSentMessage, wasMSTeamsMessageSent } from "../sent-message-cache.js";
 import { resolveMSTeamsInboundMedia } from "./inbound-media.js";
 

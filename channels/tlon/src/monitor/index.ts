@@ -1,6 +1,6 @@
 import type { RuntimeEnv, ReplyPayload, OpenClawConfig } from "openclaw/plugin-sdk";
 import { format } from "node:util";
-import { getTlonRuntime } from "../runtime.js";
+import { getTlonRuntime } from "../../src/runtime.js";
 import { normalizeShip, parseChannelNest } from "../targets.js";
 import { resolveTlonAccount } from "../types.js";
 import { authenticate } from "../urbit/auth.js";

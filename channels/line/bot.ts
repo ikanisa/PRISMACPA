@@ -1,11 +1,11 @@
 import type { WebhookRequestBody } from "@line/bot-sdk";
 import type { Request, Response, NextFunction } from "express";
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
 import type { LineInboundContext } from "./bot-message-context.js";
 import type { ResolvedLineAccount } from "./types.js";
-import { loadConfig } from "../config/config.js";
-import { logVerbose } from "../globals.js";
+import { loadConfig } from "../../src/config/config.js";
+import { logVerbose } from "../../src/globals.js";
 import { resolveLineAccount } from "./accounts.js";
 import { handleLineWebhookEvents } from "./bot-handlers.js";
 import { startLineWebhook } from "./webhook.js";

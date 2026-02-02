@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { MatrixStoragePaths } from "./types.js";
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 
 export const DEFAULT_ACCOUNT_KEY = "default";
 const STORAGE_META_FILENAME = "storage-meta.json";

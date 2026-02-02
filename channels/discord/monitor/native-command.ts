@@ -16,11 +16,11 @@ import type {
   CommandArgValues,
   CommandArgs,
   NativeCommandSpec,
-} from "../../auto-reply/commands-registry.js";
-import type { ReplyPayload } from "../../auto-reply/types.js";
-import type { OpenClawConfig, loadConfig } from "../../config/config.js";
-import { resolveEffectiveMessagesConfig, resolveHumanDelayConfig } from "../../agents/identity.js";
-import { resolveChunkMode, resolveTextChunkLimit } from "../../auto-reply/chunk.js";
+} from "../../../src/auto-reply/commands-registry.js";
+import type { ReplyPayload } from "../../../src/auto-reply/types.js";
+import type { OpenClawConfig, loadConfig } from "../../../src/config/config.js";
+import { resolveEffectiveMessagesConfig, resolveHumanDelayConfig } from "../../../src/agents/identity.js";
+import { resolveChunkMode, resolveTextChunkLimit } from "../../../src/auto-reply/chunk.js";
 import {
   buildCommandTextFromArgs,
   findCommandByNativeName,
@@ -29,17 +29,17 @@ import {
   resolveCommandArgChoices,
   resolveCommandArgMenu,
   serializeCommandArgs,
-} from "../../auto-reply/commands-registry.js";
-import { finalizeInboundContext } from "../../auto-reply/reply/inbound-context.js";
-import { dispatchReplyWithDispatcher } from "../../auto-reply/reply/provider-dispatcher.js";
-import { resolveCommandAuthorizedFromAuthorizers } from "../../channels/command-gating.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
+} from "../../../src/auto-reply/commands-registry.js";
+import { finalizeInboundContext } from "../../../src/auto-reply/reply/inbound-context.js";
+import { dispatchReplyWithDispatcher } from "../../../src/auto-reply/reply/provider-dispatcher.js";
+import { resolveCommandAuthorizedFromAuthorizers } from "../../../src/channels/command-gating.js";
+import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
-import { loadWebMedia } from "../../web/media.js";
+} from "../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
+import { loadWebMedia } from "../../../src/web/media.js";
 import { chunkDiscordTextWithMode } from "../chunk.js";
 import {
   allowListMatches,

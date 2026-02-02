@@ -160,7 +160,7 @@ export function getResourcesByScope(scope: ResourceScope): Record<string, Resour
 export function getResource(id: string): Resource | undefined {
     for (const scope of Object.values(RESOURCE_LIBRARY)) {
         if (id in scope) {
-            return scope[id as keyof typeof scope];
+            return scope[id];
         }
     }
     return undefined;

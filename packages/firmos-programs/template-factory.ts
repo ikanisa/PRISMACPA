@@ -299,11 +299,11 @@ export function searchTemplates(
     }
 
     // Sort by version (highest first) - simple semver comparison
-    const sorted = [...matches].sort((a, b) => {
+    const sorted = matches.toSorted((a, b) => {
         const aVer = a.version.split('.').map(Number);
         const bVer = b.version.split('.').map(Number);
         for (let i = 0; i < 3; i++) {
-            if (bVer[i] !== aVer[i]) return bVer[i] - aVer[i];
+            if (bVer[i] !== aVer[i]) { return bVer[i] - aVer[i]; }
         }
         return 0;
     });
@@ -431,7 +431,7 @@ export function canPublish(
     const missing: string[] = [];
 
     for (const gate of requiredGates) {
-        if (gate === 'operator_ack_optional') continue;
+        if (gate === 'operator_ack_optional') { continue; }
 
         const hasApproval = approvals.some(a => a.type === gate);
         if (!hasApproval) {

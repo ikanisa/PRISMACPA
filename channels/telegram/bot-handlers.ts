@@ -1,19 +1,19 @@
 import type { TelegramMessage } from "./bot/types.js";
-import { resolveDefaultAgentId } from "../agents/agent-scope.js";
+import { resolveDefaultAgentId } from "../../src/agents/agent-scope.js";
 // @ts-nocheck
-import { hasControlCommand } from "../auto-reply/command-detection.js";
+import { hasControlCommand } from "../../src/auto-reply/command-detection.js";
 import {
   createInboundDebouncer,
   resolveInboundDebounceMs,
-} from "../auto-reply/inbound-debounce.js";
-import { buildCommandsPaginationKeyboard } from "../auto-reply/reply/commands-info.js";
-import { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
-import { buildCommandsMessagePaginated } from "../auto-reply/status.js";
-import { resolveChannelConfigWrites } from "../channels/plugins/config-writes.js";
-import { loadConfig } from "../config/config.js";
-import { writeConfigFile } from "../config/io.js";
-import { danger, logVerbose, warn } from "../globals.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+} from "../../src/auto-reply/inbound-debounce.js";
+import { buildCommandsPaginationKeyboard } from "../../src/auto-reply/reply/commands-info.js";
+import { listSkillCommandsForAgents } from "../../src/auto-reply/skill-commands.js";
+import { buildCommandsMessagePaginated } from "../../src/auto-reply/status.js";
+import { resolveChannelConfigWrites } from "../../src/channels/plugins/config-writes.js";
+import { loadConfig } from "../../src/config/config.js";
+import { writeConfigFile } from "../../src/config/io.js";
+import { danger, logVerbose, warn } from "../../src/globals.js";
+import { readChannelAllowFromStore } from "../../src/pairing/pairing-store.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { firstDefined, isSenderAllowed, normalizeAllowFromWithStore } from "./bot-access.js";
 import { RegisterTelegramHandlerParams } from "./bot-native-commands.js";

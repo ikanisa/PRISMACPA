@@ -1,0 +1,16 @@
+{
+    "name": "@firmos/agents",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./index.ts",
+    "exports": {
+        ".": "./index.ts",
+        "./l5": "./l5-agents.ts",
+        "./types": "./types.ts",
+        "./system-prompts": "./system-prompts.ts"
+    },
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
+}

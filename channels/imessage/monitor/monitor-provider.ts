@@ -1,48 +1,48 @@
 import fs from "node:fs/promises";
 import type { IMessagePayload, MonitorIMessageOpts } from "./types.js";
-import { resolveHumanDelayConfig } from "../../agents/identity.js";
-import { resolveTextChunkLimit } from "../../auto-reply/chunk.js";
-import { hasControlCommand } from "../../auto-reply/command-detection.js";
-import { dispatchInboundMessage } from "../../auto-reply/dispatch.js";
+import { resolveHumanDelayConfig } from "../../../src/agents/identity.js";
+import { resolveTextChunkLimit } from "../../../src/auto-reply/chunk.js";
+import { hasControlCommand } from "../../../src/auto-reply/command-detection.js";
+import { dispatchInboundMessage } from "../../../src/auto-reply/dispatch.js";
 import {
   formatInboundEnvelope,
   formatInboundFromLabel,
   resolveEnvelopeFormatOptions,
-} from "../../auto-reply/envelope.js";
+} from "../../../src/auto-reply/envelope.js";
 import {
   createInboundDebouncer,
   resolveInboundDebounceMs,
-} from "../../auto-reply/inbound-debounce.js";
+} from "../../../src/auto-reply/inbound-debounce.js";
 import {
   buildPendingHistoryContextFromMap,
   clearHistoryEntriesIfEnabled,
   DEFAULT_GROUP_HISTORY_LIMIT,
   recordPendingHistoryEntryIfEnabled,
   type HistoryEntry,
-} from "../../auto-reply/reply/history.js";
-import { finalizeInboundContext } from "../../auto-reply/reply/inbound-context.js";
-import { buildMentionRegexes, matchesMentionPatterns } from "../../auto-reply/reply/mentions.js";
-import { createReplyDispatcher } from "../../auto-reply/reply/reply-dispatcher.js";
-import { resolveControlCommandGate } from "../../channels/command-gating.js";
-import { logInboundDrop } from "../../channels/logging.js";
-import { createReplyPrefixContext } from "../../channels/reply-prefix.js";
-import { recordInboundSession } from "../../channels/session.js";
-import { loadConfig } from "../../config/config.js";
+} from "../../../src/auto-reply/reply/history.js";
+import { finalizeInboundContext } from "../../../src/auto-reply/reply/inbound-context.js";
+import { buildMentionRegexes, matchesMentionPatterns } from "../../../src/auto-reply/reply/mentions.js";
+import { createReplyDispatcher } from "../../../src/auto-reply/reply/reply-dispatcher.js";
+import { resolveControlCommandGate } from "../../../src/channels/command-gating.js";
+import { logInboundDrop } from "../../../src/channels/logging.js";
+import { createReplyPrefixContext } from "../../../src/channels/reply-prefix.js";
+import { recordInboundSession } from "../../../src/channels/session.js";
+import { loadConfig } from "../../../src/config/config.js";
 import {
   resolveChannelGroupPolicy,
   resolveChannelGroupRequireMention,
-} from "../../config/group-policy.js";
-import { readSessionUpdatedAt, resolveStorePath } from "../../config/sessions.js";
-import { danger, logVerbose, shouldLogVerbose } from "../../globals.js";
-import { waitForTransportReady } from "../../infra/transport-ready.js";
-import { mediaKindFromMime } from "../../media/constants.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
+} from "../../../src/config/group-policy.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../../src/config/sessions.js";
+import { danger, logVerbose, shouldLogVerbose } from "../../../src/globals.js";
+import { waitForTransportReady } from "../../../src/infra/transport-ready.js";
+import { mediaKindFromMime } from "../../../src/media/constants.js";
+import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
-import { truncateUtf16Safe } from "../../utils.js";
+} from "../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
+import { truncateUtf16Safe } from "../../../src/utils.js";
 import { resolveIMessageAccount } from "../accounts.js";
 import { createIMessageRpcClient } from "../client.js";
 import { probeIMessage } from "../probe.js";

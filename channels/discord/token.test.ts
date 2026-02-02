@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
 import { resolveDiscordToken } from "./token.js";
 
 describe("resolveDiscordToken", () => {

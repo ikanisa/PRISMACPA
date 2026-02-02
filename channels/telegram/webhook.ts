@@ -1,17 +1,17 @@
 import { webhookCallback } from "grammy";
 import { createServer } from "node:http";
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import { isDiagnosticsEnabled } from "../infra/diagnostic-events.js";
-import { formatErrorMessage } from "../infra/errors.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
+import { isDiagnosticsEnabled } from "../../src/infra/diagnostic-events.js";
+import { formatErrorMessage } from "../../src/infra/errors.js";
 import {
   logWebhookError,
   logWebhookProcessed,
   logWebhookReceived,
   startDiagnosticHeartbeat,
   stopDiagnosticHeartbeat,
-} from "../logging/diagnostic.js";
-import { defaultRuntime } from "../runtime.js";
+} from "../../src/logging/diagnostic.js";
+import { defaultRuntime } from "../../src/runtime.js";
 import { resolveTelegramAllowedUpdates } from "./allowed-updates.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { createTelegramBot } from "./bot.js";

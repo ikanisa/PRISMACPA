@@ -187,7 +187,7 @@ export function logUnauthorizedToolAccess(
  */
 export function resolveIncident(incidentId: string, resolution: string): Incident | null {
     const incident = incidents.find(i => i.id === incidentId);
-    if (!incident) return null;
+    if (!incident) { return null; }
 
     incident.resolvedAt = new Date();
     incident.resolution = resolution;

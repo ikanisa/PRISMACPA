@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { DiscordExecApprovalConfig } from "../../config/types.discord.js";
+import type { DiscordExecApprovalConfig } from "../../../src/config/types.discord.js";
 import {
   buildExecApprovalCustomId,
   parseExecApprovalData,

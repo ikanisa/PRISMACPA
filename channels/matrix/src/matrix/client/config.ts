@@ -1,7 +1,7 @@
 import { MatrixClient } from "@vector-im/matrix-bot-sdk";
-import type { CoreConfig } from "../types.js";
+import type { CoreConfig } from "../../src/types.js";
 import type { MatrixAuth, MatrixResolvedConfig } from "./types.js";
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 import { ensureMatrixSdkLoggingConfigured } from "./logging.js";
 
 function clean(value?: string): string {

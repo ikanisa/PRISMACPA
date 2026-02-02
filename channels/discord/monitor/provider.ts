@@ -2,23 +2,23 @@ import { Client } from "@buape/carbon";
 import { GatewayIntents, GatewayPlugin } from "@buape/carbon/gateway";
 import { Routes } from "discord-api-types/v10";
 import { inspect } from "node:util";
-import type { HistoryEntry } from "../../auto-reply/reply/history.js";
-import type { OpenClawConfig, ReplyToMode } from "../../config/config.js";
-import type { RuntimeEnv } from "../../runtime.js";
-import { resolveTextChunkLimit } from "../../auto-reply/chunk.js";
-import { listNativeCommandSpecsForConfig } from "../../auto-reply/commands-registry.js";
-import { listSkillCommandsForAgents } from "../../auto-reply/skill-commands.js";
-import { mergeAllowlist, summarizeMapping } from "../../channels/allowlists/resolve-utils.js";
+import type { HistoryEntry } from "../../../src/auto-reply/reply/history.js";
+import type { OpenClawConfig, ReplyToMode } from "../../../src/config/config.js";
+import type { RuntimeEnv } from "../../../src/runtime.js";
+import { resolveTextChunkLimit } from "../../../src/auto-reply/chunk.js";
+import { listNativeCommandSpecsForConfig } from "../../../src/auto-reply/commands-registry.js";
+import { listSkillCommandsForAgents } from "../../../src/auto-reply/skill-commands.js";
+import { mergeAllowlist, summarizeMapping } from "../../../src/channels/allowlists/resolve-utils.js";
 import {
   isNativeCommandsExplicitlyDisabled,
   resolveNativeCommandsEnabled,
   resolveNativeSkillsEnabled,
-} from "../../config/commands.js";
-import { loadConfig } from "../../config/config.js";
-import { danger, logVerbose, shouldLogVerbose, warn } from "../../globals.js";
-import { formatErrorMessage } from "../../infra/errors.js";
-import { createDiscordRetryRunner } from "../../infra/retry-policy.js";
-import { createSubsystemLogger } from "../../logging/subsystem.js";
+} from "../../../src/config/commands.js";
+import { loadConfig } from "../../../src/config/config.js";
+import { danger, logVerbose, shouldLogVerbose, warn } from "../../../src/globals.js";
+import { formatErrorMessage } from "../../../src/infra/errors.js";
+import { createDiscordRetryRunner } from "../../../src/infra/retry-policy.js";
+import { createSubsystemLogger } from "../../../src/logging/subsystem.js";
 import { resolveDiscordAccount } from "../accounts.js";
 import { attachDiscordGatewayLogging } from "../gateway-logging.js";
 import { getDiscordGatewayEmitter, waitForDiscordGatewayStop } from "../monitor.gateway.js";
@@ -121,7 +121,7 @@ function formatDiscordDeployErrorDetails(err: unknown): string {
 }
 
 function resolveDiscordGatewayIntents(
-  intentsConfig?: import("../../config/types.discord.js").DiscordIntentsConfig,
+  intentsConfig?: import("../../../src/config/types.discord.js").DiscordIntentsConfig,
 ): number {
   let intents =
     GatewayIntents.Guilds |

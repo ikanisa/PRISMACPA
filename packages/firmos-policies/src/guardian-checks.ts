@@ -274,7 +274,7 @@ export function calculateEvidenceQualityScore(
     requiredEvidence: EvidenceType[]
 ): { score: number; coverage: number; missing: EvidenceType[] } {
     const linkedSet = new Set(linkedEvidence);
-    const requiredSet = new Set(requiredEvidence);
+    const _requiredSet = new Set(requiredEvidence);
 
     const covered = requiredEvidence.filter(e => linkedSet.has(e)).length;
     const missing = requiredEvidence.filter(e => !linkedSet.has(e));

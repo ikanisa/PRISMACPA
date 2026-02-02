@@ -1,4 +1,4 @@
-import type { SlackSlashCommandConfig } from "../../config/config.js";
+import type { SlackSlashCommandConfig } from "../../../src/config/config.js";
 
 export function normalizeSlackSlashCommandName(raw: string) {
   return raw.replace(/^\/+/, "");

@@ -2,7 +2,7 @@ import { messagingApi } from "@line/bot-sdk";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { logVerbose } from "../globals.js";
+import { logVerbose } from "../../src/globals.js";
 
 interface DownloadResult {
   path: string;

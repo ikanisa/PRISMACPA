@@ -10,10 +10,10 @@
  */
 
 import type {
-    EnhancedAgentManifest,
-    Skill,
-    ResourceDependencies,
-    EvidenceType
+    EnhancedAgentManifest
+
+
+
 } from './types.js';
 
 // =============================================================================

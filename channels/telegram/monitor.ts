@@ -1,11 +1,11 @@
 import { type RunOptions, run } from "@grammyjs/runner";
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import { resolveAgentMaxConcurrent } from "../config/agent-limits.js";
-import { loadConfig } from "../config/config.js";
-import { computeBackoff, sleepWithAbort } from "../infra/backoff.js";
-import { formatErrorMessage } from "../infra/errors.js";
-import { formatDurationMs } from "../infra/format-duration.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
+import { resolveAgentMaxConcurrent } from "../../src/config/agent-limits.js";
+import { loadConfig } from "../../src/config/config.js";
+import { computeBackoff, sleepWithAbort } from "../../src/infra/backoff.js";
+import { formatErrorMessage } from "../../src/infra/errors.js";
+import { formatDurationMs } from "../../src/infra/format-duration.js";
 import { resolveTelegramAccount } from "./accounts.js";
 import { resolveTelegramAllowedUpdates } from "./allowed-updates.js";
 import { createTelegramBot } from "./bot.js";

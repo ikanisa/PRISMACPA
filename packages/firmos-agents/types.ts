@@ -258,7 +258,9 @@ export interface AgentResponse {
  * Validate an agent response has all required fields
  */
 export function validateAgentResponse(response: unknown): response is AgentResponse {
-    if (typeof response !== 'object' || response === null) return false;
+    if (typeof response !== 'object' || response === null) {
+        return false;
+    }
 
     const r = response as Record<string, unknown>;
     const requiredArrayFields = [
@@ -266,10 +268,14 @@ export function validateAgentResponse(response: unknown): response is AgentRespo
         'assumptions', 'risks_and_flags', 'escalations_requested', 'next_actions'
     ];
 
-    if (typeof r.summary !== 'string') return false;
+    if (typeof r.summary !== 'string') {
+        return false;
+    }
 
     for (const field of requiredArrayFields) {
-        if (!Array.isArray(r[field])) return false;
+        if (!Array.isArray(r[field])) {
+            return false;
+        }
     }
 
     return true;

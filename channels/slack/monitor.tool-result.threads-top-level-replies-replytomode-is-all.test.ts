@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { resetInboundDedupe } from "../auto-reply/reply/inbound-dedupe.js";
+import { resetInboundDedupe } from "../../src/auto-reply/reply/inbound-dedupe.js";
 import {
   defaultSlackTestConfig,
   flush,

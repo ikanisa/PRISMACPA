@@ -1,8 +1,8 @@
 import type { WebClient as SlackWebClient } from "@slack/web-api";
-import type { FetchLike } from "../../media/fetch.js";
+import type { FetchLike } from "../../../src/media/fetch.js";
 import type { SlackFile } from "../types.js";
-import { fetchRemoteMedia } from "../../media/fetch.js";
-import { saveMediaBuffer } from "../../media/store.js";
+import { fetchRemoteMedia } from "../../../src/media/fetch.js";
+import { saveMediaBuffer } from "../../../src/media/store.js";
 
 /**
  * Fetches a URL with Authorization header, handling cross-origin redirects.

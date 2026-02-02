@@ -1,22 +1,22 @@
-import { resolveAgentDir } from "../agents/agent-scope.js";
+import { resolveAgentDir } from "../../src/agents/agent-scope.js";
 // @ts-nocheck
 import {
   findModelInCatalog,
   loadModelCatalog,
   modelSupportsVision,
-} from "../agents/model-catalog.js";
-import { resolveDefaultModelForAgent } from "../agents/model-selection.js";
-import { EmbeddedBlockChunker } from "../agents/pi-embedded-block-chunker.js";
-import { resolveChunkMode } from "../auto-reply/chunk.js";
-import { clearHistoryEntriesIfEnabled } from "../auto-reply/reply/history.js";
-import { dispatchReplyWithBufferedBlockDispatcher } from "../auto-reply/reply/provider-dispatcher.js";
-import { removeAckReactionAfterReply } from "../channels/ack-reactions.js";
-import { logAckFailure, logTypingFailure } from "../channels/logging.js";
-import { createReplyPrefixContext } from "../channels/reply-prefix.js";
-import { createTypingCallbacks } from "../channels/typing.js";
-import { OpenClawConfig } from "../config/config.js";
-import { resolveMarkdownTableMode } from "../config/markdown-tables.js";
-import { danger, logVerbose } from "../globals.js";
+} from "../../src/agents/model-catalog.js";
+import { resolveDefaultModelForAgent } from "../../src/agents/model-selection.js";
+import { EmbeddedBlockChunker } from "../../src/agents/pi-embedded-block-chunker.js";
+import { resolveChunkMode } from "../../src/auto-reply/chunk.js";
+import { clearHistoryEntriesIfEnabled } from "../../src/auto-reply/reply/history.js";
+import { dispatchReplyWithBufferedBlockDispatcher } from "../../src/auto-reply/reply/provider-dispatcher.js";
+import { removeAckReactionAfterReply } from "../../src/channels/ack-reactions.js";
+import { logAckFailure, logTypingFailure } from "../../src/channels/logging.js";
+import { createReplyPrefixContext } from "../../src/channels/reply-prefix.js";
+import { createTypingCallbacks } from "../../src/channels/typing.js";
+import { OpenClawConfig } from "../../src/config/config.js";
+import { resolveMarkdownTableMode } from "../../src/config/markdown-tables.js";
+import { danger, logVerbose } from "../../src/globals.js";
 import { deliverReplies } from "./bot/delivery.js";
 import { resolveTelegramDraftStreamingChunking } from "./draft-chunking.js";
 import { createTelegramDraftStream } from "./draft-stream.js";

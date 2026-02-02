@@ -5,7 +5,7 @@ import {
   type MessagingTarget,
   type MessagingTargetKind,
   type MessagingTargetParseOptions,
-} from "../channels/targets.js";
+} from "../../src/channels/targets.js";
 
 export type SlackTargetKind = MessagingTargetKind;
 

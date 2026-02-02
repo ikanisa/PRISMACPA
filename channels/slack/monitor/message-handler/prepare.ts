@@ -1,41 +1,41 @@
-import type { FinalizedMsgContext } from "../../../auto-reply/templating.js";
+import type { FinalizedMsgContext } from "../../../../src/auto-reply/templating.js";
 import type { ResolvedSlackAccount } from "../../accounts.js";
 import type { SlackMessageEvent } from "../../types.js";
 import type { PreparedSlackMessage } from "./types.js";
-import { resolveAckReaction } from "../../../agents/identity.js";
-import { hasControlCommand } from "../../../auto-reply/command-detection.js";
-import { shouldHandleTextCommands } from "../../../auto-reply/commands-registry.js";
+import { resolveAckReaction } from "../../../../src/agents/identity.js";
+import { hasControlCommand } from "../../../../src/auto-reply/command-detection.js";
+import { shouldHandleTextCommands } from "../../../../src/auto-reply/commands-registry.js";
 import {
   formatInboundEnvelope,
   formatThreadStarterEnvelope,
   resolveEnvelopeFormatOptions,
-} from "../../../auto-reply/envelope.js";
+} from "../../../../src/auto-reply/envelope.js";
 import {
   buildPendingHistoryContextFromMap,
   recordPendingHistoryEntryIfEnabled,
-} from "../../../auto-reply/reply/history.js";
-import { finalizeInboundContext } from "../../../auto-reply/reply/inbound-context.js";
+} from "../../../../src/auto-reply/reply/history.js";
+import { finalizeInboundContext } from "../../../../src/auto-reply/reply/inbound-context.js";
 import {
   buildMentionRegexes,
   matchesMentionWithExplicit,
-} from "../../../auto-reply/reply/mentions.js";
+} from "../../../../src/auto-reply/reply/mentions.js";
 import {
   shouldAckReaction as shouldAckReactionGate,
   type AckReactionScope,
-} from "../../../channels/ack-reactions.js";
-import { formatAllowlistMatchMeta } from "../../../channels/allowlist-match.js";
-import { resolveControlCommandGate } from "../../../channels/command-gating.js";
-import { resolveConversationLabel } from "../../../channels/conversation-label.js";
-import { logInboundDrop } from "../../../channels/logging.js";
-import { resolveMentionGatingWithBypass } from "../../../channels/mention-gating.js";
-import { recordInboundSession } from "../../../channels/session.js";
-import { readSessionUpdatedAt, resolveStorePath } from "../../../config/sessions.js";
-import { logVerbose, shouldLogVerbose } from "../../../globals.js";
-import { enqueueSystemEvent } from "../../../infra/system-events.js";
-import { buildPairingReply } from "../../../pairing/pairing-messages.js";
-import { upsertChannelPairingRequest } from "../../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../../routing/resolve-route.js";
-import { resolveThreadSessionKeys } from "../../../routing/session-key.js";
+} from "../../../../src/channels/ack-reactions.js";
+import { formatAllowlistMatchMeta } from "../../../../src/channels/allowlist-match.js";
+import { resolveControlCommandGate } from "../../../../src/channels/command-gating.js";
+import { resolveConversationLabel } from "../../../../src/channels/conversation-label.js";
+import { logInboundDrop } from "../../../../src/channels/logging.js";
+import { resolveMentionGatingWithBypass } from "../../../../src/channels/mention-gating.js";
+import { recordInboundSession } from "../../../../src/channels/session.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../../../src/config/sessions.js";
+import { logVerbose, shouldLogVerbose } from "../../../../src/globals.js";
+import { enqueueSystemEvent } from "../../../../src/infra/system-events.js";
+import { buildPairingReply } from "../../../../src/pairing/pairing-messages.js";
+import { upsertChannelPairingRequest } from "../../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../../src/routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../../../src/routing/session-key.js";
 import { reactSlackMessage } from "../../actions.js";
 import { sendMessageSlack } from "../../send.js";
 import { resolveSlackThreadContext } from "../../threading.js";

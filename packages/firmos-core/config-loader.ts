@@ -176,7 +176,7 @@ export function getServicesByScope(scope: 'global' | 'malta' | 'rwanda'): Servic
  */
 export function canAccessPack(agentId: string, packId: string): boolean {
     const agent = getAgent(agentId);
-    if (!agent) return false;
+    if (!agent) { return false; }
     return agent.pack_access.includes(packId) || agent.pack_access.includes('*');
 }
 

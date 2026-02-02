@@ -6,11 +6,11 @@ import {
   MessageReactionRemoveListener,
   PresenceUpdateListener,
 } from "@buape/carbon";
-import { danger } from "../../globals.js";
-import { formatDurationSeconds } from "../../infra/format-duration.js";
-import { enqueueSystemEvent } from "../../infra/system-events.js";
-import { createSubsystemLogger } from "../../logging/subsystem.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
+import { danger } from "../../../src/globals.js";
+import { formatDurationSeconds } from "../../../src/infra/format-duration.js";
+import { enqueueSystemEvent } from "../../../src/infra/system-events.js";
+import { createSubsystemLogger } from "../../../src/logging/subsystem.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
 import {
   normalizeDiscordSlug,
   resolveDiscordChannelConfigWithFallback,
@@ -21,9 +21,9 @@ import { formatDiscordReactionEmoji, formatDiscordUserTag } from "./format.js";
 import { resolveDiscordChannelInfo } from "./message-utils.js";
 import { setPresence } from "./presence-cache.js";
 
-type LoadedConfig = ReturnType<typeof import("../../config/config.js").loadConfig>;
-type RuntimeEnv = import("../../runtime.js").RuntimeEnv;
-type Logger = ReturnType<typeof import("../../logging/subsystem.js").createSubsystemLogger>;
+type LoadedConfig = ReturnType<typeof import("../../../src/config/config.js").loadConfig>;
+type RuntimeEnv = import("../../../src/runtime.js").RuntimeEnv;
+type Logger = ReturnType<typeof import("../../../src/logging/subsystem.js").createSubsystemLogger>;
 
 export type DiscordMessageEvent = Parameters<MessageCreateListener["handle"]>[0];
 

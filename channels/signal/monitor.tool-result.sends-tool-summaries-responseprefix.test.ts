@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
-import { resetInboundDedupe } from "../auto-reply/reply/inbound-dedupe.js";
-import { peekSystemEvents, resetSystemEventsForTest } from "../infra/system-events.js";
-import { resolveAgentRoute } from "../routing/resolve-route.js";
-import { normalizeE164 } from "../utils.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import { resetInboundDedupe } from "../../src/auto-reply/reply/inbound-dedupe.js";
+import { peekSystemEvents, resetSystemEventsForTest } from "../../src/infra/system-events.js";
+import { resolveAgentRoute } from "../../src/routing/resolve-route.js";
+import { normalizeE164 } from "../../src/utils.js";
 import { monitorSignalProvider } from "./monitor.js";
 
 const waitForTransportReadyMock = vi.hoisted(() => vi.fn());

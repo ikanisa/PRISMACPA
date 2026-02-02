@@ -1,5 +1,5 @@
 import type { SlackMonitorContext } from "./context.js";
-import { readChannelAllowFromStore } from "../../pairing/pairing-store.js";
+import { readChannelAllowFromStore } from "../../../src/pairing/pairing-store.js";
 import { allowListMatches, normalizeAllowList, normalizeAllowListLower } from "./allow-list.js";
 
 export async function resolveSlackEffectiveAllowFrom(ctx: SlackMonitorContext) {

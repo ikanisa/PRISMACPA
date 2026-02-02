@@ -1,18 +1,18 @@
 import type { MessageEvent, StickerEventMessage, EventSource, PostbackEvent } from "@line/bot-sdk";
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
 import type { ResolvedLineAccount } from "./types.js";
-import { formatInboundEnvelope, resolveEnvelopeFormatOptions } from "../auto-reply/envelope.js";
-import { finalizeInboundContext } from "../auto-reply/reply/inbound-context.js";
-import { formatLocationText, toLocationContext } from "../channels/location.js";
+import { formatInboundEnvelope, resolveEnvelopeFormatOptions } from "../../src/auto-reply/envelope.js";
+import { finalizeInboundContext } from "../../src/auto-reply/reply/inbound-context.js";
+import { formatLocationText, toLocationContext } from "../../src/channels/location.js";
 import {
   readSessionUpdatedAt,
   recordSessionMetaFromInbound,
   resolveStorePath,
   updateLastRoute,
-} from "../config/sessions.js";
-import { logVerbose, shouldLogVerbose } from "../globals.js";
-import { recordChannelActivity } from "../infra/channel-activity.js";
-import { resolveAgentRoute } from "../routing/resolve-route.js";
+} from "../../src/config/sessions.js";
+import { logVerbose, shouldLogVerbose } from "../../src/globals.js";
+import { recordChannelActivity } from "../../src/infra/channel-activity.js";
+import { resolveAgentRoute } from "../../src/routing/resolve-route.js";
 
 interface MediaRef {
   path: string;

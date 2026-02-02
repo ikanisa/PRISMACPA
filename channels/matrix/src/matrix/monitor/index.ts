@@ -2,7 +2,7 @@ import { format } from "node:util";
 import { mergeAllowlist, summarizeMapping, type RuntimeEnv } from "openclaw/plugin-sdk";
 import type { CoreConfig, ReplyToMode } from "../../types.js";
 import { resolveMatrixTargets } from "../../resolve-targets.js";
-import { getMatrixRuntime } from "../../runtime.js";
+import { getMatrixRuntime } from "../../src/runtime.js";
 import { setActiveMatrixClient } from "../active-client.js";
 import {
   isBunRuntime,

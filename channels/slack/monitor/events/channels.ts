@@ -5,10 +5,10 @@ import type {
   SlackChannelIdChangedEvent,
   SlackChannelRenamedEvent,
 } from "../types.js";
-import { resolveChannelConfigWrites } from "../../../channels/plugins/config-writes.js";
-import { loadConfig, writeConfigFile } from "../../../config/config.js";
-import { danger, warn } from "../../../globals.js";
-import { enqueueSystemEvent } from "../../../infra/system-events.js";
+import { resolveChannelConfigWrites } from "../../../../src/channels/plugins/config-writes.js";
+import { loadConfig, writeConfigFile } from "../../../../src/config/config.js";
+import { danger, warn } from "../../../../src/globals.js";
+import { enqueueSystemEvent } from "../../../../src/infra/system-events.js";
 import { migrateSlackChannelConfig } from "../../channel-migration.js";
 import { resolveSlackChannelLabel } from "../channel-config.js";
 

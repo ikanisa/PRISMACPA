@@ -1,6 +1,6 @@
 import type { WebClient } from "@slack/web-api";
-import { loadConfig } from "../config/config.js";
-import { logVerbose } from "../globals.js";
+import { loadConfig } from "../../src/config/config.js";
+import { logVerbose } from "../../src/globals.js";
 import { resolveSlackAccount } from "./accounts.js";
 import { createSlackWebClient } from "./client.js";
 import { sendMessageSlack } from "./send.js";

@@ -1,6 +1,6 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { IMessageAccountConfig } from "../config/types.js";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { IMessageAccountConfig } from "../../src/config/types.js";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../src/routing/session-key.js";
 
 export type ResolvedIMessageAccount = {
   accountId: string;

@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "../config/config.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
 import { resolveTelegramAccount } from "./accounts.js";
 
 export type TelegramReactionLevel = "off" | "ack" | "minimal" | "extensive";

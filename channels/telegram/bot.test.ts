@@ -7,7 +7,7 @@ import { expectInboundContextContract } from "../../test/helpers/inbound-contrac
 import {
   listNativeCommandSpecs,
   listNativeCommandSpecsForConfig,
-} from "../auto-reply/commands-registry.js";
+} from "../../src/auto-reply/commands-registry.js";
 import { resolveTelegramFetch } from "./fetch.js";
 
 let createTelegramBot: typeof import("./bot.js").createTelegramBot;

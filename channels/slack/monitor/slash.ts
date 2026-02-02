@@ -1,31 +1,31 @@
 import type { SlackActionMiddlewareArgs, SlackCommandMiddlewareArgs } from "@slack/bolt";
-import type { ChatCommandDefinition, CommandArgs } from "../../auto-reply/commands-registry.js";
+import type { ChatCommandDefinition, CommandArgs } from "../../../src/auto-reply/commands-registry.js";
 import type { ResolvedSlackAccount } from "../accounts.js";
 import type { SlackMonitorContext } from "./context.js";
-import { resolveEffectiveMessagesConfig } from "../../agents/identity.js";
-import { resolveChunkMode } from "../../auto-reply/chunk.js";
+import { resolveEffectiveMessagesConfig } from "../../../src/agents/identity.js";
+import { resolveChunkMode } from "../../../src/auto-reply/chunk.js";
 import {
   buildCommandTextFromArgs,
   findCommandByNativeName,
   listNativeCommandSpecsForConfig,
   parseCommandArgs,
   resolveCommandArgMenu,
-} from "../../auto-reply/commands-registry.js";
-import { finalizeInboundContext } from "../../auto-reply/reply/inbound-context.js";
-import { dispatchReplyWithDispatcher } from "../../auto-reply/reply/provider-dispatcher.js";
-import { listSkillCommandsForAgents } from "../../auto-reply/skill-commands.js";
-import { formatAllowlistMatchMeta } from "../../channels/allowlist-match.js";
-import { resolveCommandAuthorizedFromAuthorizers } from "../../channels/command-gating.js";
-import { resolveConversationLabel } from "../../channels/conversation-label.js";
-import { resolveNativeCommandsEnabled, resolveNativeSkillsEnabled } from "../../config/commands.js";
-import { resolveMarkdownTableMode } from "../../config/markdown-tables.js";
-import { danger, logVerbose } from "../../globals.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
+} from "../../../src/auto-reply/commands-registry.js";
+import { finalizeInboundContext } from "../../../src/auto-reply/reply/inbound-context.js";
+import { dispatchReplyWithDispatcher } from "../../../src/auto-reply/reply/provider-dispatcher.js";
+import { listSkillCommandsForAgents } from "../../../src/auto-reply/skill-commands.js";
+import { formatAllowlistMatchMeta } from "../../../src/channels/allowlist-match.js";
+import { resolveCommandAuthorizedFromAuthorizers } from "../../../src/channels/command-gating.js";
+import { resolveConversationLabel } from "../../../src/channels/conversation-label.js";
+import { resolveNativeCommandsEnabled, resolveNativeSkillsEnabled } from "../../../src/config/commands.js";
+import { resolveMarkdownTableMode } from "../../../src/config/markdown-tables.js";
+import { danger, logVerbose } from "../../../src/globals.js";
+import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
+} from "../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
 import {
   normalizeAllowList,
   normalizeAllowListLower,

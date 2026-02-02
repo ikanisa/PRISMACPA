@@ -4,11 +4,11 @@ import {
   chunkMarkdownTextWithMode,
   resolveChunkMode,
   resolveTextChunkLimit,
-} from "../auto-reply/chunk.js";
-import { loadConfig } from "../config/config.js";
-import { resolveMarkdownTableMode } from "../config/markdown-tables.js";
-import { logVerbose } from "../globals.js";
-import { loadWebMedia } from "../web/media.js";
+} from "../../src/auto-reply/chunk.js";
+import { loadConfig } from "../../src/config/config.js";
+import { resolveMarkdownTableMode } from "../../src/config/markdown-tables.js";
+import { logVerbose } from "../../src/globals.js";
+import { loadWebMedia } from "../../src/web/media.js";
 import { resolveSlackAccount } from "./accounts.js";
 import { createSlackWebClient } from "./client.js";
 import { markdownToSlackMrkdwnChunks } from "./format.js";

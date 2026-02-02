@@ -1,11 +1,11 @@
 import type { Guild, User } from "@buape/carbon";
-import type { AllowlistMatch } from "../../channels/allowlist-match.js";
+import type { AllowlistMatch } from "../../../src/channels/allowlist-match.js";
 import {
   buildChannelKeyCandidates,
   resolveChannelEntryMatchWithFallback,
   resolveChannelMatchConfig,
   type ChannelMatchSource,
-} from "../../channels/channel-config.js";
+} from "../../../src/channels/channel-config.js";
 import { formatDiscordUserTag } from "./format.js";
 
 export type DiscordAllowList = {

@@ -1,4 +1,4 @@
-import type { RuntimeEnv } from "../../runtime.js";
+import type { RuntimeEnv } from "../../../src/runtime.js";
 import type { MonitorIMessageOpts } from "./types.js";
 
 export function resolveRuntime(opts: MonitorIMessageOpts): RuntimeEnv {

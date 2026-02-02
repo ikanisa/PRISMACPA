@@ -1,16 +1,16 @@
 import type { Bot, Context } from "grammy";
-import type { CommandArgs } from "../auto-reply/commands-registry.js";
-import type { OpenClawConfig } from "../config/config.js";
-import type { ChannelGroupPolicy } from "../config/group-policy.js";
+import type { CommandArgs } from "../../src/auto-reply/commands-registry.js";
+import type { OpenClawConfig } from "../../src/config/config.js";
+import type { ChannelGroupPolicy } from "../../src/config/group-policy.js";
 import type {
   ReplyToMode,
   TelegramAccountConfig,
   TelegramGroupConfig,
   TelegramTopicConfig,
-} from "../config/types.js";
-import type { RuntimeEnv } from "../runtime.js";
-import { resolveEffectiveMessagesConfig } from "../agents/identity.js";
-import { resolveChunkMode } from "../auto-reply/chunk.js";
+} from "../../src/config/types.js";
+import type { RuntimeEnv } from "../../src/runtime.js";
+import { resolveEffectiveMessagesConfig } from "../../src/agents/identity.js";
+import { resolveChunkMode } from "../../src/auto-reply/chunk.js";
 import {
   buildCommandTextFromArgs,
   findCommandByNativeName,
@@ -18,27 +18,27 @@ import {
   listNativeCommandSpecsForConfig,
   parseCommandArgs,
   resolveCommandArgMenu,
-} from "../auto-reply/commands-registry.js";
-import { finalizeInboundContext } from "../auto-reply/reply/inbound-context.js";
-import { dispatchReplyWithBufferedBlockDispatcher } from "../auto-reply/reply/provider-dispatcher.js";
-import { listSkillCommandsForAgents } from "../auto-reply/skill-commands.js";
-import { resolveCommandAuthorizedFromAuthorizers } from "../channels/command-gating.js";
-import { resolveMarkdownTableMode } from "../config/markdown-tables.js";
-import { resolveTelegramCustomCommands } from "../config/telegram-custom-commands.js";
+} from "../../src/auto-reply/commands-registry.js";
+import { finalizeInboundContext } from "../../src/auto-reply/reply/inbound-context.js";
+import { dispatchReplyWithBufferedBlockDispatcher } from "../../src/auto-reply/reply/provider-dispatcher.js";
+import { listSkillCommandsForAgents } from "../../src/auto-reply/skill-commands.js";
+import { resolveCommandAuthorizedFromAuthorizers } from "../../src/channels/command-gating.js";
+import { resolveMarkdownTableMode } from "../../src/config/markdown-tables.js";
+import { resolveTelegramCustomCommands } from "../../src/config/telegram-custom-commands.js";
 import {
   normalizeTelegramCommandName,
   TELEGRAM_COMMAND_NAME_PATTERN,
-} from "../config/telegram-custom-commands.js";
-import { danger, logVerbose } from "../globals.js";
-import { getChildLogger } from "../logging.js";
-import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
+} from "../../src/config/telegram-custom-commands.js";
+import { danger, logVerbose } from "../../src/globals.js";
+import { getChildLogger } from "../../src/logging.js";
+import { readChannelAllowFromStore } from "../../src/pairing/pairing-store.js";
 import {
   executePluginCommand,
   getPluginCommandSpecs,
   matchPluginCommand,
-} from "../plugins/commands.js";
-import { resolveAgentRoute } from "../routing/resolve-route.js";
-import { resolveThreadSessionKeys } from "../routing/session-key.js";
+} from "../../src/plugins/commands.js";
+import { resolveAgentRoute } from "../../src/routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../src/routing/session-key.js";
 import { withTelegramApiErrorLogging } from "./api-logging.js";
 import { firstDefined, isSenderAllowed, normalizeAllowFromWithStore } from "./bot-access.js";
 import { TelegramUpdateKeyContext } from "./bot-updates.js";

@@ -139,10 +139,10 @@ export const AGENT_TOOL_ACCESS: Record<string, ToolGroupId[]> = {
  */
 export function canAgentAccessTool(agentId: string, tool: string): boolean {
     const allowedGroups = AGENT_TOOL_ACCESS[agentId];
-    if (!allowedGroups) return false;
+    if (!allowedGroups) { return false; }
 
     const toolGroup = getToolGroup(tool);
-    if (!toolGroup) return false;
+    if (!toolGroup) { return false; }
 
     return allowedGroups.includes(toolGroup);
 }

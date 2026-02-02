@@ -3,30 +3,30 @@ import type {
   DiscordMessagePreflightContext,
   DiscordMessagePreflightParams,
 } from "./message-handler.preflight.types.js";
-import { hasControlCommand } from "../../auto-reply/command-detection.js";
-import { shouldHandleTextCommands } from "../../auto-reply/commands-registry.js";
+import { hasControlCommand } from "../../../src/auto-reply/command-detection.js";
+import { shouldHandleTextCommands } from "../../../src/auto-reply/commands-registry.js";
 import {
   recordPendingHistoryEntryIfEnabled,
   type HistoryEntry,
-} from "../../auto-reply/reply/history.js";
+} from "../../../src/auto-reply/reply/history.js";
 import {
   buildMentionRegexes,
   matchesMentionWithExplicit,
-} from "../../auto-reply/reply/mentions.js";
-import { formatAllowlistMatchMeta } from "../../channels/allowlist-match.js";
-import { resolveControlCommandGate } from "../../channels/command-gating.js";
-import { logInboundDrop } from "../../channels/logging.js";
-import { resolveMentionGatingWithBypass } from "../../channels/mention-gating.js";
-import { logVerbose, shouldLogVerbose } from "../../globals.js";
-import { recordChannelActivity } from "../../infra/channel-activity.js";
-import { enqueueSystemEvent } from "../../infra/system-events.js";
-import { getChildLogger } from "../../logging.js";
-import { buildPairingReply } from "../../pairing/pairing-messages.js";
+} from "../../../src/auto-reply/reply/mentions.js";
+import { formatAllowlistMatchMeta } from "../../../src/channels/allowlist-match.js";
+import { resolveControlCommandGate } from "../../../src/channels/command-gating.js";
+import { logInboundDrop } from "../../../src/channels/logging.js";
+import { resolveMentionGatingWithBypass } from "../../../src/channels/mention-gating.js";
+import { logVerbose, shouldLogVerbose } from "../../../src/globals.js";
+import { recordChannelActivity } from "../../../src/infra/channel-activity.js";
+import { enqueueSystemEvent } from "../../../src/infra/system-events.js";
+import { getChildLogger } from "../../../src/logging.js";
+import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
-} from "../../pairing/pairing-store.js";
-import { resolveAgentRoute } from "../../routing/resolve-route.js";
+} from "../../../src/pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
 import { fetchPluralKitMessageInfo } from "../pluralkit.js";
 import { sendMessageDiscord } from "../send.js";
 import {

@@ -1,4 +1,4 @@
-import type { AllowlistMatch } from "../channels/allowlist-match.js";
+import type { AllowlistMatch } from "../../src/channels/allowlist-match.js";
 
 export type NormalizedAllowFrom = {
   entries: string[];

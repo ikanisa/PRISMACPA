@@ -1,8 +1,8 @@
 import { messagingApi } from "@line/bot-sdk";
 import type { LineSendResult } from "./types.js";
-import { loadConfig } from "../config/config.js";
-import { logVerbose } from "../globals.js";
-import { recordChannelActivity } from "../infra/channel-activity.js";
+import { loadConfig } from "../../src/config/config.js";
+import { logVerbose } from "../../src/globals.js";
+import { recordChannelActivity } from "../../src/infra/channel-activity.js";
 import { resolveLineAccount } from "./accounts.js";
 
 // Use the messaging API types directly
