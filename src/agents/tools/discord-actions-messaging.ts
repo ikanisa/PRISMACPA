@@ -19,8 +19,8 @@ import {
   sendPollDiscord,
   sendStickerDiscord,
   unpinMessageDiscord,
-} from "../../discord/send.js";
-import { resolveDiscordChannelId } from "../../discord/targets.js";
+} from "../../channels/discord/send.js";
+import { resolveDiscordChannelId } from "../../channels/discord/targets.js";
 import { withNormalizedTimestamp } from "../date-time.js";
 import {
   type ActionGate,

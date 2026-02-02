@@ -17,8 +17,8 @@ import {
 } from "../../agents/tools/common.js";
 import { parseReplyDirectives } from "../../auto-reply/reply/reply-directives.js";
 import { dispatchChannelMessageAction } from "../../channels/plugins/message-actions.js";
+import { parseSlackTarget } from "../../channels/slack/targets.js";
 import { extensionForMime } from "../../media/mime.js";
-import { parseSlackTarget } from "../../slack/targets.js";
 import {
   isDeliverableMessageChannel,
   normalizeMessageChannel,

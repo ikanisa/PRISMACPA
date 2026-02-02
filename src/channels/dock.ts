@@ -10,17 +10,17 @@ import type {
   ChannelPlugin,
   ChannelThreadingAdapter,
 } from "./plugins/types.js";
-import { resolveDiscordAccount } from "../discord/accounts.js";
-import { resolveIMessageAccount } from "../imessage/accounts.js";
+import { resolveDiscordAccount } from "../channels/discord/accounts.js";
+import { resolveIMessageAccount } from "../channels/imessage/accounts.js";
+import { resolveSignalAccount } from "../channels/signal/accounts.js";
+import { resolveSlackAccount, resolveSlackReplyToMode } from "../channels/slack/accounts.js";
+import { buildSlackThreadingToolContext } from "../channels/slack/threading-tool-context.js";
+import { resolveTelegramAccount } from "../channels/telegram/accounts.js";
+import { normalizeWhatsAppTarget } from "../channels/whatsapp/normalize.js";
 import { requireActivePluginRegistry } from "../plugins/runtime.js";
 import { normalizeAccountId } from "../routing/session-key.js";
-import { resolveSignalAccount } from "../signal/accounts.js";
-import { resolveSlackAccount, resolveSlackReplyToMode } from "../slack/accounts.js";
-import { buildSlackThreadingToolContext } from "../slack/threading-tool-context.js";
-import { resolveTelegramAccount } from "../telegram/accounts.js";
 import { normalizeE164 } from "../utils.js";
 import { resolveWhatsAppAccount } from "../web/accounts.js";
-import { normalizeWhatsAppTarget } from "../whatsapp/normalize.js";
 import {
   resolveDiscordGroupRequireMention,
   resolveDiscordGroupToolPolicy,
