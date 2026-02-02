@@ -3,34 +3,55 @@
  * Shows all agents with skills, proficiency, health, and domain
  */
 
-import { useState } from 'react';
-
-/** L5 Agent data with skills metrics */
-const AGENTS = [
-    // Global Governance
-    { id: 'agent_aline', name: 'Aline', role: 'Firm Orchestrator', domain: 'global', jobs: 12, status: 'healthy', skillCount: 12, evidenceTypes: 2, masteryLevel: 'L5', keyMetric: 'Workstream throughput' },
-    { id: 'agent_marco', name: 'Marco', role: 'Autonomy & Policy Governor', domain: 'global', jobs: 28, status: 'healthy', skillCount: 11, evidenceTypes: 2, masteryLevel: 'L5', keyMetric: 'Policy escalation accuracy' },
-    { id: 'agent_diane', name: 'Diane', role: 'Quality, Risk & Evidence Guardian', domain: 'global', jobs: 35, status: 'healthy', skillCount: 11, evidenceTypes: 3, masteryLevel: 'L5', keyMetric: 'Guardian pass rate' },
-
-    // Global Service
-    { id: 'agent_patrick', name: 'Patrick', role: 'Audit & Assurance Engine', domain: 'global', jobs: 4, status: 'healthy', skillCount: 15, evidenceTypes: 3, masteryLevel: 'L5', keyMetric: 'Audit quality score' },
-    { id: 'agent_sofia', name: 'Sofia', role: 'Accounting & Financial Reporting', domain: 'global', jobs: 8, status: 'healthy', skillCount: 12, evidenceTypes: 3, masteryLevel: 'L5', keyMetric: 'Financial close accuracy' },
-    { id: 'agent_james', name: 'James', role: 'Advisory & Consulting Engine', domain: 'global', jobs: 2, status: 'healthy', skillCount: 11, evidenceTypes: 3, masteryLevel: 'L5', keyMetric: 'Client satisfaction' },
-    { id: 'agent_fatima', name: 'Fatima', role: 'Risk, Controls & Internal Audit', domain: 'global', jobs: 3, status: 'healthy', skillCount: 10, evidenceTypes: 3, masteryLevel: 'L5', keyMetric: 'Control effectiveness' },
-
-    // Malta
-    { id: 'agent_matthew', name: 'Matthew', role: 'Malta Tax Engine', domain: 'malta', jobs: 6, status: 'healthy', skillCount: 8, evidenceTypes: 4, masteryLevel: 'L5', keyMetric: 'Tax compliance rate' },
-    { id: 'agent_claire', name: 'Claire', role: 'Malta CSP/MBR Engine', domain: 'malta', jobs: 5, status: 'healthy', skillCount: 9, evidenceTypes: 5, masteryLevel: 'L5', keyMetric: 'Registry accuracy' },
-
-    // Rwanda
-    { id: 'agent_emmanuel', name: 'Emmanuel', role: 'Rwanda Tax Engine', domain: 'rwanda', jobs: 4, status: 'warning', skillCount: 7, evidenceTypes: 4, masteryLevel: 'L5', keyMetric: 'Filing accuracy' },
-    { id: 'agent_chantal', name: 'Chantal', role: 'Rwanda Private Notary Engine', domain: 'rwanda', jobs: 7, status: 'healthy', skillCount: 11, evidenceTypes: 4, masteryLevel: 'L5', keyMetric: 'Authentication rate' }
-];
-
-type Agent = typeof AGENTS[0];
+import { useState, useEffect } from 'react';
+import { loadAgents, type AgentCardData } from '../api';
 
 export default function Agents() {
+    const [agents, setAgents] = useState<AgentCardData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        loadAgents()
+            .then(setAgents)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="animate-in">
+                <header style={{ marginBottom: 'var(--space-xl)' }}>
+                    <h1>Agents</h1>
+                    <p className="text-secondary" style={{ marginTop: 'var(--space-xs)' }}>
+                        Loading agent roster...
+                    </p>
+                </header>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="animate-in">
+                <header style={{ marginBottom: 'var(--space-xl)' }}>
+                    <h1>Agents</h1>
+                    <p style={{ marginTop: 'var(--space-xs)', color: 'var(--color-error)' }}>
+                        Error: {error}
+                    </p>
+                </header>
+            </div>
+        );
+    }
+
+    const governance = agents.filter(a => ['agent_aline', 'agent_marco', 'agent_diane'].includes(a.id));
+    const globalService = agents.filter(a => ['agent_patrick', 'agent_sofia', 'agent_james', 'agent_fatima'].includes(a.id));
+    const malta = agents.filter(a => a.domain === 'malta');
+    const rwanda = agents.filter(a => a.domain === 'rwanda');
+
+    const totalSkills = agents.reduce((sum, a) => sum + a.skillCount, 0);
 
     return (
         <div className="animate-in">
@@ -40,7 +61,7 @@ export default function Agents() {
                     11-agent autonomous system • L5 Partner-level mastery
                 </p>
                 <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 'var(--space-md)' }}>
-                    <span className="badge badge-healthy">107 total skills</span>
+                    <span className="badge badge-healthy">{totalSkills} total skills</span>
                     <span className="badge">All agents L5</span>
                 </div>
             </header>
@@ -48,7 +69,7 @@ export default function Agents() {
             {/* Governance Agents */}
             <Section title="🏛️ Governance" description="Orchestration, policy, and quality">
                 <div className="grid grid-3">
-                    {AGENTS.filter(a => ['agent_aline', 'agent_marco', 'agent_diane'].includes(a.id)).map(agent => (
+                    {governance.map(agent => (
                         <AgentCard
                             key={agent.id}
                             agent={agent}
@@ -62,7 +83,7 @@ export default function Agents() {
             {/* Global Service Agents */}
             <Section title="🌍 Global Services" description="Cross-jurisdiction programs">
                 <div className="grid grid-4">
-                    {AGENTS.filter(a => ['agent_patrick', 'agent_sofia', 'agent_james', 'agent_fatima'].includes(a.id)).map(agent => (
+                    {globalService.map(agent => (
                         <AgentCard
                             key={agent.id}
                             agent={agent}
@@ -76,7 +97,7 @@ export default function Agents() {
             {/* Malta Agents */}
             <Section title="🇲🇹 Malta" description="MT Tax & CSP/MBR">
                 <div className="grid grid-2">
-                    {AGENTS.filter(a => a.domain === 'malta').map(agent => (
+                    {malta.map(agent => (
                         <AgentCard
                             key={agent.id}
                             agent={agent}
@@ -90,7 +111,7 @@ export default function Agents() {
             {/* Rwanda Agents */}
             <Section title="🇷🇼 Rwanda" description="RW Tax & Private Notary">
                 <div className="grid grid-2">
-                    {AGENTS.filter(a => a.domain === 'rwanda').map(agent => (
+                    {rwanda.map(agent => (
                         <AgentCard
                             key={agent.id}
                             agent={agent}
@@ -116,7 +137,7 @@ function Section({ title, description, children }: { title: string; description:
     );
 }
 
-function AgentCard({ agent, expanded, onToggle }: { agent: Agent; expanded: boolean; onToggle: () => void }) {
+function AgentCard({ agent, expanded, onToggle }: { agent: AgentCardData; expanded: boolean; onToggle: () => void }) {
     return (
         <div
             className="card"
@@ -177,4 +198,3 @@ function AgentCard({ agent, expanded, onToggle }: { agent: Agent; expanded: bool
         </div>
     );
 }
-

@@ -3,9 +3,12 @@
  * Shows tier definitions and recent decisions
  */
 
+import { useState, useEffect } from 'react';
+import { loadPolicyDecisions, type PolicyDecision, type AutonomyTier } from '../api';
+
 const TIER_DEFINITIONS = [
     {
-        tier: 'A',
+        tier: 'A' as AutonomyTier,
         name: 'Full Auto',
         color: 'var(--status-healthy)',
         description: 'Internal operations, routine tasks with approved templates',
@@ -18,7 +21,7 @@ const TIER_DEFINITIONS = [
         ]
     },
     {
-        tier: 'B',
+        tier: 'B' as AutonomyTier,
         name: 'Auto + Check',
         color: 'var(--status-warning)',
         description: 'Routine drafting from templates, standard workflows',
@@ -30,7 +33,7 @@ const TIER_DEFINITIONS = [
         ]
     },
     {
-        tier: 'C',
+        tier: 'C' as AutonomyTier,
         name: 'Escalate',
         color: 'var(--status-error)',
         description: 'Novel, uncertain, dispute, or regulatory actions',
@@ -45,15 +48,30 @@ const TIER_DEFINITIONS = [
     }
 ];
 
-const RECENT_DECISIONS = [
-    { id: 1, action: 'Generate VAT Return draft', client: 'Acme Corp', tier: 'B', agent: 'Matthew', time: '2m ago' },
-    { id: 2, action: 'Submit Annual Return to MBR', client: 'Malta Holdings', tier: 'C', agent: 'Claire', time: '15m ago' },
-    { id: 3, action: 'Index incoming invoices', client: 'TechStart RW', tier: 'A', agent: 'Emmanuel', time: '23m ago' },
-    { id: 4, action: 'Draft legal opinion', client: 'Kigali Ventures', tier: 'C', agent: 'Chantal', time: '1h ago' },
-    { id: 5, action: 'Run guardian pre-flight', client: 'Acme Corp', tier: 'A', agent: 'Diane', time: '1h ago' }
-];
-
 export default function PolicyConsole() {
+    const [decisions, setDecisions] = useState<PolicyDecision[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        loadPolicyDecisions()
+            .then(setDecisions)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const formatTime = (isoDate: string) => {
+        const date = new Date(isoDate);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        if (diffMins < 60) return `${diffMins}m ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours}h ago`;
+        return `${Math.floor(diffHours / 24)}d ago`;
+    };
+
     return (
         <div className="animate-in">
             <header style={{ marginBottom: 'var(--space-xl)' }}>
@@ -76,32 +94,46 @@ export default function PolicyConsole() {
             {/* Recent Decisions */}
             <section>
                 <h2 style={{ marginBottom: 'var(--space-md)' }}>Recent Decisions</h2>
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>Action</th>
-                                <th>Client</th>
-                                <th>Tier</th>
-                                <th>Agent</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {RECENT_DECISIONS.map(d => (
-                                <tr key={d.id}>
-                                    <td style={{ fontWeight: 500 }}>{d.action}</td>
-                                    <td className="text-secondary">{d.client}</td>
-                                    <td>
-                                        <TierBadge tier={d.tier as 'A' | 'B' | 'C'} />
-                                    </td>
-                                    <td>{d.agent}</td>
-                                    <td className="text-muted">{d.time}</td>
+                {loading ? (
+                    <div className="card" style={{ padding: 'var(--space-lg)', textAlign: 'center' }}>
+                        Loading decisions...
+                    </div>
+                ) : error ? (
+                    <div className="card" style={{ padding: 'var(--space-lg)', color: 'var(--status-error)' }}>
+                        Error: {error}
+                    </div>
+                ) : (
+                    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Client</th>
+                                    <th>Tier</th>
+                                    <th>Agent</th>
+                                    <th>Outcome</th>
+                                    <th>Time</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {decisions.map(d => (
+                                    <tr key={d.id}>
+                                        <td style={{ fontWeight: 500 }}>{d.action}</td>
+                                        <td className="text-secondary">{d.client}</td>
+                                        <td>
+                                            <TierBadge tier={d.tier} />
+                                        </td>
+                                        <td>{d.agent}</td>
+                                        <td>
+                                            <OutcomeBadge outcome={d.outcome} />
+                                        </td>
+                                        <td className="text-muted">{formatTime(d.decidedAt)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </section>
 
             {/* Key Rules */}
@@ -197,8 +229,8 @@ function TierCard({ tier }: { tier: typeof TIER_DEFINITIONS[0] }) {
     );
 }
 
-function TierBadge({ tier }: { tier: 'A' | 'B' | 'C' }) {
-    const colors: Record<string, string> = {
+function TierBadge({ tier }: { tier: AutonomyTier }) {
+    const colors: Record<AutonomyTier, string> = {
         A: 'var(--status-healthy)',
         B: 'var(--status-warning)',
         C: 'var(--status-error)'
@@ -216,6 +248,32 @@ function TierBadge({ tier }: { tier: 'A' | 'B' | 'C' }) {
             }}
         >
             Tier {tier}
+        </span>
+    );
+}
+
+function OutcomeBadge({ outcome }: { outcome: string }) {
+    const styles: Record<string, { bg: string; color: string }> = {
+        authorized: { bg: 'rgba(22, 163, 74, 0.15)', color: '#16a34a' },
+        auto_approved: { bg: 'rgba(22, 163, 74, 0.15)', color: '#16a34a' },
+        escalated: { bg: 'rgba(234, 88, 12, 0.15)', color: '#ea580c' },
+        denied: { bg: 'rgba(220, 38, 38, 0.15)', color: '#dc2626' },
+    };
+    const style = styles[outcome] || { bg: '#e5e7eb', color: '#374151' };
+    const label = outcome.replace('_', ' ');
+
+    return (
+        <span
+            style={{
+                background: style.bg,
+                color: style.color,
+                padding: '2px 8px',
+                borderRadius: '4px',
+                fontSize: '0.75rem',
+                textTransform: 'capitalize'
+            }}
+        >
+            {label}
         </span>
     );
 }

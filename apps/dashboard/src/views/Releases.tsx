@@ -91,8 +91,8 @@ export function Releases(): React.ReactElement {
     const [filter, setFilter] = useState<'all' | 'pending' | 'decided'>('all');
 
     const filteredReleases = mockReleases.filter(rel => {
-        if (filter === 'pending') return rel.status === 'PENDING';
-        if (filter === 'decided') return rel.status !== 'PENDING';
+        if (filter === 'pending') { return rel.status === 'PENDING'; }
+        if (filter === 'decided') { return rel.status !== 'PENDING'; }
         return true;
     });
 

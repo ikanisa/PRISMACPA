@@ -3,82 +3,53 @@
  * Shows all services with assigned agents and active engagements
  */
 
-const SERVICES = [
-    {
-        id: 'audit',
-        name: 'Audit & Assurance',
-        icon: '📊',
-        owner: 'Patrick',
-        color: 'var(--accent-audit)',
-        engagements: 4,
-        programs: ['audit_program']
-    },
-    {
-        id: 'accounting',
-        name: 'Accounting & Financial Reporting',
-        icon: '📒',
-        owner: 'Sofia',
-        color: 'var(--accent-accounting)',
-        engagements: 8,
-        programs: ['accounting_close_program']
-    },
-    {
-        id: 'advisory',
-        name: 'Advisory & Consulting',
-        icon: '💡',
-        owner: 'James',
-        color: 'var(--accent-advisory)',
-        engagements: 2,
-        programs: ['advisory_cfo_program']
-    },
-    {
-        id: 'risk',
-        name: 'Risk, Controls & Internal Audit',
-        icon: '🛡️',
-        owner: 'Fatima',
-        color: 'var(--accent-risk)',
-        engagements: 3,
-        programs: ['internal_audit_program']
-    },
-    {
-        id: 'mt_tax',
-        name: 'Malta Tax',
-        icon: '🇲🇹',
-        owner: 'Matthew',
-        color: 'var(--accent-malta)',
-        engagements: 6,
-        programs: ['mt_tax']
-    },
-    {
-        id: 'mt_csp',
-        name: 'Malta CSP/MBR',
-        icon: '🏢',
-        owner: 'Claire',
-        color: 'var(--accent-malta)',
-        engagements: 5,
-        programs: ['mt_csp']
-    },
-    {
-        id: 'rw_tax',
-        name: 'Rwanda Tax',
-        icon: '🇷🇼',
-        owner: 'Emmanuel',
-        color: 'var(--accent-rwanda)',
-        engagements: 4,
-        programs: ['rw_tax']
-    },
-    {
-        id: 'rw_notary',
-        name: 'Rwanda Private Notary',
-        icon: '⚖️',
-        owner: 'Chantal',
-        color: 'var(--accent-rwanda)',
-        engagements: 7,
-        programs: ['rw_private_notary']
-    }
-];
+import { useState, useEffect } from 'react';
+import { loadServices, type ServiceCardData } from '../api';
 
 export default function Services() {
+    const [services, setServices] = useState<ServiceCardData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoading(true);
+        loadServices()
+            .then(setServices)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="animate-in">
+                <header style={{ marginBottom: 'var(--space-xl)' }}>
+                    <h1>Services</h1>
+                    <p className="text-secondary" style={{ marginTop: 'var(--space-xs)' }}>
+                        Loading service catalog...
+                    </p>
+                </header>
+                <div className="grid grid-2">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="card" style={{ height: '150px', opacity: 0.5 }} />
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="animate-in">
+                <header style={{ marginBottom: 'var(--space-xl)' }}>
+                    <h1>Services</h1>
+                    <p className="text-secondary" style={{ marginTop: 'var(--space-xs)', color: 'var(--color-error)' }}>
+                        Error: {error}
+                    </p>
+                </header>
+            </div>
+        );
+    }
+
     return (
         <div className="animate-in">
             <header style={{ marginBottom: 'var(--space-xl)' }}>
@@ -89,7 +60,7 @@ export default function Services() {
             </header>
 
             <div className="grid grid-2">
-                {SERVICES.map(service => (
+                {services.map(service => (
                     <ServiceCard key={service.id} service={service} />
                 ))}
             </div>
@@ -97,12 +68,19 @@ export default function Services() {
     );
 }
 
-function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
+function ServiceCard({ service }: { service: ServiceCardData }) {
+    const scopeColors: Record<string, string> = {
+        global: 'var(--accent-orchestrator)',
+        malta: 'var(--accent-malta)',
+        rwanda: 'var(--accent-rwanda)',
+    };
+    const color = scopeColors[service.scope] || 'var(--accent-orchestrator)';
+
     return (
         <div
             className="card"
             style={{
-                borderLeft: `3px solid ${service.color}`,
+                borderLeft: `3px solid ${color}`,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 'var(--space-md)'
@@ -118,34 +96,37 @@ function ServiceCard({ service }: { service: typeof SERVICES[0] }) {
 
             <div style={{ display: 'flex', gap: 'var(--space-lg)' }}>
                 <div>
-                    <p className="stat-value" style={{ fontSize: '1.5rem', color: service.color }}>
+                    <p className="stat-value" style={{ fontSize: '1.5rem', color }}>
                         {service.engagements}
                     </p>
                     <p className="text-muted text-xs">Active Engagements</p>
                 </div>
                 <div>
                     <p className="stat-value" style={{ fontSize: '1.5rem' }}>
-                        {service.programs.length}
+                        {service.phaseCount}
                     </p>
-                    <p className="text-muted text-xs">Programs</p>
+                    <p className="text-muted text-xs">Phases</p>
+                </div>
+                <div>
+                    <p className="stat-value" style={{ fontSize: '1.5rem' }}>
+                        {service.taskCount}
+                    </p>
+                    <p className="text-muted text-xs">Tasks</p>
                 </div>
             </div>
 
             <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap' }}>
-                {service.programs.map(p => (
-                    <span
-                        key={p}
-                        style={{
-                            background: 'var(--bg-glass)',
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.75rem',
-                            fontFamily: 'var(--font-mono)'
-                        }}
-                    >
-                        {p}
-                    </span>
-                ))}
+                <span
+                    style={{
+                        background: 'var(--bg-glass)',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontFamily: 'var(--font-mono)'
+                    }}
+                >
+                    {service.id}
+                </span>
             </div>
         </div>
     );

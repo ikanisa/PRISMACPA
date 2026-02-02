@@ -1,79 +1,66 @@
-import React, { useState } from 'react';
-
 /**
  * Incidents View — Dashboard for viewing security and compliance incidents
  */
 
-// Mock incident data
-const mockIncidents = [
-    {
-        id: 'inc-001',
-        type: 'PACK_LEAKAGE',
-        severity: 'CRITICAL',
-        description: 'Agent agent_matthew attempted to access RW_TAX pack',
-        agentId: 'agent_matthew',
-        packId: 'RW_TAX',
-        workstreamId: 'ws-123',
-        createdAt: new Date('2026-02-01T10:30:00'),
-        resolvedAt: new Date('2026-02-01T11:00:00'),
-        resolution: 'False positive - routing error corrected'
-    },
-    {
-        id: 'inc-002',
-        type: 'RELEASE_BYPASS_ATTEMPT',
-        severity: 'HIGH',
-        description: 'Agent agent_claire attempted release without Diane PASS',
-        agentId: 'agent_claire',
-        workstreamId: 'ws-456',
-        createdAt: new Date('2026-02-01T14:15:00'),
-        resolvedAt: undefined,
-        resolution: undefined
-    },
-    {
-        id: 'inc-003',
-        type: 'EVIDENCE_MISSING_PATTERN',
-        severity: 'MEDIUM',
-        description: 'Repeated missing CLIENT_INSTRUCTION evidence in tax workstreams',
-        agentId: 'agent_emmanuel',
-        workstreamId: 'ws-789',
-        createdAt: new Date('2026-02-01T09:00:00'),
-        resolvedAt: undefined,
-        resolution: undefined
-    }
-];
+import { useState, useEffect } from 'react';
+import { loadIncidents, type Incident, type IncidentSeverity } from '../api';
 
-const severityColors: Record<string, string> = {
-    CRITICAL: '#dc2626',
-    HIGH: '#ea580c',
-    MEDIUM: '#ca8a04',
-    LOW: '#16a34a'
+const severityColors: Record<IncidentSeverity, string> = {
+    critical: '#dc2626',
+    high: '#ea580c',
+    medium: '#ca8a04',
+    low: '#16a34a'
 };
 
 const typeLabels: Record<string, string> = {
-    PACK_LEAKAGE: 'Pack Leakage',
-    GATE_BYPASS_ATTEMPT: 'Gate Bypass',
-    RELEASE_BYPASS_ATTEMPT: 'Release Bypass',
-    EVIDENCE_MISSING_PATTERN: 'Evidence Pattern',
-    REPEATED_CONTRADICTION: 'Contradiction',
-    UNAUTHORIZED_TOOL_ACCESS: 'Unauthorized Tool',
-    POLICY_VIOLATION: 'Policy Violation'
+    security: 'Security',
+    compliance: 'Compliance',
 };
 
-export function Incidents(): React.ReactElement {
-    const [filter, setFilter] = useState<'all' | 'unresolved' | 'critical'>('all');
+export function Incidents() {
+    const [incidents, setIncidents] = useState<Incident[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [filter, setFilter] = useState<'all' | 'open' | 'critical'>('all');
 
-    const filteredIncidents = mockIncidents.filter(inc => {
-        if (filter === 'unresolved') return !inc.resolvedAt;
-        if (filter === 'critical') return inc.severity === 'CRITICAL';
+    useEffect(() => {
+        setLoading(true);
+        loadIncidents()
+            .then(setIncidents)
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const filteredIncidents = incidents.filter(inc => {
+        if (filter === 'open') return inc.status !== 'resolved';
+        if (filter === 'critical') return inc.severity === 'critical';
         return true;
     });
+
+    if (loading) {
+        return (
+            <div style={{ padding: '24px', maxWidth: '1200px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px' }}>Incidents</h1>
+                <p className="text-secondary">Loading incidents...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div style={{ padding: '24px', maxWidth: '1200px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '24px' }}>Incidents</h1>
+                <p style={{ color: '#dc2626' }}>Error: {error}</p>
+            </div>
+        );
+    }
 
     return (
         <div style={{ padding: '24px', maxWidth: '1200px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h1 style={{ fontSize: '24px', fontWeight: '600', margin: 0 }}>Incidents</h1>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                    {(['all', 'unresolved', 'critical'] as const).map(f => (
+                    {(['all', 'open', 'critical'] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
@@ -94,9 +81,9 @@ export function Incidents(): React.ReactElement {
             </div>
 
             <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                <StatCard label="Total" value={mockIncidents.length} color="#6b7280" />
-                <StatCard label="Unresolved" value={mockIncidents.filter(i => !i.resolvedAt).length} color="#ea580c" />
-                <StatCard label="Critical" value={mockIncidents.filter(i => i.severity === 'CRITICAL').length} color="#dc2626" />
+                <StatCard label="Total" value={incidents.length} color="#6b7280" />
+                <StatCard label="Open" value={incidents.filter(i => i.status !== 'resolved').length} color="#ea580c" />
+                <StatCard label="Critical" value={incidents.filter(i => i.severity === 'critical').length} color="#dc2626" />
             </div>
 
             <div style={{ background: 'white', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
@@ -105,9 +92,9 @@ export function Incidents(): React.ReactElement {
                         <tr style={{ background: '#f9fafb' }}>
                             <th style={thStyle}>Severity</th>
                             <th style={thStyle}>Type</th>
-                            <th style={thStyle}>Description</th>
-                            <th style={thStyle}>Agent</th>
-                            <th style={thStyle}>Created</th>
+                            <th style={thStyle}>Title</th>
+                            <th style={thStyle}>Assignee</th>
+                            <th style={thStyle}>Detected</th>
                             <th style={thStyle}>Status</th>
                         </tr>
                     </thead>
@@ -121,20 +108,21 @@ export function Incidents(): React.ReactElement {
                                         background: severityColors[inc.severity] + '20',
                                         color: severityColors[inc.severity],
                                         fontWeight: 500,
-                                        fontSize: '12px'
+                                        fontSize: '12px',
+                                        textTransform: 'uppercase'
                                     }}>
                                         {inc.severity}
                                     </span>
                                 </td>
-                                <td style={tdStyle}>{typeLabels[inc.type]}</td>
-                                <td style={tdStyle}>{inc.description}</td>
-                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '13px' }}>{inc.agentId}</td>
-                                <td style={tdStyle}>{inc.createdAt.toLocaleString()}</td>
+                                <td style={tdStyle}>{typeLabels[inc.type] || inc.type}</td>
+                                <td style={tdStyle}>{inc.title}</td>
+                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '13px' }}>{inc.assignee}</td>
+                                <td style={tdStyle}>{new Date(inc.detectedAt).toLocaleString()}</td>
                                 <td style={tdStyle}>
-                                    {inc.resolvedAt ? (
+                                    {inc.status === 'resolved' ? (
                                         <span style={{ color: '#16a34a' }}>✓ Resolved</span>
                                     ) : (
-                                        <span style={{ color: '#ea580c' }}>● Open</span>
+                                        <span style={{ color: '#ea580c' }}>● {inc.status}</span>
                                     )}
                                 </td>
                             </tr>
@@ -175,3 +163,5 @@ const tdStyle: React.CSSProperties = {
     padding: '12px 16px',
     fontSize: '14px'
 };
+
+export default Incidents;
