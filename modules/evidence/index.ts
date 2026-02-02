@@ -35,19 +35,19 @@ export interface EvidenceRequirements {
 
 // Public API (stubs for now)
 export async function attachEvidence(
-    workpaperId: string,
-    evidence: Omit<EvidenceItem, "id" | "uploadedAt">
+    _workpaperId: string,
+    _evidence: Omit<EvidenceItem, "id" | "uploadedAt">
 ): Promise<EvidenceItem> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export function scoreEvidence(items: EvidenceItem[]): number {
+export function scoreEvidence(_items: EvidenceItem[]): number {
     throw new Error("Not implemented - pending extraction");
 }
 
 export function validateEvidenceSufficiency(
-    items: EvidenceItem[],
-    requirements: EvidenceRequirements
+    _items: EvidenceItem[],
+    _requirements: EvidenceRequirements
 ): { sufficient: boolean; missing: EvidenceType[] } {
     throw new Error("Not implemented - pending extraction");
 }

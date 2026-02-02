@@ -40,18 +40,18 @@ export interface AuditQuery {
 
 // Public API (stubs for now)
 export async function logAction(
-    entry: Omit<AuditEntry, "id" | "timestamp">
+    _entry: Omit<AuditEntry, "id" | "timestamp">
 ): Promise<AuditEntry> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function queryAuditLog(query: AuditQuery): Promise<AuditEntry[]> {
+export async function queryAuditLog(_query: AuditQuery): Promise<AuditEntry[]> {
     throw new Error("Not implemented - pending extraction");
 }
 
 export async function getResourceHistory(
-    resourceType: string,
-    resourceId: string
+    _resourceType: string,
+    _resourceId: string
 ): Promise<AuditEntry[]> {
     throw new Error("Not implemented - pending extraction");
 }

@@ -29,7 +29,7 @@ export interface ReleaseDecision {
 }
 
 // Public API (stubs for now)
-export async function requestRelease(request: ReleaseRequest): Promise<ReleaseDecision> {
+export async function requestRelease(_request: ReleaseRequest): Promise<ReleaseDecision> {
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }
 
@@ -37,10 +37,10 @@ export function isReleaseRequired(autonomyLevel: string): boolean {
     return autonomyLevel === "ESCALATE";
 }
 
-export async function getReleaseStatus(workpaperId: string): Promise<ReleaseStatus> {
+export async function getReleaseStatus(_workpaperId: string): Promise<ReleaseStatus> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function executeRelease(workpaperId: string): Promise<void> {
+export async function executeRelease(_workpaperId: string): Promise<void> {
     throw new Error("Not implemented - pending extraction");
 }

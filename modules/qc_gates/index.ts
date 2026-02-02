@@ -31,7 +31,7 @@ export interface QCFinding {
 }
 
 // Public API (stubs for now)
-export async function executeQCGate(request: QCRequest): Promise<QCResult> {
+export async function executeQCGate(_request: QCRequest): Promise<QCResult> {
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }
 
@@ -39,6 +39,6 @@ export function isQCRequired(autonomyLevel: string): boolean {
     return autonomyLevel === "AUTO+CHECK" || autonomyLevel === "ESCALATE";
 }
 
-export async function getQCHistory(workpaperId: string): Promise<QCResult[]> {
+export async function getQCHistory(_workpaperId: string): Promise<QCResult[]> {
     throw new Error("Not implemented - pending extraction");
 }

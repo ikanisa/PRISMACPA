@@ -22,17 +22,17 @@ export interface RoutingDecision {
 }
 
 // Public API (stubs for now - will be implemented in P4)
-export async function routeTask(request: RoutingRequest): Promise<RoutingDecision> {
+export async function routeTask(_request: RoutingRequest): Promise<RoutingDecision> {
     // TODO: Extract from firmos-programs/routing.ts
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }
 
-export function getAgentForService(serviceId: string): string | null {
+export function getAgentForService(_serviceId: string): string | null {
     // TODO: Extract from firmos-programs/routing.ts
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }
 
-export function getAgentsByJurisdiction(jurisdiction: "MT" | "RW"): string[] {
+export function getAgentsByJurisdiction(_jurisdiction: "MT" | "RW"): string[] {
     // TODO: Extract from firmos-programs/routing.ts
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }

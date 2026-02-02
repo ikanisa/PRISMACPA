@@ -26,24 +26,24 @@ export interface TemplateSearchParams {
 }
 
 // Public API (stubs for now)
-export async function searchTemplates(params: TemplateSearchParams): Promise<Template[]> {
+export async function searchTemplates(_params: TemplateSearchParams): Promise<Template[]> {
     throw new Error("Not implemented - pending extraction from firmos-programs");
 }
 
 export async function createDraft(
-    template: Omit<Template, "id" | "status" | "createdAt" | "version">
+    _template: Omit<Template, "id" | "status" | "createdAt" | "version">
 ): Promise<Template> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function submitForQC(templateId: string): Promise<void> {
+export async function submitForQC(_templateId: string): Promise<void> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function publishTemplate(templateId: string): Promise<Template> {
+export async function publishTemplate(_templateId: string): Promise<Template> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function logTemplateUsage(templateId: string, context: string): Promise<void> {
+export async function logTemplateUsage(_templateId: string, _context: string): Promise<void> {
     throw new Error("Not implemented - pending extraction");
 }

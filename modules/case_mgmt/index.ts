@@ -36,22 +36,22 @@ export interface CaseCreateParams {
 }
 
 // Public API (stubs for now)
-export async function createCase(params: CaseCreateParams): Promise<Case> {
+export async function createCase(_params: CaseCreateParams): Promise<Case> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function getCase(caseId: string): Promise<Case | null> {
+export async function getCase(_caseId: string): Promise<Case | null> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function updateCaseStatus(caseId: string, status: CaseStatus): Promise<Case> {
+export async function updateCaseStatus(_caseId: string, _status: CaseStatus): Promise<Case> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function listCases(filter: Partial<Case>): Promise<Case[]> {
+export async function listCases(_filter: Partial<Case>): Promise<Case[]> {
     throw new Error("Not implemented - pending extraction");
 }
 
-export async function assignAgent(caseId: string, agentId: string): Promise<Case> {
+export async function assignAgent(_caseId: string, _agentId: string): Promise<Case> {
     throw new Error("Not implemented - pending extraction");
 }
