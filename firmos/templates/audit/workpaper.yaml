@@ -1,0 +1,73 @@
+# Template: Audit Workpaper
+# Used by Patrick for audit documentation
+
+metadata:
+  template_id: AUD-01
+  service: audit
+  version: "1.0"
+  updated: "2026-02-03"
+
+structure:
+  header:
+    ref: "[WP Reference]"
+    client: "[CLIENT NAME]"
+    period_end: "[DATE]"
+    title: "[WORKPAPER TITLE]"
+    area: "[AUDIT AREA]"
+    
+  preparer:
+    name: "[PREPARER]"
+    date: "[DATE]"
+    
+  reviewer:
+    name: "[REVIEWER]"
+    date: "[DATE]"
+    
+  sections:
+    objective:
+      text: "To [state the specific audit objective]"
+      assertions_tested:
+        - existence
+        - completeness
+        - valuation
+        - rights_obligations
+        - presentation_disclosure
+        
+    procedures:
+      - step: 1
+        description: "[PROCEDURE DESCRIPTION]"
+        results: "[RESULTS]"
+        tick_mark: "✓"
+        
+    sample_selection:
+      population_size: 0
+      sample_size: 0
+      selection_method: "[RANDOM/SYSTEMATIC/JUDGMENTAL]"
+      
+    exceptions:
+      - description: "[EXCEPTION DESCRIPTION]"
+        impact: "[IMPACT ASSESSMENT]"
+        resolution: "[HOW RESOLVED]"
+        
+    conclusion:
+      text: "[STATE CONCLUSION]"
+      status: "[SATISFACTORY / REQUIRES FURTHER WORK / ISSUE IDENTIFIED]"
+      
+    cross_references:
+      - "[WP REF]"
+      - "[SUPPORTING DOCUMENT]"
+
+tick_marks:
+  "✓": "Verified to source document"
+  "⊗": "Exception noted"
+  "F": "Footed/cross-footed"
+  "R": "Re-performed calculation"
+  "T": "Traced to trial balance"
+  "I": "Inspected original"
+  
+evidence_requirements:
+  what: "Clear description of evidence obtained"
+  who: "Preparer name and credentials"
+  when: "Date of procedure (ISO 8601)"
+  how: "Method of verification"
+  why: "Relevance to audit assertion"

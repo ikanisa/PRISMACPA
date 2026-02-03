@@ -1,0 +1,186 @@
+# GitHub Actions workflow for deploying OpenClaw Control UI to Cloudflare Pages
+#
+# Required secrets:
+#   CLOUDFLARE_API_TOKEN: Cloudflare API token with Pages permissions
+#   CLOUDFLARE_ACCOUNT_ID: Cloudflare account ID
+#
+# Optional secrets (if using production gateway):
+#   VITE_GATEWAY_URL: Production gateway WebSocket URL
+#   VITE_GATEWAY_TOKEN: Production gateway auth token
+#
+# Triggers:
+#   - Push to main branch (ui/** paths)
+#   - Pull requests (for preview deployments)
+#   - Manual dispatch
+
+name: Deploy UI to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'ui/**'
+      - '.github/workflows/deploy-pages.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'ui/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+env:
+  PROJECT_NAME: openclaw-dashboard
+  DIRECTORY: ui/dist
+
+jobs:
+  # ============================================================================
+  # Build
+  # ============================================================================
+  build:
+    name: Build UI
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: ui
+
+      - name: Build UI
+        run: pnpm build
+        working-directory: ui
+        env:
+          # Use secrets for production, fallback to .env.production values
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://vacltfdslodqybxojytc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_GATEWAY_URL: ${{ secrets.VITE_GATEWAY_URL }}
+          VITE_GATEWAY_TOKEN: ${{ secrets.VITE_GATEWAY_TOKEN }}
+
+      - name: Upload build artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-dist
+          path: ui/dist
+          retention-days: 1
+
+  # ============================================================================
+  # Deploy to Cloudflare Pages
+  # ============================================================================
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    
+    outputs:
+      deployment_url: ${{ steps.deploy.outputs.deployment-url }}
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-dist
+          path: dist
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ env.PROJECT_NAME }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Comment PR with preview URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = '${{ steps.deploy.outputs.deployment-url }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Preview Deployment\n\n**URL:** ${url}\n\nThis preview will be available until the PR is closed.`
+            });
+
+      - name: Post deployment summary
+        run: |
+          echo "## 🚀 Cloudflare Pages Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Project | ${{ env.PROJECT_NAME }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | ${{ github.event_name == 'pull_request' && 'preview' || 'production' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.deploy.outputs.deployment-url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # Verify Deployment
+  # ============================================================================
+  verify:
+    name: Verify Deployment
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Wait for deployment to propagate
+        run: sleep 30
+
+      - name: Health check
+        run: |
+          URL="${{ needs.deploy.outputs.deployment_url }}"
+          echo "Checking deployment at: $URL"
+          
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Deployment verified (HTTP $HTTP_STATUS)"
+          else
+            echo "⚠️ Deployment returned HTTP $HTTP_STATUS"
+            exit 1
+          fi

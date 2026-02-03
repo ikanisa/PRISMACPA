@@ -49,8 +49,10 @@ export function normalizeMessage(message: unknown): NormalizedMessage {
 
   const timestamp = typeof m.timestamp === "number" ? m.timestamp : Date.now();
   const id = typeof m.id === "string" ? m.id : undefined;
+  // Extract agentId for agent attribution (group chat avatars, A2A styling)
+  const agentId = typeof m.agentId === "string" ? m.agentId : undefined;
 
-  return { role, content, timestamp, id };
+  return { role, content, timestamp, id, agentId };
 }
 
 /**
@@ -87,4 +89,17 @@ export function isToolResultMessage(message: unknown): boolean {
   const m = message as Record<string, unknown>;
   const role = typeof m.role === "string" ? m.role.toLowerCase() : "";
   return role === "toolresult" || role === "tool_result";
+}
+
+/**
+ * Check if a message is an inter-agent message (A2A).
+ * Inter-agent messages appear as "user" role messages but with an agentId,
+ * indicating they were sent from one agent to another agent's session.
+ */
+export function isInterAgentMessage(message: unknown): boolean {
+  const m = message as Record<string, unknown>;
+  const role = typeof m.role === "string" ? m.role.toLowerCase() : "";
+  const agentId = typeof m.agentId === "string" ? m.agentId : undefined;
+  // A2A message = user role + has agentId (sent by an agent, not a human)
+  return role === "user" && !!agentId;
 }

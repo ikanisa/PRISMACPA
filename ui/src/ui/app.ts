@@ -73,11 +73,12 @@ import {
 import { resolveInjectedAssistantIdentity } from "./assistant-identity";
 import { loadAssistantIdentity as loadAssistantIdentityInternal } from "./controllers/assistant-identity";
 import { loadSettings, type UiSettings } from "./storage";
+import { loadChatHistory as loadChatHistoryForHost } from "./controllers/chat";
 import { type ChatAttachment, type ChatQueueItem, type CronFormState } from "./ui-types";
 
 declare global {
   interface Window {
-    __OPENCLAW_CONTROL_UI_BASE_PATH__?: string;
+    __FIRMOS_CONTROL_UI_BASE_PATH__?: string;
   }
 }
 
@@ -96,8 +97,8 @@ function resolveOnboardingMode(): boolean {
   return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on";
 }
 
-@customElement("openclaw-app")
-export class OpenClawApp extends LitElement {
+@customElement("firmos-app")
+export class FirmOSApp extends LitElement {
   @state() settings: UiSettings = loadSettings();
   @state() password = "";
   @state() tab: Tab = "chat";
@@ -341,6 +342,38 @@ export class OpenClawApp extends LitElement {
   async loadCron() {
     await loadCronInternal(this as unknown as Parameters<typeof loadCronInternal>[0]);
   }
+
+  /**
+   * Switch to a specific agent session. This method is used by agent-nav
+   * to ensure proper Lit reactivity when changing sessions.
+   */
+  switchToAgentSession(sessionKey: string) {
+    // Clear existing chat state
+    this.chatMessage = "";
+    this.chatMessages = [];
+    this.chatStream = null;
+    this.chatStreamStartedAt = null;
+    this.chatRunId = null;
+
+    // Reset UI state
+    this.resetToolStream();
+    this.resetChatScroll();
+
+    // Update session key (this triggers Lit reactive update)
+    this.sessionKey = sessionKey;
+
+    // Persist to settings
+    this.applySettings({
+      ...this.settings,
+      sessionKey: sessionKey,
+      lastActiveSessionKey: sessionKey,
+    });
+
+    // Load new assistant identity and chat history
+    void this.loadAssistantIdentity();
+    void loadChatHistoryForHost(this);
+  }
+
 
   async handleAbortChat() {
     await handleAbortChatInternal(this as unknown as Parameters<typeof handleAbortChatInternal>[0]);

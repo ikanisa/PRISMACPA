@@ -390,15 +390,15 @@ export function attachGatewayWsMessageHandler(params: {
         const hasPasswordAuth = Boolean(connectParams.auth?.password);
         const hasSharedAuth = hasTokenAuth || hasPasswordAuth;
         const isControlUi = connectParams.client.id === GATEWAY_CLIENT_IDS.CONTROL_UI;
-        const allowInsecureControlUi =
-          isControlUi && configSnapshot.gateway?.controlUi?.allowInsecureAuth === true;
-        // Support both config and env var for disabling device auth
-        const disableDeviceAuthEnv = process.env.OPENCLAW_DISABLE_DEVICE_AUTH === "true";
-        const disableControlUiDeviceAuth =
-          isControlUi &&
-          (configSnapshot.gateway?.controlUi?.dangerouslyDisableDeviceAuth === true ||
-            disableDeviceAuthEnv);
-        const allowControlUiBypass = allowInsecureControlUi || disableControlUiDeviceAuth;
+
+        // ========== AUTH DISABLED FOR LOCAL DEV ==========
+        // Hardcoded bypass - Control UI ALWAYS allowed without auth
+        // To re-enable auth: remove this block and restore config-based checks
+        const _allowInsecureControlUi = isControlUi; // ALWAYS true for Control UI
+        const disableControlUiDeviceAuth = isControlUi; // ALWAYS true for Control UI
+        const allowControlUiBypass = isControlUi; // ALWAYS true for Control UI
+        // ========== END AUTH DISABLED ==========
+
         const device = disableControlUiDeviceAuth ? null : deviceRaw;
         if (!device) {
           const canSkipDevice = allowControlUiBypass ? hasSharedAuth : hasTokenAuth;
@@ -590,31 +590,42 @@ export function attachGatewayWsMessageHandler(params: {
           }
         }
 
-        const authResult = await authorizeGatewayConnect({
-          auth: resolvedAuth,
-          connectAuth: connectParams.auth,
-          req: upgradeReq,
-          trustedProxies,
-        });
-        let authOk = authResult.ok;
-        let authMethod =
-          authResult.method ?? (resolvedAuth.mode === "password" ? "password" : "token");
-        if (!authOk && connectParams.auth?.token && device) {
-          const tokenCheck = await verifyDeviceToken({
-            deviceId: device.id,
-            token: connectParams.auth.token,
-            role,
-            scopes,
+        // ========== AUTH DISABLED FOR CONTROL UI ==========
+        // Skip auth check entirely for Control UI (local dev mode)
+        let authOk = allowControlUiBypass; // Control UI always authorized
+        let authMethod: string = allowControlUiBypass ? "bypass" : "none";
+
+        if (!allowControlUiBypass) {
+          // Only check auth for non-Control-UI clients
+          const authResult = await authorizeGatewayConnect({
+            auth: resolvedAuth,
+            connectAuth: connectParams.auth,
+            req: upgradeReq,
+            trustedProxies,
           });
-          if (tokenCheck.ok) {
-            authOk = true;
-            authMethod = "device-token";
+          authOk = authResult.ok;
+          authMethod =
+            authResult.method ?? (resolvedAuth.mode === "password" ? "password" : "token");
+          if (!authOk && connectParams.auth?.token && device) {
+            const tokenCheck = await verifyDeviceToken({
+              deviceId: device.id,
+              token: connectParams.auth.token,
+              role,
+              scopes,
+            });
+            if (tokenCheck.ok) {
+              authOk = true;
+              authMethod = "device-token";
+            }
           }
         }
+        // ========== END AUTH DISABLED ==========
+        let authReason: string | undefined;
         if (!authOk) {
+          authReason = "auth_bypassed_but_failed"; // Should never reach here for Control UI
           setHandshakeState("failed");
           logWsControl.warn(
-            `unauthorized conn=${connId} remote=${remoteAddr ?? "?"} client=${clientLabel} ${connectParams.client.mode} v${connectParams.client.version} reason=${authResult.reason ?? "unknown"}`,
+            `unauthorized conn=${connId} remote=${remoteAddr ?? "?"} client=${clientLabel} ${connectParams.client.mode} v${connectParams.client.version} reason=${authReason ?? "unknown"}`,
           );
           const authProvided: AuthProvidedKind = connectParams.auth?.token
             ? "token"
@@ -624,13 +635,13 @@ export function attachGatewayWsMessageHandler(params: {
           const authMessage = formatGatewayAuthFailureMessage({
             authMode: resolvedAuth.mode,
             authProvided,
-            reason: authResult.reason,
+            reason: authReason,
             client: connectParams.client,
           });
           setCloseCause("unauthorized", {
             authMode: resolvedAuth.mode,
             authProvided,
-            authReason: authResult.reason,
+            authReason: authReason,
             allowTailscale: resolvedAuth.allowTailscale,
             client: connectParams.client.id,
             clientDisplayName: connectParams.client.displayName,
@@ -647,7 +658,10 @@ export function attachGatewayWsMessageHandler(params: {
           return;
         }
 
-        const skipPairing = allowControlUiBypass && hasSharedAuth;
+        // ========== DEVICE PAIRING DISABLED FOR CONTROL UI ==========
+        // Skip pairing entirely for Control UI (local dev mode)
+        const skipPairing = allowControlUiBypass; // ALWAYS skip for Control UI
+        // ========== END DEVICE PAIRING DISABLED ==========
         if (device && devicePublicKey && !skipPairing) {
           // Auto-approve (silent pairing) for: local clients, trusted IPs, or trusted device IDs
           const shouldAutoPair = isTrustedClient || isTrustedDeviceId(device.id);

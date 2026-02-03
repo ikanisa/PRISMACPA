@@ -1,4 +1,4 @@
-import type { OpenClawApp } from "./app";
+import type { FirmOSApp } from "./app";
 import type { EventLogEntry } from "./app-events";
 import type { ExecApprovalRequest } from "./controllers/exec-approval";
 import type { GatewayEventFrame, GatewayHelloOk } from "./gateway";
@@ -127,7 +127,11 @@ export async function connectGateway(host: GatewayHost) {
     // Clear stale device tokens if config changed (hash-based detection)
     clearStaleTokensIfConfigChanged(config.url, config.token);
 
-    host.settings.token = config.token;
+    // Only update token if config provides a non-empty value
+    // This preserves tokens set from URL params or localStorage
+    if (config.token) {
+      host.settings.token = config.token;
+    }
     host.settings.gatewayUrl = config.url;
   } catch (err) {
     host.lastError = `Failed to fetch gateway config: ${err instanceof Error ? err.message : String(err)}`;
@@ -140,7 +144,7 @@ export async function connectGateway(host: GatewayHost) {
     url: host.settings.gatewayUrl,
     token: host.settings.token.trim() ? host.settings.token : undefined,
     password: host.password.trim() ? host.password : undefined,
-    clientName: "openclaw-control-ui",
+    clientName: "firmos-control-ui",
     mode: "webchat",
     onHello: (hello) => {
       host.connected = true;
@@ -153,10 +157,10 @@ export async function connectGateway(host: GatewayHost) {
       (host as unknown as { chatStream: string | null }).chatStream = null;
       (host as unknown as { chatStreamStartedAt: number | null }).chatStreamStartedAt = null;
       resetToolStream(host as unknown as Parameters<typeof resetToolStream>[0]);
-      void loadAssistantIdentity(host as unknown as OpenClawApp);
-      void loadAgents(host as unknown as OpenClawApp);
-      void loadNodes(host as unknown as OpenClawApp, { quiet: true });
-      void loadDevices(host as unknown as OpenClawApp, { quiet: true });
+      void loadAssistantIdentity(host as unknown as FirmOSApp);
+      void loadAgents(host as unknown as FirmOSApp);
+      void loadNodes(host as unknown as FirmOSApp, { quiet: true });
+      void loadDevices(host as unknown as FirmOSApp, { quiet: true });
       void refreshActiveTab(host as unknown as Parameters<typeof refreshActiveTab>[0]);
     },
     onClose: ({ code, reason }) => {
@@ -210,7 +214,7 @@ function handleGatewayEventUnsafe(host: GatewayHost, evt: GatewayEventFrame) {
         payload.sessionKey,
       );
     }
-    const state = handleChatEvent(host as unknown as OpenClawApp, payload);
+    const state = handleChatEvent(host as unknown as FirmOSApp, payload);
     if (state === "final" || state === "error" || state === "aborted") {
       resetToolStream(host as unknown as Parameters<typeof resetToolStream>[0]);
       void flushChatQueueForEvent(host as unknown as Parameters<typeof flushChatQueueForEvent>[0]);
@@ -218,14 +222,14 @@ function handleGatewayEventUnsafe(host: GatewayHost, evt: GatewayEventFrame) {
       if (runId && host.refreshSessionsAfterChat.has(runId)) {
         host.refreshSessionsAfterChat.delete(runId);
         if (state === "final") {
-          void loadSessions(host as unknown as OpenClawApp, {
+          void loadSessions(host as unknown as FirmOSApp, {
             activeMinutes: CHAT_SESSIONS_ACTIVE_MINUTES,
           });
         }
       }
     }
     if (state === "final") {
-      void loadChatHistory(host as unknown as OpenClawApp);
+      void loadChatHistory(host as unknown as FirmOSApp);
     }
     return;
   }
@@ -245,7 +249,7 @@ function handleGatewayEventUnsafe(host: GatewayHost, evt: GatewayEventFrame) {
   }
 
   if (evt.event === "device.pair.requested" || evt.event === "device.pair.resolved") {
-    void loadDevices(host as unknown as OpenClawApp, { quiet: true });
+    void loadDevices(host as unknown as FirmOSApp, { quiet: true });
   }
 
   if (evt.event === "exec.approval.requested") {

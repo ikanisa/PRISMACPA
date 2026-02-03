@@ -222,6 +222,17 @@ export const icons = {
       />
     </svg>
   `,
+  arrowLeft: html`
+    <svg viewBox="0 0 24 24">
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </svg>
+  `,
+  chevronLeft: html`
+    <svg viewBox="0 0 24 24">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  `,
 } as const;
 
 export type IconName = keyof typeof icons;

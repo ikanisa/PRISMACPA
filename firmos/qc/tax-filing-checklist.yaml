@@ -1,0 +1,87 @@
+# QC Checklist: Tax Filing Review
+# Used by Diane for quality control of Matthew/Emmanuel tax submissions
+
+version: "1.0"
+service: tax
+
+checklist:
+  # --------------------------------------------------------------------------
+  # GENERAL REQUIREMENTS
+  # --------------------------------------------------------------------------
+  general:
+    - id: GEN-01
+      description: "Entity correctly identified"
+      required: true
+      
+    - id: GEN-02
+      description: "Filing period accurate"
+      required: true
+      
+    - id: GEN-03
+      description: "Filing deadline verified"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # DATA ACCURACY
+  # --------------------------------------------------------------------------
+  data:
+    - id: DAT-01
+      description: "Source data reconciled to accounting records"
+      required: true
+      
+    - id: DAT-02
+      description: "Calculations verified/cross-footed"
+      required: true
+      
+    - id: DAT-03
+      description: "Exchange rates correctly applied (if applicable)"
+      required: false
+      
+  # --------------------------------------------------------------------------
+  # COMPLIANCE
+  # --------------------------------------------------------------------------
+  compliance:
+    - id: COM-01
+      description: "Correct tax rates applied"
+      required: true
+      
+    - id: COM-02
+      description: "Exemptions/reliefs properly documented"
+      required: false
+      
+    - id: COM-03
+      description: "Prior period adjustments explained"
+      required: false
+      
+  # --------------------------------------------------------------------------
+  # JURISDICTION-SPECIFIC
+  # --------------------------------------------------------------------------
+  malta:
+    - id: MT-01
+      description: "CFR portal ID verified"
+      required: true
+      applies_to: MT
+      
+  rwanda:
+    - id: RW-01
+      description: "RRA system compatibility confirmed"
+      required: true
+      applies_to: RW
+      
+    - id: RW-02
+      description: "EBM data reconciled"
+      required: false
+      applies_to: RW
+
+outcomes:
+  pass:
+    criteria: "All required items checked, calculations verified"
+    
+  pass_with_comments:
+    criteria: "Minor documentation gaps, core accuracy confirmed"
+    
+  revise:
+    criteria: "Calculation errors or missing required data"
+    
+  escalate:
+    criteria: "Potential tax exposure, aggressive positions, or penalties risk"

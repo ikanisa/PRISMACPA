@@ -30,7 +30,7 @@ CREATE TYPE str_status AS ENUM (
 
 -- Customer/Entity records for CDD
 CREATE TABLE cdd_records (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Entity identification
   entity_type TEXT NOT NULL,  -- 'individual', 'company', 'trust'
@@ -73,7 +73,7 @@ CREATE TABLE cdd_records (
 
 -- CDD documents (verification records)
 CREATE TABLE cdd_documents (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   cdd_record_id UUID NOT NULL REFERENCES cdd_records(id) ON DELETE CASCADE,
   
@@ -99,7 +99,7 @@ CREATE TABLE cdd_documents (
 
 -- Suspicious Transaction Reports
 CREATE TABLE str_reports (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Reference
   internal_reference TEXT NOT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE str_reports (
 
 -- AML alerts (automated triggers)
 CREATE TABLE aml_alerts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Reference
   cdd_record_id UUID REFERENCES cdd_records(id),

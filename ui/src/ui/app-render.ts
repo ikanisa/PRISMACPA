@@ -46,7 +46,7 @@ import {
   updateSkillEnabled,
 } from "./controllers/skills";
 import { icons } from "./icons";
-import { TAB_GROUPS, subtitleForTab, titleForTab } from "./navigation";
+import { TAB_GROUPS, subtitleForTab, titleForTab, serviceIdFromPath, pathForServiceDetail, pathForTab } from "./navigation";
 import { renderChannels } from "./views/channels";
 import { renderChat } from "./views/chat";
 import { renderConfig } from "./views/config";
@@ -60,15 +60,33 @@ import { renderNodes } from "./views/nodes";
 import { renderOverview } from "./views/overview";
 import { renderSessions } from "./views/sessions";
 import { renderSkills } from "./views/skills";
+import { renderAgents } from "./views/agents";
+import { renderActivity, type ActivityEvent, type ActivityEventType } from "./views/activity";
 import { renderControlTower } from "./views/controltower";
 import { renderServices } from "./views/services";
+import { renderServiceDetail } from "./views/service-detail";
 import { renderPacks } from "./views/packs";
 import { renderReleases } from "./views/releases";
 import { renderIncidents } from "./views/incidents";
 import { renderPolicy } from "./views/policy";
+import { renderAgentNav } from "./views/agent-nav";
+import { syncUrlWithSessionKey } from "./app-settings";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
+
+/**
+ * Extract agent ID from session key string.
+ * Session keys follow formats like:
+ * - "agent:{agentId}:main" -> returns agentId
+ * - "agent:all:group" -> returns "all"
+ * - "main" or other -> returns null
+ */
+function extractAgentIdFromSessionKey(sessionKey: string): string | null {
+  if (!sessionKey) return null;
+  const match = /^agent:([^:]+):/.exec(sessionKey);
+  return match ? match[1] : null;
+}
 
 function resolveAssistantAvatarUrl(state: AppViewState): string | undefined {
   const list = state.agentsList?.agents ?? [];
@@ -98,6 +116,17 @@ export function renderApp(state: AppViewState) {
   const chatAvatarUrl = state.chatAvatarUrl ?? assistantAvatarUrl ?? null;
 
   return html`
+    <device-gate
+      .connected=${state.connected}
+      .lastError=${state.lastError}
+      @token-submit=${(e: CustomEvent<{ token: string }>) => {
+      state.applySettings({
+        ...state.settings,
+        token: e.detail.token,
+      });
+      state.connect();
+    }}
+    >
     <div class="shell ${isChat ? "shell--chat" : ""} ${chatFocus ? "shell--chat-focus" : ""} ${state.settings.navCollapsed ? "shell--nav-collapsed" : ""} ${state.onboarding ? "shell--onboarding" : ""}">
       <header class="topbar">
         <div class="topbar-left">
@@ -136,6 +165,7 @@ export function renderApp(state: AppViewState) {
         ${TAB_GROUPS.map((group) => {
         const isGroupCollapsed = state.settings.navGroupsCollapsed[group.label] ?? false;
         const hasActiveTab = group.tabs.some((tab) => tab === state.tab);
+        const isChatGroup = group.label === "Chat";
         return html`
             <div class="nav-group ${isGroupCollapsed && !hasActiveTab ? "nav-group--collapsed" : ""}">
               <button
@@ -155,6 +185,30 @@ export function renderApp(state: AppViewState) {
               </button>
               <div class="nav-group__items">
                 ${group.tabs.map((tab) => renderTab(state, tab))}
+                ${isChatGroup && state.connected ? renderAgentNav({
+            connected: state.connected,
+            agents: state.agentsList?.agents ?? [],
+            currentAgentId: extractAgentIdFromSessionKey(state.sessionKey),
+            expanded: state.settings.agentNavExpanded ?? false,
+            onAgentSelect: (agentId: string) => {
+              const newSessionKey = `agent:${agentId}:main`;
+              state.switchToAgentSession(newSessionKey);
+              syncUrlWithSessionKey(state, newSessionKey, true);
+              state.setTab("chat");
+            },
+            onGroupChatSelect: () => {
+              const groupSessionKey = "agent:all:group";
+              state.switchToAgentSession(groupSessionKey);
+              syncUrlWithSessionKey(state, groupSessionKey, true);
+              state.setTab("chat");
+            },
+            onToggleExpanded: () => {
+              state.applySettings({
+                ...state.settings,
+                agentNavExpanded: !(state.settings.agentNavExpanded ?? false),
+              });
+            },
+          }) : nothing}
               </div>
             </div>
           `;
@@ -166,7 +220,7 @@ export function renderApp(state: AppViewState) {
           <div class="nav-group__items">
             <a
               class="nav-item nav-item--external"
-              href="https://docs.openclaw.ai"
+              href="https://docs.firmos.ai"
               target="_blank"
               rel="noreferrer"
               title="Docs (opens in new tab)"
@@ -314,6 +368,48 @@ export function renderApp(state: AppViewState) {
         onRun: (job) => runCronJob(state, job),
         onRemove: (job) => removeCronJob(state, job),
         onLoadRuns: (jobId) => loadCronRuns(state, jobId),
+      })
+      : nothing
+    }
+
+        ${state.tab === "agents"
+      ? renderAgents({
+        connected: state.connected,
+        agents: state.agentsList?.agents ?? [],
+        selectedAgentId: state.sessionKey ? (extractAgentIdFromSessionKey(state.sessionKey) ?? null) : null,
+        loading: state.agentsLoading,
+        error: state.agentsError,
+        onAgentSelect: (agentId: string) => {
+          const newSessionKey = `agent:${agentId}:main`;
+          state.switchToAgentSession(newSessionKey);
+          syncUrlWithSessionKey(state, newSessionKey, true);
+          state.setTab("chat");
+        },
+        onServiceClick: (serviceId: string) => {
+          // Navigate to service detail page
+          const servicePath = pathForServiceDetail(serviceId, state.basePath);
+          window.history.pushState({}, "", servicePath);
+          state.tab = "services";
+        },
+        onRefresh: () => state.loadOverview(),
+      })
+      : nothing
+    }
+
+        ${state.tab === "activity"
+      ? renderActivity({
+        connected: state.connected,
+        events: (state as any).activityEvents ?? [],
+        agents: state.agentsList?.agents ?? [],
+        loading: (state as any).activityLoading ?? false,
+        error: (state as any).activityError ?? null,
+        filterType: (state as any).activityFilterType ?? null,
+        filterAgentId: (state as any).activityFilterAgentId ?? null,
+        onFilterChange: (type: ActivityEventType | null, agentId: string | null) => {
+          (state as any).activityFilterType = type;
+          (state as any).activityFilterAgentId = agentId;
+        },
+        onRefresh: () => {/* Activity events refresh - placeholder */ },
       })
       : nothing
     }
@@ -486,8 +582,31 @@ export function renderApp(state: AppViewState) {
         onOpenSidebar: (content: string) => state.handleOpenSidebar(content),
         onCloseSidebar: () => state.handleCloseSidebar(),
         onSplitRatioChange: (ratio: number) => state.handleSplitRatioChange(ratio),
+        // Agent selector props for quick switching
+        agents: state.agentsList?.agents,
+        currentAgentId: extractAgentIdFromSessionKey(state.sessionKey),
+        isGroupChat: state.sessionKey === "agent:all:group",
+        onAgentSelect: (agentId: string) => {
+          const newSessionKey = `agent:${agentId}:main`;
+          state.switchToAgentSession(newSessionKey);
+          syncUrlWithSessionKey(state, newSessionKey, true);
+        },
+        onGroupChatSelect: () => {
+          const groupSessionKey = "agent:all:group";
+          state.switchToAgentSession(groupSessionKey);
+          syncUrlWithSessionKey(state, groupSessionKey, true);
+        },
         assistantName: state.assistantName,
         assistantAvatar: state.assistantAvatar,
+        // Mention autocomplete state
+        mentionActive: (state as any).mentionActive ?? false,
+        mentionQuery: (state as any).mentionQuery ?? "",
+        mentionHighlightIndex: (state as any).mentionHighlightIndex ?? 0,
+        onMentionStateChange: (active: boolean, query: string, highlightIndex: number) => {
+          (state as any).mentionActive = active;
+          (state as any).mentionQuery = query;
+          (state as any).mentionHighlightIndex = highlightIndex;
+        },
       })
       : nothing
     }
@@ -587,13 +706,50 @@ export function renderApp(state: AppViewState) {
     }
 
         ${state.tab === "services"
-      ? renderServices({
-        connected: state.connected,
-        loading: false,
-        error: null,
-        services: [],
-        onRefresh: () => { },
-      })
+      ? (() => {
+        // Check if we're viewing a specific service detail
+        const serviceId = serviceIdFromPath(window.location.pathname, state.basePath);
+        if (serviceId) {
+          // Find the matching agent for this service
+          const agentId = serviceId === "main" ? "main" : `firmos-${serviceId}`;
+          const agent = (state.agentsList?.agents ?? []).find((a) => a.id === agentId) || null;
+          return renderServiceDetail({
+            connected: state.connected,
+            serviceId,
+            agent,
+            loading: state.agentsLoading,
+            error: state.agentsError,
+            onChatClick: (id) => {
+              const newSessionKey = `agent:${id}:main`;
+              state.switchToAgentSession(newSessionKey);
+              syncUrlWithSessionKey(state, newSessionKey, true);
+            },
+            onBack: () => {
+              // Navigate back to agents list
+              const agentsPath = pathForTab("agents", state.basePath);
+              window.history.pushState({}, "", agentsPath);
+              state.tab = "agents";
+            },
+            onRefresh: () => state.loadOverview(),
+          });
+        }
+        // Otherwise show the services list
+        return renderServices({
+          connected: state.connected,
+          loading: state.agentsLoading,
+          error: state.agentsError,
+          services: (state.agentsList?.agents ?? []).map((agent) => ({
+            id: agent.id,
+            name: agent.identity?.name ?? agent.id,
+            role: "FirmOS Agent",
+            status: "online" as const,
+            lastSeen: null,
+            tasksCompleted: 0,
+            description: `Agent workspace: ${agent.id}`,
+          })),
+          onRefresh: () => state.loadOverview(),
+        });
+      })()
       : nothing
     }
 
@@ -645,5 +801,6 @@ export function renderApp(state: AppViewState) {
       ${renderExecApprovalPrompt(state)}
       ${renderGatewayUrlConfirmation(state)}
     </div>
+    </device-gate>
   `;
 }

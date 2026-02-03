@@ -1,0 +1,79 @@
+# FirmOS Entity Database
+# Master registry of all client entities
+
+version: "1.0"
+updated: "2026-02-03"
+
+# ============================================================================
+# MALTA ENTITIES
+# ============================================================================
+malta:
+  - id: MT001
+    name: "Sample Malta Trading Ltd"
+    registration_number: "C 12345"
+    tin: "12345678"
+    year_end: "December 31"
+    directors:
+      - name: "John Smith"
+        role: "Director"
+    secretary: "ABC Secretarial Services Ltd"
+    registered_office: "123 Republic Street, Valletta VLT 1111"
+    status: active
+    services:
+      - accounting
+      - tax
+      - csp
+      
+  - id: MT002
+    name: "Malta Holding Co Ltd"
+    registration_number: "C 23456"
+    tin: "23456789"
+    year_end: "December 31"
+    directors:
+      - name: "Jane Doe"
+        role: "Director"
+    secretary: "ABC Secretarial Services Ltd"
+    registered_office: "456 Main Street, St Julian's STJ 2222"
+    status: active
+    services:
+      - accounting
+      - tax
+      - advisory
+      - audit
+
+# ============================================================================
+# RWANDA ENTITIES
+# ============================================================================
+rwanda:
+  - id: RW001
+    name: "Sample Rwanda Ltd"
+    rdb_number: "100123456"
+    tin: "100123456"
+    establishment_date: "2024-01-15"
+    year_end: "December 31"
+    directors:
+      - name: "Jean Pierre"
+        role: "Managing Director"
+    registered_office: "KG 123 Street, Kigali"
+    status: active
+    services:
+      - accounting
+      - tax
+      - notary
+      
+  - id: RW002
+    name: "Kigali Trading Company Ltd"
+    rdb_number: "100234567"
+    tin: "100234567"
+    establishment_date: "2023-06-01"
+    year_end: "December 31"
+    directors:
+      - name: "Marie Claire"
+        role: "Director"
+    registered_office: "KN 456 Avenue, Kigali"
+    status: active
+    services:
+      - accounting
+      - tax
+      - advisory
+      - risk

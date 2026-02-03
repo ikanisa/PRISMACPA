@@ -1,0 +1,157 @@
+#!/bin/bash
+# FirmOS CLI Stub - Development Mode
+# This stub logs commands and provides help text while the full CLI is in development.
+
+VERSION="0.1.0-dev"
+LOG_FILE="$HOME/.openclaw/logs/firmos-cli.log"
+
+# Ensure log directory exists
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# Log command
+log_command() {
+    echo "[$(date -u +"%Y-%m-%dT%H:%M:%SZ")] firmos $*" >> "$LOG_FILE"
+}
+
+# Show version
+if [[ "$1" == "--version" ]] || [[ "$1" == "-v" ]]; then
+    echo "firmos $VERSION"
+    exit 0
+fi
+
+# Show main help
+if [[ -z "$1" ]] || [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+    cat << 'EOF'
+FirmOS CLI v0.1.0-dev
+
+USAGE:
+    firmos <skill>:<command> [OPTIONS]
+
+SKILLS:
+    orch        Orchestrator operations (Aline)
+    acc         Accounting operations (Sofia)
+    tax         Tax operations (Matthew/Emmanuel)
+    audit       Audit operations (Patrick)
+    adv         Advisory operations (James)
+    risk        Risk management (Fatima)
+    csp         Company secretarial (Claire)
+    notary      Notarial services (Chantal)
+    qc          Quality control (Diane)
+    gov         Governance (Marco)
+
+EXAMPLES:
+    firmos acc:journal --date 2026-01-31 --debit "Revenue" --amount 50000
+    firmos tax:vat --period Jan-2026 --entity "CompanyA"
+    firmos audit:create --engagement "2026-Audit" --client "ClientCo"
+    firmos risk:assess --entity "CompanyA" --scope "ERM"
+
+For skill-specific help:
+    firmos <skill> --help
+
+EOF
+    exit 0
+fi
+
+# Parse skill:command
+IFS=':' read -r SKILL COMMAND <<< "$1"
+shift
+
+# Skill-specific help and commands
+case "$SKILL" in
+    orch)
+        # Execute Node.js CLI for Orchestrator commands
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        
+        # Pass full command including skill prefix
+        npx tsx "$CLI_TS" "orch:$COMMAND" "$@"
+        ;;
+    acc)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "acc:$COMMAND" "$@"
+        ;;
+    tax)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "tax:$COMMAND" "$@"
+        ;;
+    audit)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "audit:$COMMAND" "$@"
+        ;;
+    adv)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "adv:$COMMAND" "$@"
+        ;;
+    risk)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "risk:$COMMAND" "$@"
+        ;;
+    csp)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "csp:$COMMAND" "$@"
+        ;;
+    notary)
+        # Execute Node.js CLI
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        npx tsx "$CLI_TS" "notary:$COMMAND" "$@"
+        ;;
+    qc)
+        # Execute Node.js CLI for QC commands
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+        CLI_TS="$ROOT_DIR/scripts/firmos-cli.ts"
+        
+        # Pass full command including skill prefix
+        npx tsx "$CLI_TS" "qc:$COMMAND" "$@"
+        ;;
+    gov)
+        case "$COMMAND" in
+            --help|"")
+                cat << 'EOF'
+Governance Commands (Marco):
+    gov:release     Authorize release
+    gov:policy      Check policy compliance
+    gov:escalation  Handle escalation
+    gov:incident    Log incident
+EOF
+                ;;
+            release|policy|escalation|incident)
+                log_command "gov:$COMMAND $@"
+                echo "[DEV] gov:$COMMAND executed with args: $@"
+                echo "[DEV] Command logged to $LOG_FILE"
+                ;;
+            *)
+                echo "Unknown governance command: $COMMAND"
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        echo "Unknown skill: $SKILL"
+        echo "Run 'firmos --help' for available skills."
+        exit 1
+        ;;
+esac
+
+exit 0

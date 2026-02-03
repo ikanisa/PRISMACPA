@@ -11,7 +11,7 @@ type DeviceAuthStore = {
   tokens: Record<string, DeviceAuthEntry>;
 };
 
-const STORAGE_KEY = "openclaw.device.auth.v1";
+const STORAGE_KEY = "firmos.device.auth.v1";
 
 function normalizeRole(role: string): string {
   return role.trim();
@@ -131,7 +131,7 @@ export function clearAllDeviceAuthTokens(): void {
 }
 
 // Gateway config hash storage for change detection
-const GATEWAY_CONFIG_KEY = "openclaw.gateway.config.v1";
+const GATEWAY_CONFIG_KEY = "firmos.gateway.config.v1";
 
 export function getStoredGatewayConfigHash(): string | null {
   try {

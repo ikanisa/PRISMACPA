@@ -29,7 +29,7 @@ CREATE TYPE approval_status AS ENUM (
 
 -- Approvals table
 CREATE TABLE approvals (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Target reference
   target_type approval_target_type NOT NULL,
@@ -66,7 +66,7 @@ CREATE UNIQUE INDEX unique_pending_approval
 
 -- Approval audit log
 CREATE TABLE approval_audit_log (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   approval_id UUID NOT NULL REFERENCES approvals(id) ON DELETE CASCADE,
   

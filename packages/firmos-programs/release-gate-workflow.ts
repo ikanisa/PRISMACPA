@@ -5,7 +5,7 @@
  * Controls what gets released to production.
  */
 
-import { loadConfig } from '../core/config-loader.js';
+import { loadConfig } from '../firmos-core/config-loader.js';
 import { runQCGate, type QCGateResult, type QCContext } from './qc-gate-runner.js';
 
 // Release types

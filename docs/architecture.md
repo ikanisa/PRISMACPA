@@ -109,7 +109,7 @@ flowchart LR
 | Build | pnpm 10, TypeScript 5.8, oxlint |
 | Test | vitest (70% coverage threshold) |
 | CI | GitHub Actions (7 workflows) |
-| Deploy | Cloud Run (gateway), Cloudflare Pages (dashboard) |
+| Deploy | Local (default ws://127.0.0.1:18789), Cloud Run (optional), Cloudflare Pages (optional) |
 
 ---
 

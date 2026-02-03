@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@lancedb/lancedb": "^0.23.0",
+    "@lancedb/lancedb-darwin-x64": "^0.22.3",
     "@sinclair/typebox": "0.34.48",
     "openai": "^6.17.0"
   },

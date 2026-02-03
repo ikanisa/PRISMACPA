@@ -331,6 +331,27 @@ export type GatewayAgentRow = {
     avatar?: string;
     avatarUrl?: string;
   };
+  /** Agent operational status for dashboard display */
+  status?: AgentStatus;
+  /** Agent workload metrics for dashboard display */
+  metrics?: AgentMetrics;
+};
+
+/** Agent operational status */
+export type AgentStatus = "online" | "busy" | "offline" | "error";
+
+/** Agent workload and activity metrics */
+export type AgentMetrics = {
+  /** Number of pending tasks in queue */
+  queueDepth?: number;
+  /** Timestamp of last activity */
+  lastActiveAt?: number;
+  /** Description of current task (if busy) */
+  currentTask?: string;
+  /** Active session count */
+  activeSessions?: number;
+  /** Average response latency in ms */
+  avgLatencyMs?: number;
 };
 
 export type AgentsListResult = {
@@ -398,23 +419,23 @@ export type CronWakeMode = "next-heartbeat" | "now";
 export type CronPayload =
   | { kind: "systemEvent"; text: string }
   | {
-      kind: "agentTurn";
-      message: string;
-      thinking?: string;
-      timeoutSeconds?: number;
-      deliver?: boolean;
-      provider?:
-        | "last"
-        | "whatsapp"
-        | "telegram"
-        | "discord"
-        | "slack"
-        | "signal"
-        | "imessage"
-        | "msteams";
-      to?: string;
-      bestEffortDeliver?: boolean;
-    };
+    kind: "agentTurn";
+    message: string;
+    thinking?: string;
+    timeoutSeconds?: number;
+    deliver?: boolean;
+    provider?:
+    | "last"
+    | "whatsapp"
+    | "telegram"
+    | "discord"
+    | "slack"
+    | "signal"
+    | "imessage"
+    | "msteams";
+    to?: string;
+    bestEffortDeliver?: boolean;
+  };
 
 export type CronIsolation = {
   postToMainPrefix?: string;
@@ -524,3 +545,52 @@ export type LogEntry = {
   message?: string | null;
   meta?: Record<string, unknown> | null;
 };
+
+// =============================================================================
+// FIRMOS TYPES
+// =============================================================================
+
+export interface FirmOSTowerStats {
+  active_agents_count: number;
+  open_incidents_count: number;
+  pending_qc_count: number;
+  system_health_score: number;
+  last_updated: string;
+}
+
+export interface FirmOSQCReview {
+  id: string;
+  workstream_id: string;
+  reviewer_agent: string;
+  status: "pending" | "pass" | "revise" | "escalate";
+  created_at: string;
+  checklist?: Record<string, boolean>;
+  outcome?: string;
+}
+
+export interface FirmOSRelease {
+  id: string;
+  component: string;
+  version: string;
+  status: "pending" | "authorized" | "rejected" | "released";
+  risk_score: number;
+  created_at: string;
+}
+
+export interface FirmOSIncident {
+  id: string;
+  title: string;
+  severity: "critical" | "high" | "medium" | "low";
+  status: "open" | "investigating" | "resolved";
+  created_at: string;
+  assigned_agent?: string;
+}
+
+export interface FirmOSPolicyDecision {
+  id: string;
+  request_type: string;
+  decision: "allow" | "deny" | "escalate";
+  policy_id: string;
+  reasoning: string;
+  created_at: string;
+}

@@ -1,0 +1,103 @@
+# QC Checklist: Risk Assessment Review
+# Used by Diane for quality control of Fatima's risk work
+
+version: "1.0"
+service: risk
+
+checklist:
+  # --------------------------------------------------------------------------
+  # SCOPE & METHODOLOGY
+  # --------------------------------------------------------------------------
+  methodology:
+    - id: MET-01
+      description: "Scope of assessment clearly defined"
+      required: true
+      
+    - id: MET-02
+      description: "Risk framework identified (COSO, ISO, etc.)"
+      required: true
+      
+    - id: MET-03
+      description: "Methodology appropriate for engagement"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # RISK IDENTIFICATION
+  # --------------------------------------------------------------------------
+  identification:
+    - id: IDN-01
+      description: "Risk categories comprehensive"
+      required: true
+      
+    - id: IDN-02
+      description: "Risk descriptions clear and specific"
+      required: true
+      
+    - id: IDN-03
+      description: "Root causes identified"
+      required: false
+      
+  # --------------------------------------------------------------------------
+  # RISK ASSESSMENT
+  # --------------------------------------------------------------------------
+  assessment:
+    - id: ASS-01
+      description: "Impact ratings justified"
+      required: true
+      
+    - id: ASS-02
+      description: "Likelihood ratings justified"
+      required: true
+      
+    - id: ASS-03
+      description: "Overall risk rating calculated correctly"
+      required: true
+      
+    - id: ASS-04
+      description: "Risk appetite considered"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # CONTROLS & MITIGATION
+  # --------------------------------------------------------------------------
+  controls:
+    - id: CTL-01
+      description: "Existing controls identified"
+      required: true
+      
+    - id: CTL-02
+      description: "Control effectiveness assessed"
+      required: true
+      
+    - id: CTL-03
+      description: "Recommended improvements actionable"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # REPORTING
+  # --------------------------------------------------------------------------
+  reporting:
+    - id: RPT-01
+      description: "Risk register format correct"
+      required: true
+      
+    - id: RPT-02
+      description: "Heat map/visualization included"
+      required: false
+      
+    - id: RPT-03
+      description: "Remediation owners assigned"
+      required: true
+
+outcomes:
+  pass:
+    criteria: "Complete assessment with justified ratings and actionable recommendations"
+    
+  pass_with_comments:
+    criteria: "Minor gaps in documentation, core assessment sound"
+    
+  revise:
+    criteria: "Incomplete coverage or unjustified ratings"
+    
+  escalate:
+    criteria: "Critical risks identified requiring immediate attention"

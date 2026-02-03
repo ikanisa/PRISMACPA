@@ -3,6 +3,7 @@ import {
   normalizeMessage,
   normalizeRoleForGrouping,
   isToolResultMessage,
+  isInterAgentMessage,
 } from "./message-normalizer";
 
 describe("message-normalizer", () => {
@@ -29,6 +30,7 @@ describe("message-normalizer", () => {
         content: [{ type: "text", text: "Hello world" }],
         timestamp: 1000,
         id: "msg-1",
+        agentId: undefined,
       });
     });
 
@@ -174,6 +176,67 @@ describe("message-normalizer", () => {
     it("returns false for non-string role", () => {
       expect(isToolResultMessage({ role: 123 })).toBe(false);
       expect(isToolResultMessage({ role: null })).toBe(false);
+    });
+  });
+
+  describe("isInterAgentMessage", () => {
+    it("returns true for user role with agentId", () => {
+      expect(isInterAgentMessage({ role: "user", agentId: "aline" })).toBe(true);
+    });
+
+    it("returns false for user role without agentId", () => {
+      expect(isInterAgentMessage({ role: "user", content: "Hello" })).toBe(false);
+    });
+
+    it("returns false for assistant role with agentId", () => {
+      expect(isInterAgentMessage({ role: "assistant", agentId: "sofia" })).toBe(false);
+    });
+
+    it("returns false for assistant role without agentId", () => {
+      expect(isInterAgentMessage({ role: "assistant" })).toBe(false);
+    });
+
+    it("handles uppercase User role", () => {
+      expect(isInterAgentMessage({ role: "User", agentId: "yves" })).toBe(true);
+    });
+
+    it("returns false for empty agentId string", () => {
+      // Empty string is falsy
+      expect(isInterAgentMessage({ role: "user", agentId: "" })).toBe(false);
+    });
+
+    it("returns false for non-string agentId", () => {
+      expect(isInterAgentMessage({ role: "user", agentId: 123 })).toBe(false);
+      expect(isInterAgentMessage({ role: "user", agentId: null })).toBe(false);
+    });
+  });
+
+  describe("normalizeMessage agentId extraction", () => {
+    it("extracts agentId from message", () => {
+      const result = normalizeMessage({
+        role: "assistant",
+        content: "Hello",
+        agentId: "sofia",
+        timestamp: 1234567890,
+      });
+      expect(result.agentId).toBe("sofia");
+    });
+
+    it("returns undefined agentId when not present", () => {
+      const result = normalizeMessage({
+        role: "user",
+        content: "Hello",
+      });
+      expect(result.agentId).toBeUndefined();
+    });
+
+    it("ignores non-string agentId", () => {
+      const result = normalizeMessage({
+        role: "assistant",
+        content: "Hello",
+        agentId: 123,
+      });
+      expect(result.agentId).toBeUndefined();
     });
   });
 });

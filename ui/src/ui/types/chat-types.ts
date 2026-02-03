@@ -13,6 +13,8 @@ export type MessageGroup = {
   kind: "group";
   key: string;
   role: string;
+  agentId?: string;
+  isInterAgent?: boolean;
   messages: Array<{ message: unknown; key: string }>;
   timestamp: number;
   isStreaming: boolean;
@@ -32,6 +34,7 @@ export type NormalizedMessage = {
   content: MessageContentItem[];
   timestamp: number;
   id?: string;
+  agentId?: string;
 };
 
 /** Tool card representation for tool calls and results */

@@ -1,0 +1,86 @@
+# Rwanda Regulatory Deadlines Calendar
+# FirmOS deadline tracking for Rwanda entities
+
+version: "1.0"
+updated: "2026-02-03"
+
+# ============================================================================
+# VAT DEADLINES
+# ============================================================================
+vat:
+  frequency: monthly
+  deadline_rule: "15th of following month"
+  examples:
+    - period: "January 2026"
+      due_date: "2026-02-15"
+    - period: "February 2026"
+      due_date: "2026-03-15"
+  portal: "RRA eTax System"
+  responsible_agent: emmanuel
+  note: "EBM (Electronic Billing Machine) compliance required"
+
+# ============================================================================
+# PAYE DEADLINES
+# ============================================================================
+paye:
+  frequency: monthly
+  deadline_rule: "15th of following month"
+  responsible_agent: emmanuel
+
+# ============================================================================
+# INCOME TAX DEADLINES
+# ============================================================================
+income_tax:
+  corporate:
+    - type: "Annual Corporate Tax Return"
+      deadline: "March 31"
+      applies_to: "December year-end"
+    - type: "Provisional Tax (Quarterly)"
+      deadline: "Q1: Mar 31, Q2: Jun 30, Q3: Sep 30, Q4: Dec 31"
+  responsible_agent: emmanuel
+
+# ============================================================================
+# WITHHOLDING TAX
+# ============================================================================
+withholding_tax:
+  frequency: monthly
+  deadline_rule: "15th of following month"
+  applies_to:
+    - dividends
+    - interest
+    - royalties
+    - management fees
+  responsible_agent: emmanuel
+
+# ============================================================================
+# RDB/CORPORATE DEADLINES
+# ============================================================================
+rdb:
+  annual_return:
+    deadline_rule: "30 days from anniversary date"
+    responsible_agent: chantal
+    
+  director_changes:
+    deadline_rule: "7 days from change"
+    responsible_agent: chantal
+    
+  share_transfers:
+    deadline_rule: "7 days from transfer"
+    responsible_agent: chantal
+    
+  company_registration:
+    processing_time: "1-3 business days"
+    responsible_agent: chantal
+
+# ============================================================================
+# FINANCIAL STATEMENTS
+# ============================================================================
+financial_statements:
+  filing_deadline: "6 months from year-end"
+  example:
+    year_end: "December 31, 2025"
+    due_date: "June 30, 2026"
+  standards: "IFRS for SMEs"
+  responsible_agents:
+    - sofia  # Preparation
+    - chantal  # RDB submission

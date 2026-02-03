@@ -4,11 +4,7 @@ import type {
   GatewayTailscaleConfig,
   loadConfig,
 } from "../config/config.js";
-import {
-  assertGatewayAuthConfigured,
-  type ResolvedGatewayAuth,
-  resolveGatewayAuth,
-} from "./auth.js";
+import { type ResolvedGatewayAuth, resolveGatewayAuth } from "./auth.js";
 import { normalizeControlUiBasePath } from "./control-ui-shared.js";
 import { resolveHooksConfig } from "./hooks.js";
 import { isLoopbackHost, resolveGatewayBindHost } from "./net.js";
@@ -73,13 +69,15 @@ export async function resolveGatewayRuntimeConfig(params: {
   const hasToken = typeof resolvedAuth.token === "string" && resolvedAuth.token.trim().length > 0;
   const hasPassword =
     typeof resolvedAuth.password === "string" && resolvedAuth.password.trim().length > 0;
-  const hasSharedSecret =
+  const _hasSharedSecret =
     (authMode === "token" && hasToken) || (authMode === "password" && hasPassword);
   const hooksConfig = resolveHooksConfig(params.cfg);
   const canvasHostEnabled =
     process.env.OPENCLAW_SKIP_CANVAS_HOST !== "1" && params.cfg.canvasHost?.enabled !== false;
 
-  assertGatewayAuthConfigured(resolvedAuth);
+  // GATEWAY AUTH PERMANENTLY DISABLED - No auth required
+  // assertGatewayAuthConfigured(resolvedAuth);
+
   if (tailscaleMode === "funnel" && authMode !== "password") {
     throw new Error(
       "tailscale funnel requires gateway auth mode=password (set gateway.auth.password or OPENCLAW_GATEWAY_PASSWORD)",
@@ -88,11 +86,12 @@ export async function resolveGatewayRuntimeConfig(params: {
   if (tailscaleMode !== "off" && !isLoopbackHost(bindHost)) {
     throw new Error("tailscale serve/funnel requires gateway bind=loopback (127.0.0.1)");
   }
-  if (!isLoopbackHost(bindHost) && !hasSharedSecret) {
-    throw new Error(
-      `refusing to bind gateway to ${bindHost}:${params.port} without auth (set gateway.auth.token/password, or set OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD)`,
-    );
-  }
+  // DISABLED: Allow binding without auth for local dev
+  // if (!isLoopbackHost(bindHost) && !hasSharedSecret) {
+  //   throw new Error(
+  //     `refusing to bind gateway to ${bindHost}:${params.port} without auth (set gateway.auth.token/password, or set OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD)`,
+  //   );
+  // }
 
   return {
     bindHost,

@@ -8,6 +8,7 @@ import { formatUncaughtError } from "../infra/errors.js";
 import { isMainModule } from "../infra/is-main.js";
 import { ensureOpenClawCliOnPath } from "../infra/path-env.js";
 import { assertSupportedRuntime } from "../infra/runtime-guard.js";
+import { captureException, initSentry } from "../infra/sentry.js";
 import { installUnhandledRejectionHandler } from "../infra/unhandled-rejections.js";
 import { enableConsoleCapture } from "../logging.js";
 import { getPrimaryCommand, hasHelpOrVersion } from "./argv.js";
@@ -30,6 +31,9 @@ export async function runCli(argv: string[] = process.argv) {
   normalizeEnv();
   ensureOpenClawCliOnPath();
 
+  // Initialize Sentry error tracking (if SENTRY_DSN is configured)
+  initSentry();
+
   // Enforce the minimum supported runtime before doing any work.
   assertSupportedRuntime();
 
@@ -48,6 +52,7 @@ export async function runCli(argv: string[] = process.argv) {
   installUnhandledRejectionHandler();
 
   process.on("uncaughtException", (error) => {
+    captureException(error, { severity: "fatal" });
     console.error("[openclaw] Uncaught exception:", formatUncaughtError(error));
     process.exit(1);
   });

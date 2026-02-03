@@ -26,23 +26,25 @@ describe("iconForTab", () => {
   });
 
   it("returns stable icons for known tabs", () => {
-    expect(iconForTab("chat")).toBe("💬");
-    expect(iconForTab("overview")).toBe("📊");
-    expect(iconForTab("channels")).toBe("🔗");
-    expect(iconForTab("instances")).toBe("📡");
-    expect(iconForTab("sessions")).toBe("📄");
-    expect(iconForTab("cron")).toBe("⏰");
-    expect(iconForTab("skills")).toBe("⚡️");
-    expect(iconForTab("nodes")).toBe("🖥️");
-    expect(iconForTab("config")).toBe("⚙️");
-    expect(iconForTab("debug")).toBe("🐞");
-    expect(iconForTab("logs")).toBe("🧾");
+    expect(iconForTab("chat")).toBe("messageSquare");
+    expect(iconForTab("overview")).toBe("barChart");
+    expect(iconForTab("activity")).toBe("scrollText");
+    expect(iconForTab("channels")).toBe("link");
+    expect(iconForTab("instances")).toBe("radio");
+    expect(iconForTab("sessions")).toBe("fileText");
+    expect(iconForTab("cron")).toBe("loader");
+    expect(iconForTab("agents")).toBe("brain");
+    expect(iconForTab("skills")).toBe("zap");
+    expect(iconForTab("nodes")).toBe("monitor");
+    expect(iconForTab("config")).toBe("settings");
+    expect(iconForTab("debug")).toBe("bug");
+    expect(iconForTab("logs")).toBe("scrollText");
   });
 
   it("returns a fallback icon for unknown tab", () => {
     // TypeScript won't allow this normally, but runtime could receive unexpected values
     const unknownTab = "unknown" as Tab;
-    expect(iconForTab(unknownTab)).toBe("📁");
+    expect(iconForTab(unknownTab)).toBe("folder");
   });
 });
 
@@ -72,7 +74,7 @@ describe("subtitleForTab", () => {
 
   it("returns descriptive subtitles", () => {
     expect(subtitleForTab("chat")).toContain("chat session");
-    expect(subtitleForTab("config")).toContain("openclaw.json");
+    expect(subtitleForTab("config")).toContain("firmos.json");
   });
 });
 
@@ -94,7 +96,7 @@ describe("normalizeBasePath", () => {
   });
 
   it("handles nested paths", () => {
-    expect(normalizeBasePath("/apps/openclaw")).toBe("/apps/openclaw");
+    expect(normalizeBasePath("/apps/firmos")).toBe("/apps/firmos");
   });
 });
 
@@ -121,7 +123,7 @@ describe("pathForTab", () => {
 
   it("prepends base path", () => {
     expect(pathForTab("chat", "/ui")).toBe("/ui/chat");
-    expect(pathForTab("sessions", "/apps/openclaw")).toBe("/apps/openclaw/sessions");
+    expect(pathForTab("sessions", "/apps/firmos")).toBe("/apps/firmos/sessions");
   });
 });
 
@@ -138,7 +140,7 @@ describe("tabFromPath", () => {
 
   it("handles base paths", () => {
     expect(tabFromPath("/ui/chat", "/ui")).toBe("chat");
-    expect(tabFromPath("/apps/openclaw/sessions", "/apps/openclaw")).toBe("sessions");
+    expect(tabFromPath("/apps/firmos/sessions", "/apps/firmos")).toBe("sessions");
   });
 
   it("returns null for unknown path", () => {
@@ -163,7 +165,7 @@ describe("inferBasePathFromPathname", () => {
 
   it("infers base path from nested paths", () => {
     expect(inferBasePathFromPathname("/ui/chat")).toBe("/ui");
-    expect(inferBasePathFromPathname("/apps/openclaw/sessions")).toBe("/apps/openclaw");
+    expect(inferBasePathFromPathname("/apps/firmos/sessions")).toBe("/apps/firmos");
   });
 
   it("handles index.html suffix", () => {

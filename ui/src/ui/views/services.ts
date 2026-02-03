@@ -63,7 +63,7 @@ export function renderServices(props: ServicesProps) {
         <button class="btn" @click=${() => props.onRefresh()}>Refresh</button>
       </div>
       ${props.services.length === 0
-            ? html`<div class="muted" style="margin-top: 14px;">No services registered. Configure agents in your openclaw.json.</div>`
+            ? html`<div class="muted" style="margin-top: 14px;">No services registered. Configure agents in your firmos.json.</div>`
             : html`
             <div class="grid grid-cols-3" style="margin-top: 18px; gap: 14px;">
               ${props.services.map(

@@ -1,3 +1,3 @@
 import "./styles.css";
-import "./ui/auth-gate.ts";
+import "./ui/device-gate.ts";
 import "./ui/app.ts";

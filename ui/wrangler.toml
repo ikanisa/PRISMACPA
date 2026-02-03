@@ -1,0 +1,23 @@
+# OpenClaw Control UI - Cloudflare Pages Configuration
+#
+# Deploy: npx wrangler pages deploy dist --project-name=openclaw-dashboard
+# Dev:    npx wrangler pages dev dist --port 8788
+
+name = "openclaw-dashboard"
+compatibility_date = "2024-01-01"
+
+# Pages-specific configuration
+[site]
+bucket = "./dist"
+
+# Build configuration (used by Cloudflare direct integration)
+[build]
+command = "pnpm build"
+output_directory = "dist"
+
+# Environment-specific configurations
+[env.production]
+name = "openclaw-dashboard"
+
+[env.preview]
+name = "openclaw-dashboard-preview"

@@ -1,0 +1,94 @@
+# QC Checklist: Audit Workpaper Review
+# Used by Diane for quality control of Patrick's audit workpapers
+
+version: "1.0"
+service: audit
+
+checklist:
+  # --------------------------------------------------------------------------
+  # GENERAL REQUIREMENTS
+  # --------------------------------------------------------------------------
+  general:
+    - id: GEN-01
+      description: "Workpaper is clearly titled and dated"
+      required: true
+      
+    - id: GEN-02
+      description: "Preparer name and date recorded"
+      required: true
+      
+    - id: GEN-03
+      description: "Client and period identified"
+      required: true
+      
+    - id: GEN-04
+      description: "Purpose/objective stated"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # EVIDENCE REQUIREMENTS
+  # --------------------------------------------------------------------------
+  evidence:
+    - id: EVD-01
+      description: "Evidence is relevant to audit objective"
+      required: true
+      
+    - id: EVD-02
+      description: "Evidence source clearly identified"
+      required: true
+      
+    - id: EVD-03
+      description: "Evidence is sufficient and appropriate"
+      required: true
+      
+    - id: EVD-04
+      description: "Third-party confirmations include response"
+      required: false
+      
+  # --------------------------------------------------------------------------
+  # PROCEDURE REQUIREMENTS
+  # --------------------------------------------------------------------------
+  procedures:
+    - id: PRO-01
+      description: "Procedures performed are documented"
+      required: true
+      
+    - id: PRO-02
+      description: "Sample selection methodology stated"
+      required: false
+      
+    - id: PRO-03
+      description: "Exceptions identified and investigated"
+      required: true
+      
+  # --------------------------------------------------------------------------
+  # CONCLUSION
+  # --------------------------------------------------------------------------
+  conclusion:
+    - id: CON-01
+      description: "Conclusion is clearly stated"
+      required: true
+      
+    - id: CON-02
+      description: "Conclusion is supported by work performed"
+      required: true
+      
+    - id: CON-03
+      description: "Issues requiring further action flagged"
+      required: true
+
+# --------------------------------------------------------------------------
+# REVIEW OUTCOME CRITERIA
+# --------------------------------------------------------------------------
+outcomes:
+  pass:
+    criteria: "All required items checked, no material exceptions"
+    
+  pass_with_comments:
+    criteria: "Minor items missing but no impact on conclusion"
+    
+  revise:
+    criteria: "Required items missing or conclusion unsupported"
+    
+  escalate:
+    criteria: "Material exceptions, risk indicators, or policy violations"

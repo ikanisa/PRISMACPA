@@ -12,11 +12,16 @@
         "./release_gates": "./release_gates/index.ts",
         "./template_factory": "./template_factory/index.ts",
         "./audit_log": "./audit_log/index.ts",
+        "./incidents": "./incidents/index.ts",
         "./case_mgmt": "./case_mgmt/index.ts"
     },
     "dependencies": {
         "@firmos/core": "workspace:*",
         "@firmos/policies": "workspace:*",
-        "@firmos/programs": "workspace:*"
+        "@firmos/programs": "workspace:*",
+        "@supabase/supabase-js": "^2.93.3"
+    },
+    "devDependencies": {
+        "@types/node": "^25.2.0"
     }
 }

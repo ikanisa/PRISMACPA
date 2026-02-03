@@ -24,7 +24,7 @@ CREATE TYPE evidence_source AS ENUM (
 
 -- Evidence entries table
 CREATE TABLE evidence_entries (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- File metadata
   filename TEXT NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE evidence_entries (
 
 -- Evidence packs (grouped evidence for a period)
 CREATE TABLE evidence_packs (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Period association
   vat_period_id UUID NOT NULL,

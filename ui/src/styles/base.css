@@ -213,6 +213,7 @@ body {
   0% {
     clip-path: circle(0% at var(--theme-switch-x, 50%) var(--theme-switch-y, 50%));
   }
+
   100% {
     clip-path: circle(150% at var(--theme-switch-x, 50%) var(--theme-switch-y, 50%));
   }
@@ -235,13 +236,14 @@ html.theme-transition::view-transition-new(theme) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   html.theme-transition::view-transition-old(theme),
   html.theme-transition::view-transition-new(theme) {
     animation: none !important;
   }
 }
 
-openclaw-app {
+firmos-app {
   display: block;
   position: relative;
   z-index: 1;
@@ -295,6 +297,7 @@ select {
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -305,6 +308,7 @@ select {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -315,6 +319,7 @@ select {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -326,6 +331,7 @@ select {
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -336,26 +342,31 @@ select {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 @keyframes pulse-subtle {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.7;
   }
 }
 
 @keyframes glow-pulse {
+
   0%,
   100% {
     box-shadow: 0 0 0 rgba(255, 92, 92, 0);
   }
+
   50% {
     box-shadow: 0 0 20px var(--accent-glow);
   }
@@ -365,18 +376,23 @@ select {
 .stagger-1 {
   animation-delay: 0ms;
 }
+
 .stagger-2 {
   animation-delay: 50ms;
 }
+
 .stagger-3 {
   animation-delay: 100ms;
 }
+
 .stagger-4 {
   animation-delay: 150ms;
 }
+
 .stagger-5 {
   animation-delay: 200ms;
 }
+
 .stagger-6 {
   animation-delay: 250ms;
 }
@@ -385,4 +401,101 @@ select {
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+/* ==========================================================================
+   Status Indicator Classes - Reusable agent/system status indicators
+   ========================================================================== */
+
+/* Base status indicator (dot) */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-indicator--sm {
+  width: 6px;
+  height: 6px;
+}
+
+.status-indicator--lg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Status states */
+.status-indicator--online,
+.status--online {
+  background: var(--ok);
+  box-shadow: 0 0 4px var(--ok);
+}
+
+.status-indicator--busy,
+.status--busy {
+  background: var(--warn);
+  box-shadow: 0 0 4px var(--warn);
+}
+
+.status-indicator--offline,
+.status--offline {
+  background: var(--muted);
+  opacity: 0.7;
+}
+
+.status-indicator--error,
+.status--error {
+  background: var(--danger);
+  box-shadow: 0 0 4px var(--danger);
+}
+
+/* Pulsing animation for active indicators */
+.status-indicator--pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Status badge (text label variant) */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+}
+
+.status-badge--online {
+  background: var(--ok-subtle);
+  color: var(--ok);
+}
+
+.status-badge--busy {
+  background: var(--warn-subtle);
+  color: var(--warn);
+}
+
+.status-badge--offline {
+  background: var(--bg-muted);
+  color: var(--muted);
+}
+
+.status-badge--error {
+  background: var(--danger-subtle);
+  color: var(--danger);
 }

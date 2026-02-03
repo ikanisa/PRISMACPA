@@ -1,5 +1,5 @@
 import type { GatewayBrowserClient } from "../gateway";
-import type { AgentsListResult } from "../types";
+import type { AgentsListResult, GatewayAgentRow } from "../types";
 
 export type AgentsState = {
   client: GatewayBrowserClient | null;
@@ -19,7 +19,7 @@ export async function loadAgents(state: AgentsState) {
   state.agentsLoading = true;
   state.agentsError = null;
   try {
-    const res = await state.client.request("agents.list", {});
+    const res = await state.client.request("agents.list", {}) as AgentsListResult | null;
     if (res) {
       state.agentsList = res;
     }
@@ -28,4 +28,28 @@ export async function loadAgents(state: AgentsState) {
   } finally {
     state.agentsLoading = false;
   }
+}
+
+/**
+ * Get display name for an agent
+ */
+export function getAgentDisplayName(agent: GatewayAgentRow): string {
+  return agent.identity?.name || agent.name || agent.id;
+}
+
+/**
+ * Get emoji for an agent
+ */
+export function getAgentEmoji(agent: GatewayAgentRow): string {
+  return agent.identity?.emoji || "🤖";
+}
+
+/**
+ * Get agent by ID from state
+ */
+export function getAgentById(
+  state: AgentsState,
+  agentId: string,
+): GatewayAgentRow | undefined {
+  return state.agentsList?.agents.find((a) => a.id === agentId);
 }

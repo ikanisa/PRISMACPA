@@ -4,9 +4,9 @@ export const TAB_GROUPS = [
   { label: "Chat", tabs: ["chat"] },
   {
     label: "Control",
-    tabs: ["overview", "channels", "instances", "sessions", "cron"],
+    tabs: ["overview", "activity", "channels", "instances", "sessions", "cron"],
   },
-  { label: "Agent", tabs: ["skills", "nodes"] },
+  { label: "Agent", tabs: ["agents", "skills", "nodes"] },
   {
     label: "FirmOS",
     tabs: ["controltower", "services", "packs", "releases", "incidents", "policy"],
@@ -16,10 +16,12 @@ export const TAB_GROUPS = [
 
 export type Tab =
   | "overview"
+  | "activity"
   | "channels"
   | "instances"
   | "sessions"
   | "cron"
+  | "agents"
   | "skills"
   | "nodes"
   | "chat"
@@ -35,10 +37,12 @@ export type Tab =
 
 const TAB_PATHS: Record<Tab, string> = {
   overview: "/overview",
+  activity: "/activity",
   channels: "/channels",
   instances: "/instances",
   sessions: "/sessions",
   cron: "/cron",
+  agents: "/agents",
   skills: "/skills",
   nodes: "/nodes",
   chat: "/chat",
@@ -92,6 +96,30 @@ export function pathForTab(tab: Tab, basePath = ""): string {
   return base ? `${base}${path}` : path;
 }
 
+/**
+ * Generate path for a service detail page
+ */
+export function pathForServiceDetail(serviceId: string, basePath = ""): string {
+  const base = normalizeBasePath(basePath);
+  return base ? `${base}/services/${serviceId}` : `/services/${serviceId}`;
+}
+
+/**
+ * Extract service ID from a path like /services/{serviceId}
+ */
+export function serviceIdFromPath(pathname: string, basePath = ""): string | null {
+  const base = normalizeBasePath(basePath);
+  let path = pathname || "/";
+  if (base) {
+    if (path.startsWith(`${base}/`)) {
+      path = path.slice(base.length);
+    }
+  }
+  const normalized = normalizePath(path).toLowerCase();
+  const match = normalized.match(/^\/services\/([^/]+)$/);
+  return match ? match[1] : null;
+}
+
 export function tabFromPath(pathname: string, basePath = ""): Tab | null {
   const base = normalizeBasePath(basePath);
   let path = pathname || "/";
@@ -108,6 +136,10 @@ export function tabFromPath(pathname: string, basePath = ""): Tab | null {
   }
   if (normalized === "/") {
     return "chat";
+  }
+  // Handle /services/{serviceId} as services tab with detail view
+  if (normalized.startsWith("/services/") && normalized !== "/services") {
+    return "services";
   }
   return PATH_TO_TAB.get(normalized) ?? null;
 }
@@ -140,6 +172,8 @@ export function iconForTab(tab: Tab): IconName {
       return "messageSquare";
     case "overview":
       return "barChart";
+    case "activity":
+      return "scrollText"; // Activity log/feed icon
     case "channels":
       return "link";
     case "instances":
@@ -148,6 +182,8 @@ export function iconForTab(tab: Tab): IconName {
       return "fileText";
     case "cron":
       return "loader";
+    case "agents":
+      return "brain";
     case "skills":
       return "zap";
     case "nodes":
@@ -179,6 +215,8 @@ export function titleForTab(tab: Tab) {
   switch (tab) {
     case "overview":
       return "Overview";
+    case "activity":
+      return "Activity";
     case "channels":
       return "Channels";
     case "instances":
@@ -187,6 +225,8 @@ export function titleForTab(tab: Tab) {
       return "Sessions";
     case "cron":
       return "Cron Jobs";
+    case "agents":
+      return "Agents";
     case "skills":
       return "Skills";
     case "nodes":
@@ -220,6 +260,8 @@ export function subtitleForTab(tab: Tab) {
   switch (tab) {
     case "overview":
       return "Gateway status, entry points, and a fast health read.";
+    case "activity":
+      return "Real-time feed of agent and system events.";
     case "channels":
       return "Manage channels and settings.";
     case "instances":
@@ -228,6 +270,8 @@ export function subtitleForTab(tab: Tab) {
       return "Inspect active sessions and adjust per-session defaults.";
     case "cron":
       return "Schedule wakeups and recurring agent runs.";
+    case "agents":
+      return "View all agents with status and workload.";
     case "skills":
       return "Manage skill availability and API key injection.";
     case "nodes":
@@ -235,7 +279,7 @@ export function subtitleForTab(tab: Tab) {
     case "chat":
       return "Direct gateway chat session for quick interventions.";
     case "config":
-      return "Edit ~/.openclaw/openclaw.json safely.";
+      return "Edit ~/.openclaw/firmos.json safely.";
     case "debug":
       return "Gateway snapshots, events, and manual RPC calls.";
     case "logs":

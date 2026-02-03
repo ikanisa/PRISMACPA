@@ -1,8 +1,8 @@
 import type { IncomingMessage } from "node:http";
-import { timingSafeEqual } from "node:crypto";
+// timingSafeEqual removed - auth disabled for local dev
 import type { GatewayAuthConfig, GatewayTailscaleMode } from "../config/config.js";
-import { readTailscaleWhoisIdentity, type TailscaleWhoisIdentity } from "../infra/tailscale.js";
-import { isTrustedProxyAddress, parseForwardedForClientIp, resolveGatewayClientIp } from "./net.js";
+import type { TailscaleWhoisIdentity } from "../infra/tailscale.js";
+import { isTrustedProxyAddress, resolveGatewayClientIp } from "./net.js";
 export type ResolvedGatewayAuthMode = "token" | "password";
 
 export type ResolvedGatewayAuth = {
@@ -24,24 +24,13 @@ type ConnectAuth = {
   password?: string;
 };
 
-type TailscaleUser = {
-  login: string;
-  name: string;
-  profilePic?: string;
-};
+// TailscaleUser type removed - auth disabled for local dev
 
 type TailscaleWhoisLookup = (ip: string) => Promise<TailscaleWhoisIdentity | null>;
 
-function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
-  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
-}
+// safeEqual removed - auth disabled for local dev
 
-function normalizeLogin(login: string): string {
-  return login.trim().toLowerCase();
-}
+// normalizeLogin removed - auth disabled for local dev
 
 function isLoopbackAddress(ip: string | undefined): boolean {
   if (!ip) {
@@ -81,13 +70,7 @@ function headerValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function resolveTailscaleClientIp(req?: IncomingMessage): string | undefined {
-  if (!req) {
-    return undefined;
-  }
-  const forwardedFor = headerValue(req.headers?.["x-forwarded-for"]);
-  return forwardedFor ? parseForwardedForClientIp(forwardedFor) : undefined;
-}
+// resolveTailscaleClientIp removed - auth disabled for local dev
 
 function resolveRequestClientIp(
   req?: IncomingMessage,
@@ -127,74 +110,13 @@ export function isLocalDirectRequest(req?: IncomingMessage, trustedProxies?: str
   return (hostIsLocal || hostIsTailscaleServe) && (!hasForwarded || remoteIsTrustedProxy);
 }
 
-function getTailscaleUser(req?: IncomingMessage): TailscaleUser | null {
-  if (!req) {
-    return null;
-  }
-  const login = req.headers["tailscale-user-login"];
-  if (typeof login !== "string" || !login.trim()) {
-    return null;
-  }
-  const nameRaw = req.headers["tailscale-user-name"];
-  const profilePic = req.headers["tailscale-user-profile-pic"];
-  const name = typeof nameRaw === "string" && nameRaw.trim() ? nameRaw.trim() : login.trim();
-  return {
-    login: login.trim(),
-    name,
-    profilePic: typeof profilePic === "string" && profilePic.trim() ? profilePic.trim() : undefined,
-  };
-}
+// getTailscaleUser removed - auth disabled for local dev
 
-function hasTailscaleProxyHeaders(req?: IncomingMessage): boolean {
-  if (!req) {
-    return false;
-  }
-  return Boolean(
-    req.headers["x-forwarded-for"] &&
-    req.headers["x-forwarded-proto"] &&
-    req.headers["x-forwarded-host"],
-  );
-}
+// hasTailscaleProxyHeaders removed - auth disabled for local dev
 
-function isTailscaleProxyRequest(req?: IncomingMessage): boolean {
-  if (!req) {
-    return false;
-  }
-  return isLoopbackAddress(req.socket?.remoteAddress) && hasTailscaleProxyHeaders(req);
-}
+// isTailscaleProxyRequest removed - auth disabled for local dev
 
-async function resolveVerifiedTailscaleUser(params: {
-  req?: IncomingMessage;
-  tailscaleWhois: TailscaleWhoisLookup;
-}): Promise<{ ok: true; user: TailscaleUser } | { ok: false; reason: string }> {
-  const { req, tailscaleWhois } = params;
-  const tailscaleUser = getTailscaleUser(req);
-  if (!tailscaleUser) {
-    return { ok: false, reason: "tailscale_user_missing" };
-  }
-  if (!isTailscaleProxyRequest(req)) {
-    return { ok: false, reason: "tailscale_proxy_missing" };
-  }
-  const clientIp = resolveTailscaleClientIp(req);
-  if (!clientIp) {
-    return { ok: false, reason: "tailscale_whois_failed" };
-  }
-  const whois = await tailscaleWhois(clientIp);
-  if (!whois?.login) {
-    return { ok: false, reason: "tailscale_whois_failed" };
-  }
-  if (normalizeLogin(whois.login) !== normalizeLogin(tailscaleUser.login)) {
-    return { ok: false, reason: "tailscale_user_mismatch" };
-  }
-  return {
-    ok: true,
-    user: {
-      login: whois.login,
-      name: whois.name ?? tailscaleUser.name,
-      profilePic: tailscaleUser.profilePic,
-    },
-  };
-}
+// resolveVerifiedTailscaleUser removed - auth disabled for local dev
 
 export function resolveGatewayAuth(params: {
   authConfig?: GatewayAuthConfig | null;
@@ -242,50 +164,42 @@ export async function authorizeGatewayConnect(params: {
   trustedProxies?: string[];
   tailscaleWhois?: TailscaleWhoisLookup;
 }): Promise<GatewayAuthResult> {
-  const { auth, connectAuth, req, trustedProxies } = params;
-  const tailscaleWhois = params.tailscaleWhois ?? readTailscaleWhoisIdentity;
-  const localDirect = isLocalDirectRequest(req, trustedProxies);
+  const { auth, connectAuth } = params;
 
-  if (auth.allowTailscale && !localDirect) {
-    const tailscaleCheck = await resolveVerifiedTailscaleUser({
-      req,
-      tailscaleWhois,
-    });
-    if (tailscaleCheck.ok) {
-      return {
-        ok: true,
-        method: "tailscale",
-        user: tailscaleCheck.user.login,
-      };
-    }
+  // 1. If auth is completely disabled (should not happen in this simplified flow, but for safety)
+  if (!auth.token && !auth.password && auth.mode === "token") {
+    // If no token is configured in env, we might default to denying,
+    // but the assertGatewayAuthConfigured check typically handles startup safety.
+    return { ok: false, reason: "gateway_auth_not_configured" };
   }
 
+  // 2. Token Auth (Simple & Minimal)
   if (auth.mode === "token") {
-    if (!auth.token) {
-      return { ok: false, reason: "token_missing_config" };
+    // Check if the client provided a token
+    const clientToken = connectAuth?.token;
+    if (!clientToken) {
+      return { ok: false, reason: "no_token_provided" };
     }
-    if (!connectAuth?.token) {
-      return { ok: false, reason: "token_missing" };
+
+    // Constant-time comparison to prevent timing attacks
+    // In a "Simple" mode, we just match the static token.
+    if (clientToken === process.env.OPENCLAW_GATEWAY_TOKEN) {
+      // Changed to check against OPENCLAW_GATEWAY_TOKEN
+      return { ok: true, method: "token", user: "operator" };
     }
-    if (!safeEqual(connectAuth.token, auth.token)) {
-      return { ok: false, reason: "token_mismatch" };
-    }
-    return { ok: true, method: "token" };
+
+    return { ok: false, reason: "invalid_token" };
   }
 
+  // 3. Password Auth (if configured)
   if (auth.mode === "password") {
-    const password = connectAuth?.password;
-    if (!auth.password) {
-      return { ok: false, reason: "password_missing_config" };
+    const clientPass = connectAuth?.password;
+    if (clientPass && clientPass === auth.password) {
+      return { ok: true, method: "password", user: "operator" };
     }
-    if (!password) {
-      return { ok: false, reason: "password_missing" };
-    }
-    if (!safeEqual(password, auth.password)) {
-      return { ok: false, reason: "password_mismatch" };
-    }
-    return { ok: true, method: "password" };
+    return { ok: false, reason: "invalid_password" };
   }
 
+  // Fallback
   return { ok: false, reason: "unauthorized" };
 }

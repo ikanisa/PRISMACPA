@@ -1,0 +1,68 @@
+# Template: VAT Return (Rwanda)
+# Used by Emmanuel for Rwanda VAT submissions
+
+metadata:
+  template_id: TAX-RW-01
+  service: tax
+  jurisdiction: RW
+  version: "1.0"
+  updated: "2026-02-03"
+
+structure:
+  header:
+    entity_name: "[ENTITY NAME]"
+    tin: "[TIN NUMBER]"
+    period: "[MONTH YEAR]"
+    due_date: "[15th of following month]"
+    
+  sections:
+    output_vat:
+      - code: "A"
+        description: "Standard rated supplies (18%)"
+        taxable_value: 0.00
+        vat_amount: 0.00
+        
+      - code: "B"
+        description: "Zero-rated supplies"
+        taxable_value: 0.00
+        vat_amount: 0.00
+        
+      - code: "C"
+        description: "Exempt supplies"
+        taxable_value: 0.00
+        vat_amount: 0.00
+        
+    input_vat:
+      - code: "D"
+        description: "Input VAT on local purchases"
+        vat_amount: 0.00
+        
+      - code: "E"
+        description: "Input VAT on imports"
+        vat_amount: 0.00
+        
+    ebm_reconciliation:
+      ebm_total_sales: 0.00
+      declared_sales: 0.00
+      variance: 0.00
+      variance_explanation: ""
+      
+    summary:
+      total_output_vat: 0.00
+      total_input_vat: 0.00
+      net_payable: 0.00
+      
+validation_rules:
+  - "Net payable = Output VAT - Input VAT"
+  - "EBM sales must reconcile to declared sales"
+  - "Variance requires written explanation"
+  - "Cross-check to general ledger VAT accounts"
+  
+submission:
+  portal: "RRA eTax System"
+  method: "Electronic filing"
+  requires_payment: true
+  payment_methods:
+    - "Bank transfer"
+    - "Mobile money"
+  ebm_required: true

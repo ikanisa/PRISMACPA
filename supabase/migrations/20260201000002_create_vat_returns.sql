@@ -12,7 +12,7 @@ CREATE TYPE vat_period_status AS ENUM (
 
 -- VAT periods table (quarterly/monthly Malta VAT)
 CREATE TABLE vat_periods (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Period definition
   period_start DATE NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE vat_periods (
 
 -- VAT line items (detailed breakdown)
 CREATE TABLE vat_line_items (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Period association
   vat_period_id UUID NOT NULL REFERENCES vat_periods(id) ON DELETE CASCADE,
@@ -71,7 +71,7 @@ CREATE TABLE vat_line_items (
 
 -- VAT return drafts (JSON snapshots before filing)
 CREATE TABLE vat_return_drafts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   vat_period_id UUID NOT NULL REFERENCES vat_periods(id) ON DELETE CASCADE,
   

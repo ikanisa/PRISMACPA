@@ -1,0 +1,98 @@
+# FirmOS Inter-Agent Communication Channels
+# Defines message routing and queues between agents
+
+version: "1.0"
+updated: "2026-02-03"
+
+# ============================================================================
+# CHANNEL DEFINITIONS
+# ============================================================================
+channels:
+
+  # --------------------------------------------------------------------------
+  # QC Review Queue (Diane)
+  # --------------------------------------------------------------------------
+  qc_review:
+    owner: diane
+    description: "Quality control review queue for deliverables"
+    message_types:
+      - workpaper_review
+      - deliverable_review
+      - filing_review
+      - assessment_review
+    senders:
+      - patrick   # Audit workpapers
+      - james     # Advisory deliverables
+      - matthew   # Tax filings (MT)
+      - emmanuel  # Tax filings (RW)
+      - fatima    # Risk assessments
+      - chantal   # Notarial acts
+    priority_levels:
+      - urgent     # Same-day review required
+      - standard   # 24-hour SLA
+      - routine    # 48-hour SLA
+
+  # --------------------------------------------------------------------------
+  # Routing Queue (Aline)
+  # --------------------------------------------------------------------------
+  routing_inbox:
+    owner: aline
+    description: "Task routing and distribution queue"
+    message_types:
+      - new_request
+      - priority_change
+      - deadline_alert
+      - handoff_request
+    senders:
+      - all_agents
+      - external  # Incoming client requests
+
+  # --------------------------------------------------------------------------
+  # Escalation Channel (Marco)
+  # --------------------------------------------------------------------------
+  escalation:
+    owner: marco
+    description: "Governance escalation and release authorization"
+    message_types:
+      - qc_failure
+      - policy_violation
+      - high_risk_alert
+      - release_request
+      - incident_report
+    senders:
+      - diane     # QC escalations
+      - aline     # Routing escalations
+      - all_agents  # Direct escalations
+    escalation_triggers:
+      - consecutive_failures: 3
+      - risk_score: ">0.8"
+      - deadline_breach: imminent
+      - compliance_flag: true
+
+# ============================================================================
+# MESSAGE FORMAT
+# ============================================================================
+message_schema:
+  required:
+    - from: "agent_id"
+    - to: "channel or agent_id"
+    - type: "message_type"
+    - content: "message body"
+    - timestamp: "ISO 8601"
+  optional:
+    - priority: "urgent|standard|routine"
+    - reference: "related work item"
+    - attachments: "file paths"
+
+# ============================================================================
+# ROUTING RULES
+# ============================================================================
+routing_rules:
+  - pattern: "qc_*"
+    route_to: qc_review
+    
+  - pattern: "escalate_*"
+    route_to: escalation
+    
+  - pattern: "new_*"
+    route_to: routing_inbox

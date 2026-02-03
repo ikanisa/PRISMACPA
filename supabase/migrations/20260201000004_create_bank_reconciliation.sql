@@ -20,7 +20,7 @@ CREATE TYPE bank_match_type AS ENUM (
 
 -- Bank accounts
 CREATE TABLE bank_accounts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Account details
   account_name TEXT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE bank_accounts (
 
 -- Bank transactions (imported from statements)
 CREATE TABLE bank_transactions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Account reference
   bank_account_id UUID NOT NULL REFERENCES bank_accounts(id) ON DELETE CASCADE,
@@ -72,7 +72,7 @@ CREATE TABLE bank_transactions (
 
 -- Bank matches (transaction to evidence mapping)
 CREATE TABLE bank_matches (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- References
   bank_transaction_id UUID NOT NULL REFERENCES bank_transactions(id) ON DELETE CASCADE,
@@ -98,7 +98,7 @@ CREATE TABLE bank_matches (
 
 -- Bank reconciliation summaries (per period)
 CREATE TABLE bank_reconciliation_summaries (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Period
   vat_period_id UUID REFERENCES vat_periods(id),

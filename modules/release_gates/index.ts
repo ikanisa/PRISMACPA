@@ -1,3 +1,4 @@
+
 /**
  * Release Gates Module
  * 
@@ -5,6 +6,10 @@
  * Integrates with FirmOS config for policy-driven authorization.
  * In v2027+, implementations will live here directly.
  */
+
+import { getSupabaseClient } from '../lib/db.js';
+import { logAction } from '../audit_log/index.js';
+import { getQCHistory } from '../qc_gates/index.js';
 
 // Re-export types and functions from canonical source
 export {
@@ -44,16 +49,20 @@ export type ReleaseStatusSimple =
 export interface ReleaseRequestSimple {
     workpaperId: string;
     requestedBy: string;
-    requestedAt: Date;
-    qcResult: { outcome: "PASS" };
-    authorizationLevel: "standard" | "elevated" | "critical";
+    description: string;
+    metadata?: Record<string, unknown>;
 }
 
-export interface ReleaseDecisionSimple {
+export interface ReleaseRecord {
+    id: string;
+    workpaperId: string;
     status: ReleaseStatusSimple;
-    authorizedBy: "marco" | "operator";
-    authorizedAt: Date;
-    comment?: string;
+    requestedBy: string;
+    requestedAt: Date;
+    authorizedBy?: string;
+    authorizedAt?: Date;
+    releasedAt?: Date;
+    metadata: Record<string, unknown>;
 }
 
 /**
@@ -80,22 +89,175 @@ export function getReleaseOwner(): string {
 }
 
 /**
- * Get authorization levels from policy config
+ * Request a Release (Persisted)
  */
-export function getAuthorizationLevels(): string[] {
-    const config = loadFirmOSConfig();
-    return Object.keys(config.policies.gates.release_gate.authorization_levels);
+export async function requestRelease(request: ReleaseRequestSimple): Promise<ReleaseRecord> {
+    const supabase = getSupabaseClient();
+
+    // 1. Check QC Gates
+    const qcHistory = await getQCHistory(request.workpaperId);
+    const lastQC = qcHistory[0];
+
+    // If no passing QC, reject via failure (or could allow pending_qc status)
+    if (!lastQC || lastQC.outcome !== 'PASS') {
+        throw new Error("Cannot request release: Workpaper has not passed QC.");
+    }
+
+    // 2. Insert Release Request
+    const dbEntry = {
+        workpaper_id: request.workpaperId,
+        status: 'pending_authorization',
+        requested_by: request.requestedBy,
+        metadata: request.metadata || {}
+    };
+
+    const { data, error } = await supabase
+        .from('releases')
+        .insert(dbEntry)
+        .select()
+        .single();
+
+    if (error) {
+        throw new Error(`Failed to request release: ${error.message}`);
+    }
+
+    const record = mapDbToReleaseRecord(data);
+
+    // 3. Audit Log
+    await logAction({
+        action: 'release_requested',
+        actor: request.requestedBy,
+        resourceType: 'release',
+        resourceId: record.id,
+        details: {
+            workpaperId: request.workpaperId,
+            qcReference: lastQC.id
+        }
+    });
+
+    return record;
 }
 
-// Future API stubs
-export async function requestRelease(_request: ReleaseRequestSimple): Promise<ReleaseDecisionSimple> {
-    throw new Error("Not implemented - use createReleaseRequest() from @firmos/programs for now");
+/**
+ * Authorize (or Deny) a Release
+ */
+export async function authorizeReleaseSimple(
+    releaseId: string,
+    decision: 'authorized' | 'denied',
+    actor: string
+): Promise<ReleaseRecord> {
+    const supabase = getSupabaseClient();
+
+    // Verify actor authority (basic check)
+    // In strict mode, check if actor === getReleaseOwner() or is admin
+
+    const updates: any = {
+        status: decision,
+        authorized_by: actor,
+        authorized_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+        .from('releases')
+        .update(updates)
+        .eq('id', releaseId)
+        .select()
+        .single();
+
+    if (error) {
+        throw new Error(`Failed to update release: ${error.message}`);
+    }
+
+    const record = mapDbToReleaseRecord(data);
+
+    await logAction({
+        action: decision === 'authorized' ? 'release_authorized' : 'release_denied',
+        actor,
+        resourceType: 'release',
+        resourceId: releaseId,
+        details: { decision }
+    });
+
+    return record;
 }
 
-export async function getReleaseStatus(_workpaperId: string): Promise<ReleaseStatusSimple> {
-    throw new Error("Not implemented - pending extraction");
+/**
+ * Execute Release (Move to Released state)
+ */
+export async function executeRelease(releaseId: string, actor: string): Promise<ReleaseRecord> {
+    const supabase = getSupabaseClient();
+
+    // Must be authorized first
+    const current = await getReleaseById(releaseId);
+    if (!current || current.status !== 'authorized') {
+        throw new Error("Cannot execute release: Release is not authorized.");
+    }
+
+    const { data, error } = await supabase
+        .from('releases')
+        .update({
+            status: 'released',
+            released_at: new Date().toISOString()
+        })
+        .eq('id', releaseId)
+        .select()
+        .single();
+
+    if (error) {
+        throw new Error(`Failed to execute release: ${error.message}`);
+    }
+
+    const record = mapDbToReleaseRecord(data);
+
+    await logAction({
+        action: 'release_executed',
+        actor,
+        resourceType: 'release',
+        resourceId: releaseId,
+        details: {}
+    });
+
+    return record;
 }
 
-export async function executeRelease(_workpaperId: string): Promise<void> {
-    throw new Error("Not implemented - use executeReleaseWorkflow() from @firmos/programs for now");
+/**
+ * Get Release Status by Workpaper
+ */
+export async function getReleaseStatus(workpaperId: string): Promise<ReleaseStatusSimple | null> {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+        .from('releases')
+        .select('status')
+        .eq('workpaper_id', workpaperId)
+        .order('requested_at', { ascending: false })
+        .limit(1)
+        .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "Row not found"
+        throw new Error(`Failed to fetch release status: ${error.message}`);
+    }
+
+    return data ? (data.status as ReleaseStatusSimple) : null;
+}
+
+async function getReleaseById(id: string): Promise<ReleaseRecord | null> {
+    const supabase = getSupabaseClient();
+    const { data } = await supabase.from('releases').select('*').eq('id', id).single();
+    return data ? mapDbToReleaseRecord(data) : null;
+}
+
+// Helper
+function mapDbToReleaseRecord(row: any): ReleaseRecord {
+    return {
+        id: row.id,
+        workpaperId: row.workpaper_id,
+        status: row.status,
+        requestedBy: row.requested_by,
+        requestedAt: new Date(row.requested_at),
+        authorizedBy: row.authorized_by,
+        authorizedAt: row.authorized_at ? new Date(row.authorized_at) : undefined,
+        releasedAt: row.released_at ? new Date(row.released_at) : undefined,
+        metadata: row.metadata || {}
+    };
 }
