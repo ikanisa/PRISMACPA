@@ -1,92 +1,113 @@
-# OpenClaw + FirmOS
+# Prisma CPA + FirmOS
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/Node-22+-green.svg)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-10+-orange.svg)](https://pnpm.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E.svg)](https://supabase.com)
 
-**OpenClaw** is an AI-powered personal assistant with a multi-agent operating system (**FirmOS**) for professional services automation.
+**Prisma CPA** is an AI-powered multi-agent operating system (**FirmOS**) for professional services automation — audit, tax, accounting, advisory, and compliance.
+
+> Originally forked from [OpenClaw](https://github.com/openclaw/openclaw). Specialized for Malta and Rwanda jurisdictions with Big Four-grade AI agents.
+
+---
 
 ## Quick Start
 
 ```bash
 # Clone and install
-git clone https://github.com/nicholaschuayunzhi/openclaw.git
-cd openclaw && corepack enable && pnpm install
+git clone https://github.com/ikanisa/PRISMACPA.git
+cd PRISMACPA && corepack enable && pnpm install
 
 # Start gateway
 pnpm gateway:watch
+
+# Start UI (separate terminal)
+cd ui && pnpm dev
+```
+
+**Supabase (local):**
+```bash
+supabase start
+supabase db push
+# Studio: http://localhost:54323
 ```
 
 ---
 
-## Architecture
+## Architecture Overview
 
 ```
-openclaw/
-├── src/                      # Core platform (2200+ files)
+PRISMACPA/
+├── src/                      # Core platform (2500+ files)
 │   ├── gateway/              # Local gateway server
 │   ├── agents/               # Agent runtime
 │   ├── cli/                  # Command line interface
 │   └── channels/             # Channel adapters
-├── channels/                 # 19 messaging channels
-│   ├── discord/, telegram/, whatsapp/, slack/
-│   ├── signal/, matrix/, msteams/, googlechat/
-│   └── imessage/, line/, nostr/, voice-call/
-├── packages/                 # Shared packages
+├── packages/                 # 8 shared packages
 │   ├── firmos-core/          # Core types + config loader
 │   ├── firmos-agents/        # 11 agent definitions
 │   ├── firmos-policies/      # Policy enforcement
 │   ├── firmos-programs/      # QC gate + release runners
 │   ├── firmos-packs/         # Malta/Rwanda jurisdiction packs
 │   ├── firmos-tools/         # Agent tools + registry
-│   ├── moltbot/              # Moltbot marketplace + AI chat
-│   ├── prisma-cpa/           # Staff/Admin portal
-│   ├── clawdbot/             # Clawdbot package
-│   └── ui/                   # Shared UI components
-├── apps/                     # Applications
+│   ├── moltbot-official/     # Moltbot marketplace + AI chat
+│   └── clawdbot/             # Clawdbot package
+├── apps/                     # 7 applications
 │   ├── dashboard/            # Vite + React dashboard
 │   ├── firmos/               # FirmOS control app
 │   ├── api/                  # API server
+│   ├── shared/               # Shared app utilities
 │   ├── macos/                # Swift macOS app
 │   ├── ios/                  # iOS app
 │   └── android/              # Kotlin Android app
-├── skills/                   # 60 skills modules
-│   ├── firmos-*/             # 8 FirmOS skills (audit, tax, etc.)
+├── channels/                 # 19 messaging channels
+├── skills/                   # 63 skills modules
+│   ├── firmos-*/             # 11 FirmOS skills
 │   └── ...                   # 52 base OpenClaw skills
-├── extensions/               # 12 extension packages
+├── extensions/               # 30 extension packages
 ├── supabase/                 # Database + edge functions
-└── docs/                     # 300+ documentation files
+│   ├── migrations/           # 8 database migrations
+│   └── functions/            # Edge functions (OCR, webhooks)
+├── ui/                       # Control UI (Lit + TypeScript)
+├── modules/                  # Business logic modules
+├── docs/                     # 300+ documentation files
+└── firmos/                   # FirmOS configuration
 ```
 
 ---
 
 ## FirmOS Agent System
 
-11 specialized AI agents with Big Four-grade personas:
+**11 specialized AI agents** with Big Four-grade personas:
 
 ### Governance Tier
+
 | Agent | Role | Function |
 |-------|------|----------|
-| **Aline** | Orchestrator | Routes tasks, manages priorities |
-| **Marco** | Governor | Policy enforcement, release control |
-| **Diane** | Guardian | QC gates, ethics, risk validation |
+| **Aline** | Orchestrator | Routes tasks, manages priorities, agent coordination |
+| **Marco** | Governor | Policy enforcement, release control, compliance gates |
+| **Diane** | Guardian | QC gates, ethics, risk validation, approval workflows |
 
 ### Global Engine
+
 | Agent | Service | Skill |
 |-------|---------|-------|
 | **Patrick** | Audit Lead | `firmos-audit` |
 | **Sofia** | Accounting | `firmos-accounting` |
 | **James** | Advisory/CFO | `firmos-advisory` |
 | **Fatima** | Risk & Controls | `firmos-risk` |
+| **Yves** | Fullstack Dev | `firmos-fullstack` |
 
 ### Malta Engine (MT)
+
 | Agent | Service | Skill |
 |-------|---------|-------|
 | **Matthew** | Tax Compliance | `firmos-tax` |
 | **Claire** | CSP/MBR | `firmos-csp` |
 
 ### Rwanda Engine (RW)
+
 | Agent | Service | Skill |
 |-------|---------|-------|
 | **Emmanuel** | Tax Compliance | `firmos-tax` |
@@ -114,26 +135,90 @@ openclaw/
 
 ---
 
-## FirmOS Dashboard
+## Skills (63 total)
 
-The FirmOS dashboard (`apps/dashboard/`) extends the OpenClaw Control UI:
+### FirmOS Skills (11)
 
-| Feature | Implementation |
-|---------|---------------|
-| **Auth** | Supabase Google OAuth (replaces device pairing) |
-| **Config** | Dynamic gateway config from edge function |
-| **Protocol** | `openclaw-control-ui` client, v3 |
+| Skill | Function |
+|-------|----------|
+| `firmos-audit` | Audit programs, evidence, QC gates |
+| `firmos-tax` | Tax compliance (MT/RW), filings |
+| `firmos-accounting` | Bookkeeping, close, reconciliation |
+| `firmos-advisory` | CFO services, M&A, valuations |
+| `firmos-risk` | ERM, controls, SOC, AML |
+| `firmos-governance` | Workflow, QC, ethics enforcement |
+| `firmos-csp` | Malta CSP/MBR, company secretarial |
+| `firmos-notary` | Rwanda notary, RDB filings |
+| `firmos-orchestrator` | Agent routing, task distribution |
+| `firmos-fullstack` | System maintenance, UI/UX, development |
 
-```bash
-# Local development
-VITE_GATEWAY_URL=ws://localhost:19001
-VITE_GATEWAY_TOKEN=dev-token
-```
+### Base OpenClaw Skills (52)
+
+`coding-agent`, `debugging`, `git`, `github`, `mcp`, `bash`, `slack`, `discord`, `gemini`, `notion`, `obsidian`, `trello`, `weather`, `voice-call`, and more...
+
+---
+
+## Packages (8)
+
+| Package | Purpose |
+|---------|---------|
+| `@firmos/core` | Types, config loader, constants |
+| `@firmos/agents` | 11 agent definitions + personas |
+| `@firmos/policies` | Policy enforcement, autonomy tiers |
+| `@firmos/programs` | Service programs, QC gates |
+| `@firmos/packs` | Malta/Rwanda jurisdiction packs |
+| `@firmos/tools` | Agent tool registry |
+| `moltbot-official` | AI marketplace with claymorphism UI |
+| `clawdbot` | Clawdbot integration package |
+
+---
+
+## Extensions (30)
+
+Authentication, diagnostics, memory, and channel extensions:
+
+- **Auth:** `google-antigravity-auth`, `google-gemini-cli-auth`, `qwen-portal-auth`, `minimax-portal-auth`
+- **Memory:** `memory-core`, `memory-lancedb`
+- **Diagnostics:** `diagnostics-otel`, `copilot-proxy`
+- **Channels:** `telegram`, `discord`, `slack`, `whatsapp`, `signal`, `matrix`, `msteams`, `googlechat`, `line`, `zalo`, `zalouser`, `nostr`, `tlon`, `twitch`, `voice-call`, `nextcloud-talk`, `mattermost`, `imessage`, `bluebubbles`
+- **Other:** `open-prose`, `lobster`, `llm-task`
+
+---
+
+## Supabase Database
+
+### Migrations (8)
+
+| Migration | Purpose |
+|-----------|---------|
+| `create_evidence_ledger` | Audit evidence entries and packs |
+| `create_vat_returns` | VAT return tracking |
+| `create_approvals` | Approval workflows |
+| `create_bank_reconciliation` | Bank reconciliation |
+| `create_aml_compliance` | AML/CFT compliance |
+| `create_firmos_core_tables` | Core FirmOS entities |
+| `add_firmos_entities_workstreams` | Workstreams, clients, engagements |
+| `reload_schema` | Schema refresh |
+
+### Edge Functions
+
+- `ocr-processor` — Document OCR processing
+- `webhook-handler` — External webhook handling
+
+### Key Tables
+
+- `evidence_entries`, `evidence_packs` — Audit evidence ledger
+- `vat_returns` — VAT return tracking
+- `approvals` — Approval workflows
+- `bank_reconciliation` — Bank reconciliation
+- `aml_compliance` — AML/CFT compliance
+- `clients`, `engagements`, `workstreams` — FirmOS core entities
 
 ---
 
 ## Development
 
+### Commands
 
 ```bash
 # Build
@@ -150,58 +235,55 @@ pnpm tsgo
 
 # FirmOS tests
 cd packages/firmos-programs && pnpm test
+
+# UI development
+cd ui && pnpm dev
 ```
 
----
+### Testing
 
-## Packages
-
-| Package | Purpose |
+| Command | Purpose |
 |---------|---------|
-| `@firmos/core` | Types, config loader |
-| `@firmos/agents` | 11 agent definitions |
-| `@firmos/policies` | Policy enforcement |
-| `@firmos/programs` | Service programs, QC gates |
-| `@firmos/packs` | Malta/Rwanda jurisdiction packs |
-| `@firmos/tools` | Agent tool registry |
-| `moltbot` | AI marketplace with claymorphism UI |
-| `prisma-cpa` | Staff/Admin portal |
+| `pnpm test` | Run all tests (Vitest) |
+| `pnpm test:coverage` | Tests with V8 coverage |
+| `pnpm test:live` | Live tests with real keys |
+| `pnpm test:docker` | Docker-based tests |
 
 ---
 
-## Skills (60 total)
+## Local Development Setup
 
-### FirmOS Skills (8)
-- `firmos-audit` - Audit programs, evidence, QC gates
-- `firmos-tax` - Tax compliance (MT/RW), filings
-- `firmos-accounting` - Bookkeeping, close, reconciliation
-- `firmos-advisory` - CFO services, M&A, valuations
-- `firmos-risk` - ERM, controls, SOC, AML
-- `firmos-governance` - Workflow, QC, ethics enforcement
-- `firmos-csp` - Malta CSP/MBR, company secretarial
-- `firmos-notary` - Rwanda notary, RDB filings
+> **⚠️ Gateway Auth is SIMPLIFIED for local development**
 
-### Base OpenClaw Skills (52)
-coding-agent, debugging, git, mcp, bash, and more...
+For local development, gateway authentication uses a **shared dev token** and device pairing is disabled.
 
----
-
-## Supabase
-
-```bash
-# Local development
-supabase start
-supabase db push
-
-# Studio: http://localhost:54323
+**Gateway config (`~/.openclaw/openclaw.json`):**
+```json
+{
+  "gateway": {
+    "controlUi": {
+      "enabled": true,
+      "allowInsecureAuth": true,
+      "dangerouslyDisableDeviceAuth": true
+    },
+    "auth": {
+      "mode": "token",
+      "token": "dev-local-token"
+    }
+  }
+}
 ```
 
-### Key Tables
-- `evidence_entries`, `evidence_packs` - Audit evidence ledger
-- `vat_returns` - VAT return tracking
-- `approvals` - Approval workflows
-- `bank_reconciliation` - Bank reconciliation
-- `aml_compliance` - AML/CFT compliance
+**Environment variables (`ui/.env.local`):**
+```bash
+VITE_GATEWAY_URL=ws://127.0.0.1:18789
+```
+
+**For production**, you MUST:
+1. Set `allowInsecureAuth: false`
+2. Set `dangerouslyDisableDeviceAuth: false`
+3. Generate a secure random token: `openssl rand -hex 32`
+4. Store the token securely and provide it to authorized clients
 
 ---
 
@@ -214,6 +296,24 @@ supabase db push
 | `formal-conformance.yml` | Protocol compliance |
 | `install-smoke.yml` | Install verification |
 
+### Deployment Options
+
+- **Cloud Run:** `Dockerfile.cloudrun` + `cloudbuild.yaml`
+- **Fly.io:** `fly.toml`
+- **Render:** `render.yaml`
+- **Docker Compose:** `docker-compose.yml`
+
+---
+
+## Security
+
+- **RLS policies** on all Supabase tables
+- **JWT auth** with 1-hour expiry
+- **`detect-secrets`** in CI pipeline
+- **Staff/Admin RBAC** enforced at UI, API, and DB layers
+
+Report issues: [security@openclaw.dev](mailto:security@openclaw.dev)
+
 ---
 
 ## Contributing
@@ -223,16 +323,7 @@ supabase db push
 3. Commit: `feat(scope): description`
 4. Open PR
 
----
-
-## Security
-
-- RLS policies on all Supabase tables
-- JWT auth with 1-hour expiry
-- `detect-secrets` in CI
-- Staff/Admin RBAC enforced
-
-Report issues: [security@openclaw.dev](mailto:security@openclaw.dev)
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
@@ -246,6 +337,6 @@ MIT — see [LICENSE](LICENSE)
 
 **Built with ❤️ for professional services automation**
 
-[Documentation](docs/) • [Issues](https://github.com/nicholaschuayunzhi/openclaw/issues) • [Discussions](https://github.com/nicholaschuayunzhi/openclaw/discussions)
+[Documentation](docs/) • [Issues](https://github.com/ikanisa/PRISMACPA/issues) • [Discussions](https://github.com/ikanisa/PRISMACPA/discussions)
 
 </div>
