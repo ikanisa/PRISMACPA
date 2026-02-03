@@ -239,6 +239,34 @@ export function createGatewayHttpServer(opts: {
       return;
     }
 
+    // CORS support for Cloudflare Pages origins
+    const origin = req.headers.origin ?? "";
+    const allowedOrigins = [
+      "https://formos.pages.dev",
+      /^https:\/\/[a-z0-9]+\.formos\.pages\.dev$/, // Preview deployments
+    ];
+    const isAllowedOrigin = allowedOrigins.some((allowed) =>
+      typeof allowed === "string" ? origin === allowed : allowed.test(origin),
+    );
+
+    if (isAllowedOrigin) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-OpenClaw-Token",
+      );
+      res.setHeader("Access-Control-Allow-Credentials", "true");
+      res.setHeader("Access-Control-Max-Age", "86400");
+    }
+
+    // Handle CORS preflight
+    if (req.method === "OPTIONS") {
+      res.statusCode = 204;
+      res.end();
+      return;
+    }
+
     try {
       const configSnapshot = loadConfig();
       const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];

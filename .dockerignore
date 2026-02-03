@@ -1,5 +1,4 @@
-# Docker build ignore file - minimal version for Cloud Run deployment
-# Excludes large/unnecessary files while keeping source code
+# Docker build ignore file — excludes large/unnecessary files while keeping source code
 
 # Git metadata
 .git

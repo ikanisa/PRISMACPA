@@ -298,7 +298,7 @@ VITE_GATEWAY_URL=ws://127.0.0.1:18789
 
 ### Deployment Options
 
-- **Cloud Run:** `Dockerfile.cloudrun` + `cloudbuild.yaml`
+- **Cloudflare Pages:** `ui/` static build + Wrangler deploy
 - **Fly.io:** `fly.toml`
 - **Render:** `render.yaml`
 - **Docker Compose:** `docker-compose.yml`

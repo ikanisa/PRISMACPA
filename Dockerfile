@@ -37,9 +37,9 @@ ENV NODE_ENV=production
 # This reduces the attack surface by preventing container escape via root privileges
 USER node
 
-# Cloud Run provides PORT env var (default 8080)
+# PORT env var can be set by container orchestrator (default 8080)
 # Gateway needs --allow-unconfigured for deployment and --bind lan for external access
 # Note: tsc outputs to dist/src/ because include is "src/**/*" which preserves structure
 # Using 'gateway' directly (not 'gateway run') as tested locally
-# OPENCLAW_CONFIG_PATH can be set via Cloud Run env var to point to /app/openclaw.cloud.json
+# OPENCLAW_CONFIG_PATH can be set via env var to point to /app/openclaw.cloud.json
 CMD ["sh", "-c", "node dist/src/index.js gateway --port ${PORT:-8080} --allow-unconfigured --bind lan"]
