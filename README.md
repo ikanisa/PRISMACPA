@@ -8,8 +8,6 @@
 
 **Prisma CPA** is an AI-powered multi-agent operating system (**FirmOS**) for professional services automation — audit, tax, accounting, advisory, and compliance.
 
-> Originally forked from [OpenClaw](https://github.com/openclaw/openclaw). Specialized for Malta and Rwanda jurisdictions with Big Four-grade AI agents.
-
 ---
 
 ## Quick Start

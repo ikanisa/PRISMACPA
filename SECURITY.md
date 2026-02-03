@@ -1,38 +1,36 @@
 # Security Policy
 
-If you believe you've found a security issue in OpenClaw, please report it privately.
+If you believe you've found a security issue in Prisma CPA, please report it privately.
 
 ## Reporting
 
-- Email: `steipete@gmail.com`
+- Email: `security@prismacpa.com`
 - What to include: reproduction steps, impact assessment, and (if possible) a minimal PoC.
 
 ## Bug Bounties
 
-OpenClaw is a labor of love. There is no bug bounty program and no budget for paid reports. Please still disclose responsibly so we can fix issues quickly.
+Prisma CPA is a professional services platform. There is no bug bounty program at this time. Please still disclose responsibly so we can fix issues quickly.
 The best way to help the project right now is by sending PRs.
 
 ## Out of Scope
 
 - Public Internet Exposure
-- Using OpenClaw in ways that the docs recommend not to
+- Using Prisma CPA in ways that the docs recommend not to
 - Prompt injection attacks
 
 ## Operational Guidance
 
-For threat model + hardening guidance (including `openclaw security audit --deep` and `--fix`), see:
-
-- `https://docs.openclaw.ai/gateway/security`
+For threat model + hardening guidance, see your deployment documentation.
 
 ### Web Interface Safety
 
-OpenClaw's web interface is intended for local use only. Do **not** bind it to the public internet; it is not hardened for public exposure.
+Prisma CPA's web interface is intended for local use only. Do **not** bind it to the public internet; it is not hardened for public exposure.
 
 ## Runtime Requirements
 
 ### Node.js Version
 
-OpenClaw requires **Node.js 22.12.0 or later** (LTS). This version includes important security patches:
+Prisma CPA requires **Node.js 22.12.0 or later** (LTS). This version includes important security patches:
 
 - CVE-2025-59466: async_hooks DoS vulnerability
 - CVE-2026-21636: Permission model bypass vulnerability
@@ -45,7 +43,7 @@ node --version  # Should be v22.12.0 or later
 
 ### Docker Security
 
-When running OpenClaw in Docker:
+When running Prisma CPA in Docker:
 
 1. The official image runs as a non-root user (`node`) for reduced attack surface
 2. Use `--read-only` flag when possible for additional filesystem protection

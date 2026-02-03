@@ -1,17 +1,17 @@
 {
-  "name": "openclaw",
+  "name": "prisma-cpa",
   "version": "2026.1.30",
-  "description": "OpenClaw AI Assistant Platform — configured for Prisma CPA (Malta tax/audit/accounting)",
+  "description": "Prisma CPA — AI-powered FirmOS for professional services (Malta tax/audit/accounting)",
   "keywords": [],
   "license": "MIT",
   "author": "",
   "bin": {
-    "openclaw": "openclaw.mjs"
+    "prisma-cpa": "prisma-cpa.mjs"
   },
   "files": [
     "CHANGELOG.md",
     "LICENSE",
-    "openclaw.mjs",
+    "prisma-cpa.mjs",
     "README-header.png",
     "README.md",
     "assets/**",
@@ -78,7 +78,7 @@
     ".": "./dist/index.js",
     "./plugin-sdk": "./dist/plugin-sdk/index.js",
     "./plugin-sdk/*": "./dist/plugin-sdk/*",
-    "./cli-entry": "./openclaw.mjs"
+    "./cli-entry": "./prisma-cpa.mjs"
   },
   "scripts": {
     "android:assemble": "cd apps/android && ./gradlew :app:assembleDebug",
@@ -111,8 +111,8 @@
     "mac:open": "open dist/OpenClaw.app",
     "mac:package": "bash scripts/package-mac-app.sh",
     "mac:restart": "bash scripts/restart-mac.sh",
-    "openclaw": "node scripts/run-node.mjs",
-    "openclaw:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
+    "prisma-cpa": "node scripts/run-node.mjs",
+    "prisma-cpa:rpc": "node scripts/run-node.mjs agent --mode rpc --json",
     "plugins:sync": "node --import tsx scripts/sync-plugin-versions.ts",
     "postinstall": "node scripts/postinstall.js",
     "prepack": "pnpm build && pnpm ui:build",
