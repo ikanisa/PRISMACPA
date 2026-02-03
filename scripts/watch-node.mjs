@@ -30,7 +30,7 @@ const compilerProcess = spawn("pnpm", ["exec", compiler, ...watchArgs], {
   stdio: "inherit",
 });
 
-const nodeProcess = spawn(process.execPath, ["--watch", "openclaw.mjs", ...args], {
+const nodeProcess = spawn(process.execPath, ["--watch", "prisma-cpa.mjs", ...args], {
   cwd,
   env,
   stdio: "inherit",

@@ -279,7 +279,7 @@ function trySetupCompletion(repoRoot) {
     return;
   }
 
-  const binPath = path.join(repoRoot, "openclaw.mjs");
+  const binPath = path.join(repoRoot, "prisma-cpa.mjs");
   if (!fs.existsSync(binPath)) {
     return;
   }
