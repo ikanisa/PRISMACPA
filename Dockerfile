@@ -20,8 +20,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY ui/package.json ./ui/package.json
 COPY patches ./patches
 COPY scripts ./scripts
-COPY modules/package.json ./modules/package.json
-COPY modules/programs ./modules/programs
+COPY firmos/modules/package.json ./firmos/modules/package.json
+COPY firmos/modules/programs ./firmos/modules/programs
 
 RUN pnpm install --frozen-lockfile
 

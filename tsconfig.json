@@ -21,27 +21,34 @@
     "target": "es2023",
     "paths": {
       "@firmos/core": [
-        "./packages/firmos-core/src/index.ts"
+        "./firmos/core/src/index.ts"
       ],
       "@firmos/core/*": [
-        "./packages/firmos-core/src/*"
+        "./firmos/core/src/*"
       ],
       "@firmos/programs": [
-        "./packages/firmos-programs/src/index.ts"
+        "./firmos/programs/index.ts"
       ],
       "@firmos/programs/*": [
-        "./packages/firmos-programs/src/*"
+        "./firmos/programs/*"
       ],
       "@firmos/modules": [
-        "./modules/index.ts"
+        "./firmos/modules/index.ts"
       ],
       "@firmos/modules/*": [
-        "./modules/*"
+        "./firmos/modules/*"
+      ],
+      "@firmos/agents": [
+        "./firmos/agents/index.ts"
+      ],
+      "@firmos/agents/*": [
+        "./firmos/agents/*"
       ]
     }
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "firmos/**/*"
   ],
   "exclude": [
     "node_modules",
