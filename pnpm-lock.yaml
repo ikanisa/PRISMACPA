@@ -798,6 +798,8 @@ importers:
         specifier: ^25.2.0
         version: 25.2.0
 
+  modules/programs: {}
+
   packages/clawdbot:
     dependencies:
       openclaw:

@@ -1,0 +1,13 @@
+{
+  "name": "@firmos/programs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    "./qc-gate-runner.js": "./qc-gate-runner.ts",
+    "./release-gate-workflow.js": "./release-gate-workflow.ts",
+    "./routing.js": "./routing.ts",
+    "./template-factory.js": "./template-factory.ts"
+  }
+}

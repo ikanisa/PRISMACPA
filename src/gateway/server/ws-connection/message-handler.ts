@@ -288,6 +288,12 @@ export function attachGatewayWsMessageHandler(params: {
           parsed.method !== "connect" ||
           !validateConnectParams(parsed.params)
         ) {
+          // Debug logging for connect param validation failures
+          if (isRequestFrame && parsed.method === "connect") {
+            logWsControl.warn(
+              `connect params validation failed conn=${connId} errors=${JSON.stringify(validateConnectParams.errors, null, 2)} params=${JSON.stringify(parsed.params, null, 2).slice(0, 500)}`,
+            );
+          }
           const handshakeError = isRequestFrame
             ? parsed.method === "connect"
               ? `invalid connect params: ${formatValidationErrors(validateConnectParams.errors)}`
@@ -389,7 +395,9 @@ export function attachGatewayWsMessageHandler(params: {
         const hasTokenAuth = Boolean(connectParams.auth?.token);
         const hasPasswordAuth = Boolean(connectParams.auth?.password);
         const hasSharedAuth = hasTokenAuth || hasPasswordAuth;
-        const isControlUi = connectParams.client.id === GATEWAY_CLIENT_IDS.CONTROL_UI;
+        const isControlUi =
+          connectParams.client.id === GATEWAY_CLIENT_IDS.CONTROL_UI ||
+          connectParams.client.id === GATEWAY_CLIENT_IDS.FIRMOS_CONTROL_UI;
 
         // ========== AUTH DISABLED FOR LOCAL DEV ==========
         // Hardcoded bypass - Control UI ALWAYS allowed without auth
