@@ -2,13 +2,13 @@ import type { OpenClawConfig } from "../../../config/config.js";
 import type { DmPolicy } from "../../../config/types.js";
 import type { WizardPrompter } from "../../../wizard/prompts.js";
 import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
+import { formatCliCommand } from "../../../cli/command-format.js";
+import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import {
   listTelegramAccountIds,
   resolveDefaultTelegramAccountId,
   resolveTelegramAccount,
-} from "../../../../channels/telegram/accounts.js";
-import { formatCliCommand } from "../../../cli/command-format.js";
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
+} from "../../../telegram/accounts.js";
 import { formatDocsLink } from "../../../terminal/links.js";
 import { addWildcardAllowFrom, promptAccountId } from "./helpers.js";
 

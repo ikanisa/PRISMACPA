@@ -1,57 +1,5 @@
 import { createRequire } from "node:module";
 import type { PluginRuntime } from "./types.js";
-import { auditDiscordChannelPermissions } from "../../../channels/discord/audit.js";
-import {
-  listDiscordDirectoryGroupsLive,
-  listDiscordDirectoryPeersLive,
-} from "../../../channels/discord/directory-live.js";
-import { monitorDiscordProvider } from "../../../channels/discord/monitor.js";
-import { probeDiscord } from "../../../channels/discord/probe.js";
-import { resolveDiscordChannelAllowlist } from "../../../channels/discord/resolve-channels.js";
-import { resolveDiscordUserAllowlist } from "../../../channels/discord/resolve-users.js";
-import { sendMessageDiscord, sendPollDiscord } from "../../../channels/discord/send.js";
-import { monitorIMessageProvider } from "../../../channels/imessage/monitor.js";
-import { probeIMessage } from "../../../channels/imessage/probe.js";
-import { sendMessageIMessage } from "../../../channels/imessage/send.js";
-import {
-  listLineAccountIds,
-  normalizeAccountId as normalizeLineAccountId,
-  resolveDefaultLineAccountId,
-  resolveLineAccount,
-} from "../../../channels/line/accounts.js";
-import { monitorLineProvider } from "../../../channels/line/monitor.js";
-import { probeLineBot } from "../../../channels/line/probe.js";
-import {
-  createQuickReplyItems,
-  pushMessageLine,
-  pushMessagesLine,
-  pushFlexMessage,
-  pushTemplateMessage,
-  pushLocationMessage,
-  pushTextMessageWithQuickReplies,
-  sendMessageLine,
-} from "../../../channels/line/send.js";
-import { buildTemplateMessageFromPayload } from "../../../channels/line/template-messages.js";
-import { monitorSignalProvider } from "../../../channels/signal/index.js";
-import { probeSignal } from "../../../channels/signal/probe.js";
-import { sendMessageSignal } from "../../../channels/signal/send.js";
-import {
-  listSlackDirectoryGroupsLive,
-  listSlackDirectoryPeersLive,
-} from "../../../channels/slack/directory-live.js";
-import { monitorSlackProvider } from "../../../channels/slack/index.js";
-import { probeSlack } from "../../../channels/slack/probe.js";
-import { resolveSlackChannelAllowlist } from "../../../channels/slack/resolve-channels.js";
-import { resolveSlackUserAllowlist } from "../../../channels/slack/resolve-users.js";
-import { sendMessageSlack } from "../../../channels/slack/send.js";
-import {
-  auditTelegramGroupMembership,
-  collectTelegramUnmentionedGroupIds,
-} from "../../../channels/telegram/audit.js";
-import { monitorTelegramProvider } from "../../../channels/telegram/monitor.js";
-import { probeTelegram } from "../../../channels/telegram/probe.js";
-import { sendMessageTelegram } from "../../../channels/telegram/send.js";
-import { resolveTelegramToken } from "../../../channels/telegram/token.js";
 import { resolveEffectiveMessagesConfig, resolveHumanDelayConfig } from "../../agents/identity.js";
 import { createMemoryGetTool, createMemorySearchTool } from "../../agents/tools/memory-tool.js";
 import { handleSlackAction } from "../../agents/tools/slack-actions.js";
@@ -111,9 +59,41 @@ import {
   resolveStorePath,
   updateLastRoute,
 } from "../../config/sessions.js";
+import { auditDiscordChannelPermissions } from "../../discord/audit.js";
+import {
+  listDiscordDirectoryGroupsLive,
+  listDiscordDirectoryPeersLive,
+} from "../../discord/directory-live.js";
+import { monitorDiscordProvider } from "../../discord/monitor.js";
+import { probeDiscord } from "../../discord/probe.js";
+import { resolveDiscordChannelAllowlist } from "../../discord/resolve-channels.js";
+import { resolveDiscordUserAllowlist } from "../../discord/resolve-users.js";
+import { sendMessageDiscord, sendPollDiscord } from "../../discord/send.js";
 import { shouldLogVerbose } from "../../globals.js";
+import { monitorIMessageProvider } from "../../imessage/monitor.js";
+import { probeIMessage } from "../../imessage/probe.js";
+import { sendMessageIMessage } from "../../imessage/send.js";
 import { getChannelActivity, recordChannelActivity } from "../../infra/channel-activity.js";
 import { enqueueSystemEvent } from "../../infra/system-events.js";
+import {
+  listLineAccountIds,
+  normalizeAccountId as normalizeLineAccountId,
+  resolveDefaultLineAccountId,
+  resolveLineAccount,
+} from "../../line/accounts.js";
+import { monitorLineProvider } from "../../line/monitor.js";
+import { probeLineBot } from "../../line/probe.js";
+import {
+  createQuickReplyItems,
+  pushMessageLine,
+  pushMessagesLine,
+  pushFlexMessage,
+  pushTemplateMessage,
+  pushLocationMessage,
+  pushTextMessageWithQuickReplies,
+  sendMessageLine,
+} from "../../line/send.js";
+import { buildTemplateMessageFromPayload } from "../../line/template-messages.js";
 import { getChildLogger } from "../../logging.js";
 import { normalizeLogLevel } from "../../logging/levels.js";
 import { convertMarkdownTables } from "../../markdown/tables.js";
@@ -130,6 +110,26 @@ import {
 } from "../../pairing/pairing-store.js";
 import { runCommandWithTimeout } from "../../process/exec.js";
 import { resolveAgentRoute } from "../../routing/resolve-route.js";
+import { monitorSignalProvider } from "../../signal/index.js";
+import { probeSignal } from "../../signal/probe.js";
+import { sendMessageSignal } from "../../signal/send.js";
+import {
+  listSlackDirectoryGroupsLive,
+  listSlackDirectoryPeersLive,
+} from "../../slack/directory-live.js";
+import { monitorSlackProvider } from "../../slack/index.js";
+import { probeSlack } from "../../slack/probe.js";
+import { resolveSlackChannelAllowlist } from "../../slack/resolve-channels.js";
+import { resolveSlackUserAllowlist } from "../../slack/resolve-users.js";
+import { sendMessageSlack } from "../../slack/send.js";
+import {
+  auditTelegramGroupMembership,
+  collectTelegramUnmentionedGroupIds,
+} from "../../telegram/audit.js";
+import { monitorTelegramProvider } from "../../telegram/monitor.js";
+import { probeTelegram } from "../../telegram/probe.js";
+import { sendMessageTelegram } from "../../telegram/send.js";
+import { resolveTelegramToken } from "../../telegram/token.js";
 import { textToSpeechTelephony } from "../../tts/tts.js";
 import { getActiveWebListener } from "../../web/active-listener.js";
 import {

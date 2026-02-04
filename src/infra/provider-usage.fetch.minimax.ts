@@ -262,8 +262,8 @@ function collectUsageCandidates(root: Record<string, unknown>): Record<string, u
     }
   }
 
-  const sorted = candidates.toSorted((a, b) => b.score - a.score || a.depth - b.depth);
-  return sorted.map((candidate) => candidate.record);
+  candidates.sort((a, b) => b.score - a.score || a.depth - b.depth);
+  return candidates.map((candidate) => candidate.record);
 }
 
 function deriveWindowLabel(payload: Record<string, unknown>): string {

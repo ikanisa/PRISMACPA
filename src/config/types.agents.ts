@@ -6,7 +6,6 @@ import type {
   SandboxDockerSettings,
   SandboxPruneSettings,
 } from "./types.sandbox.js";
-import type { TeamConfig } from "./types.team.js";
 import type { AgentToolsConfig, MemorySearchConfig } from "./types.tools.js";
 
 export type AgentModelConfig =
@@ -68,8 +67,6 @@ export type AgentConfig = {
 export type AgentsConfig = {
   defaults?: AgentDefaultsConfig;
   list?: AgentConfig[];
-  /** Multi-agent teams for group chat collaboration. */
-  teams?: TeamConfig[];
 };
 
 export type AgentBinding = {

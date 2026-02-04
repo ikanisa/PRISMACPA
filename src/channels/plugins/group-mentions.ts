@@ -4,12 +4,12 @@ import type {
   GroupToolPolicyBySenderConfig,
   GroupToolPolicyConfig,
 } from "../../config/types.tools.js";
-import { resolveSlackAccount } from "../../../channels/slack/accounts.js";
 import {
   resolveChannelGroupRequireMention,
   resolveChannelGroupToolsPolicy,
   resolveToolsBySender,
 } from "../../config/group-policy.js";
+import { resolveSlackAccount } from "../../slack/accounts.js";
 
 type GroupMentionParams = {
   cfg: OpenClawConfig;

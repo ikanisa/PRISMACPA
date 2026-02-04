@@ -5,18 +5,10 @@ import type { SessionPreviewItem } from "./session-utils.types.js";
 import { resolveSessionTranscriptPath } from "../config/sessions.js";
 import { stripEnvelope } from "./chat-sanitize.js";
 
-/**
- * Read session messages from transcript file.
- * @param sessionId - The session ID
- * @param storePath - The session store path
- * @param sessionFile - Optional explicit session file path
- * @param defaultAgentId - Optional agentId to attach to messages that don't have one in the envelope
- */
 export function readSessionMessages(
   sessionId: string,
   storePath: string | undefined,
   sessionFile?: string,
-  defaultAgentId?: string,
 ): unknown[] {
   const candidates = resolveSessionTranscriptCandidates(sessionId, storePath, sessionFile);
 
@@ -34,15 +26,7 @@ export function readSessionMessages(
     try {
       const parsed = JSON.parse(line);
       if (parsed?.message) {
-        // Propagate agentId from transcript entry envelope to message object
-        // Priority: entry.agentId > defaultAgentId
-        const agentId = parsed.agentId ?? defaultAgentId;
-        if (agentId) {
-          const msg = { ...parsed.message, agentId };
-          messages.push(msg);
-        } else {
-          messages.push(parsed.message);
-        }
+        messages.push(parsed.message);
       }
     } catch {
       // ignore bad lines

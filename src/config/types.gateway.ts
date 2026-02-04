@@ -76,15 +76,6 @@ export type GatewayControlUiConfig = {
   dangerouslyDisableDeviceAuth?: boolean;
 };
 
-export type GatewayTrustedDevicesConfig = {
-  /** IP addresses that are auto-approved for device pairing (silent pairing). */
-  trustedIps?: string[];
-  /** Pre-registered device IDs (SHA-256 fingerprints) that are auto-approved. */
-  trustedDeviceIds?: string[];
-  /** Auto-approve all local network connections (same /24 subnet). Default: false. */
-  trustLocalNetwork?: boolean;
-};
-
 export type GatewayAuthMode = "token" | "password";
 
 export type GatewayAuthConfig = {
@@ -254,9 +245,4 @@ export type GatewayConfig = {
    * `x-real-ip`) to determine the client IP for local pairing and HTTP checks.
    */
   trustedProxies?: string[];
-  /**
-   * Trusted devices configuration for automatic pairing.
-   * Devices matching these criteria are auto-approved without manual intervention.
-   */
-  trustedDevices?: GatewayTrustedDevicesConfig;
 };

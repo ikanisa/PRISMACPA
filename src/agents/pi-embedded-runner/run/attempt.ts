@@ -5,15 +5,15 @@ import { createAgentSession, SessionManager, SettingsManager } from "@mariozechn
 import fs from "node:fs/promises";
 import os from "node:os";
 import type { EmbeddedRunAttemptParams, EmbeddedRunAttemptResult } from "./types.js";
-import { resolveSignalReactionLevel } from "../../../../channels/signal/reaction-level.js";
-import { resolveTelegramInlineButtonsScope } from "../../../../channels/telegram/inline-buttons.js";
-import { resolveTelegramReactionLevel } from "../../../../channels/telegram/reaction-level.js";
 import { resolveHeartbeatPrompt } from "../../../auto-reply/heartbeat.js";
 import { resolveChannelCapabilities } from "../../../config/channel-capabilities.js";
 import { getMachineDisplayName } from "../../../infra/machine-name.js";
 import { MAX_IMAGE_BYTES } from "../../../media/constants.js";
 import { getGlobalHookRunner } from "../../../plugins/hook-runner-global.js";
 import { isSubagentSessionKey } from "../../../routing/session-key.js";
+import { resolveSignalReactionLevel } from "../../../signal/reaction-level.js";
+import { resolveTelegramInlineButtonsScope } from "../../../telegram/inline-buttons.js";
+import { resolveTelegramReactionLevel } from "../../../telegram/reaction-level.js";
 import { buildTtsSystemPromptHint } from "../../../tts/tts.js";
 import { resolveUserPath } from "../../../utils.js";
 import { normalizeMessageChannel } from "../../../utils/message-channel.js";

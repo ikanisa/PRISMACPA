@@ -203,15 +203,6 @@ import {
   WizardStatusResultSchema,
   type WizardStep,
   WizardStepSchema,
-  // Services schemas
-  type ServicesListParams,
-  ServicesListParamsSchema,
-  type ServicesGetParams,
-  ServicesGetParamsSchema,
-  type ServicesRouteParams,
-  ServicesRouteParamsSchema,
-  type ServicesValidateParams,
-  ServicesValidateParamsSchema,
 } from "./schema.js";
 
 const ajv = new (AjvPkg as unknown as new (opts?: object) => import("ajv").default)({
@@ -351,15 +342,6 @@ export const validateUpdateRunParams = ajv.compile<UpdateRunParams>(UpdateRunPar
 export const validateWebLoginStartParams =
   ajv.compile<WebLoginStartParams>(WebLoginStartParamsSchema);
 export const validateWebLoginWaitParams = ajv.compile<WebLoginWaitParams>(WebLoginWaitParamsSchema);
-
-// Services validators
-export const validateServicesListParams = ajv.compile<ServicesListParams>(ServicesListParamsSchema);
-export const validateServicesGetParams = ajv.compile<ServicesGetParams>(ServicesGetParamsSchema);
-export const validateServicesRouteParams =
-  ajv.compile<ServicesRouteParams>(ServicesRouteParamsSchema);
-export const validateServicesValidateParams = ajv.compile<ServicesValidateParams>(
-  ServicesValidateParamsSchema,
-);
 
 export function formatValidationErrors(errors: ErrorObject[] | null | undefined) {
   if (!errors?.length) {

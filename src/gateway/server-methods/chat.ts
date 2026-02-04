@@ -205,17 +205,8 @@ export const chatHandlers: GatewayRequestHandlers = {
     };
     const { cfg, storePath, entry } = loadSessionEntry(sessionKey);
     const sessionId = entry?.sessionId;
-
-    // Resolve agentId for this session to attach to messages
-    const agentId = resolveSessionAgentId({
-      sessionKey,
-      config: cfg,
-    });
-
     const rawMessages =
-      sessionId && storePath
-        ? readSessionMessages(sessionId, storePath, entry?.sessionFile, agentId)
-        : [];
+      sessionId && storePath ? readSessionMessages(sessionId, storePath, entry?.sessionFile) : [];
     const hardMax = 1000;
     const defaultLimit = 200;
     const requested = typeof limit === "number" ? limit : defaultLimit;
@@ -244,7 +235,6 @@ export const chatHandlers: GatewayRequestHandlers = {
       sessionId,
       messages: capped,
       thinkingLevel,
-      agentId, // Include agentId for UI context (agent avatars, styling)
     });
   },
   "chat.abort": ({ params, respond, context }) => {

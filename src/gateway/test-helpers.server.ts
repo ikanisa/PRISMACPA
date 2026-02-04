@@ -371,7 +371,7 @@ export async function connectReq(
       ? undefined
       : typeof (testState.gatewayAuth as { token?: unknown } | undefined)?.token === "string"
         ? ((testState.gatewayAuth as { token?: string }).token ?? undefined)
-        : (process.env.OPENCLAW_GATEWAY_TOKEN ?? "secret"); // Default for tests
+        : process.env.OPENCLAW_GATEWAY_TOKEN;
   const defaultPassword =
     opts?.skipDefaultAuth === true
       ? undefined

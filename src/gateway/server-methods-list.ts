@@ -85,11 +85,6 @@ const BASE_METHODS = [
   "chat.history",
   "chat.abort",
   "chat.send",
-  // FirmOS Services catalog methods
-  "services.list",
-  "services.get",
-  "services.route",
-  "services.validate",
 ];
 
 export function listGatewayMethods(): string[] {

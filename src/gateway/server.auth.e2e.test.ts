@@ -260,7 +260,7 @@ describe("gateway server auth/connect", () => {
       ws.close();
     });
 
-    test("rejects control ui when token is missing", async () => {
+    test("returns control ui hint when token is missing", async () => {
       const ws = await openWs(port);
       const res = await connectReq(ws, {
         skipDefaultAuth: true,
@@ -272,12 +272,11 @@ describe("gateway server auth/connect", () => {
         },
       });
       expect(res.ok).toBe(false);
-      // Token is required - device identity is not
-      expect(res.error?.message ?? "").toMatch(/unauthorized|device identity/i);
+      expect(res.error?.message ?? "").toContain("Control UI settings");
       ws.close();
     });
 
-    test("allows control ui with token alone (relaxed mode)", async () => {
+    test("rejects control ui without device identity by default", async () => {
       const ws = await openWs(port);
       const res = await connectReq(ws, {
         token: "secret",
@@ -289,8 +288,8 @@ describe("gateway server auth/connect", () => {
           mode: GATEWAY_CLIENT_MODES.WEBCHAT,
         },
       });
-      // Relaxed auth: valid token alone is sufficient, device identity not required
-      expect(res.ok).toBe(true);
+      expect(res.ok).toBe(false);
+      expect(res.error?.message ?? "").toContain("secure context");
       ws.close();
     });
   });

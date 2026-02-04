@@ -4,10 +4,10 @@ import type {
   ChannelMessageActionName,
   ChannelToolSend,
 } from "./types.js";
-import { listEnabledSlackAccounts } from "../../../channels/slack/accounts.js";
-import { resolveSlackChannelId } from "../../../channels/slack/targets.js";
 import { createActionGate, readNumberParam, readStringParam } from "../../agents/tools/common.js";
 import { handleSlackAction, type SlackActionContext } from "../../agents/tools/slack-actions.js";
+import { listEnabledSlackAccounts } from "../../slack/accounts.js";
+import { resolveSlackChannelId } from "../../slack/targets.js";
 
 export function createSlackActions(providerId: string): ChannelMessageActionAdapter {
   return {

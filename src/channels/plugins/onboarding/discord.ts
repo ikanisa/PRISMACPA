@@ -7,13 +7,13 @@ import {
   listDiscordAccountIds,
   resolveDefaultDiscordAccountId,
   resolveDiscordAccount,
-} from "../../../../channels/discord/accounts.js";
-import { normalizeDiscordSlug } from "../../../../channels/discord/monitor/allow-list.js";
+} from "../../../discord/accounts.js";
+import { normalizeDiscordSlug } from "../../../discord/monitor/allow-list.js";
 import {
   resolveDiscordChannelAllowlist,
   type DiscordChannelResolution,
-} from "../../../../channels/discord/resolve-channels.js";
-import { resolveDiscordUserAllowlist } from "../../../../channels/discord/resolve-users.js";
+} from "../../../discord/resolve-channels.js";
+import { resolveDiscordUserAllowlist } from "../../../discord/resolve-users.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import { formatDocsLink } from "../../../terminal/links.js";
 import { promptChannelAccessConfig } from "./channel-access.js";
