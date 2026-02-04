@@ -111,6 +111,7 @@ function validateAgainstSchema(data: unknown, schemaName: string): boolean {
         return true;
     }
 
+    // @ts-ignore - Ajv import interop issue
     const ajv = new Ajv({ allErrors: true });
     const validate = ajv.compile(schema);
     const valid = validate(data);

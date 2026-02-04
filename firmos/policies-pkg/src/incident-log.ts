@@ -60,7 +60,7 @@ export const IncidentSchema = z.object({
     workstreamId: z.string().optional(),
     agentId: z.string(),
     packId: z.string().optional(),
-    details: z.record(z.unknown()),
+    details: z.record(z.string(), z.unknown()),
     createdAt: z.coerce.date(),
     resolvedAt: z.coerce.date().optional(),
     resolution: z.string().optional()

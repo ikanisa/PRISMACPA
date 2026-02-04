@@ -143,14 +143,16 @@ export const PackId = z.enum([
     'MT_TAX',
     'MT_CSP_MBR',
     'RW_TAX',
-    'RW_PRIVATE_NOTARY'
+    'RW_PRIVATE_NOTARY',
+    'GLOBAL'
 ]);
 export type PackId = z.infer<typeof PackId>;
 
 /** Pack to jurisdiction mapping */
-export const PACK_JURISDICTION: Record<PackId, 'MT' | 'RW'> = {
+export const PACK_JURISDICTION: Record<PackId, 'MT' | 'RW' | 'GLOBAL'> = {
     MT_TAX: 'MT',
     MT_CSP_MBR: 'MT',
     RW_TAX: 'RW',
-    RW_PRIVATE_NOTARY: 'RW'
+    RW_PRIVATE_NOTARY: 'RW',
+    GLOBAL: 'GLOBAL'
 };

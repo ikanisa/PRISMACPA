@@ -196,8 +196,9 @@ describe('Cross-Module Integration Tests', () => {
             // Step 1: Create draft
             const draft = await createDraft({
                 name: 'MT VAT Return Template',
-                jurisdiction: 'MT',
-                createdBy: 'luke'
+                pack: 'malta',
+                createdBy: 'luke',
+                content: 'Template content'
             });
 
             expect(draft.status).toBe('draft');
@@ -432,7 +433,7 @@ describe('Cross-Module Integration Tests', () => {
             (getSupabaseClient as any).mockReturnValue(mockSupabase);
 
             // Create template
-            await createDraft({ name: 'Audit Test', jurisdiction: 'RW', createdBy: 'test' });
+            await createDraft({ name: 'Audit Test', pack: 'rwanda', createdBy: 'test', content: 'content' });
 
             // Verify audit was logged
             expect(logAction).toHaveBeenCalledWith(expect.objectContaining({
