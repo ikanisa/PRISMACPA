@@ -1,36 +1,36 @@
-import type { FirmOSApp } from "./app";
-import type { NostrProfile } from "./types";
+import type { OpenClawApp } from "./app.ts";
+import type { NostrProfile } from "./types.ts";
 import {
   loadChannels,
   logoutWhatsApp,
   startWhatsAppLogin,
   waitWhatsAppLogin,
-} from "./controllers/channels";
-import { loadConfig, saveConfig } from "./controllers/config";
-import { createNostrProfileFormState } from "./views/channels.nostr-profile-form";
+} from "./controllers/channels.ts";
+import { loadConfig, saveConfig } from "./controllers/config.ts";
+import { createNostrProfileFormState } from "./views/channels.nostr-profile-form.ts";
 
-export async function handleWhatsAppStart(host: FirmOSApp, force: boolean) {
+export async function handleWhatsAppStart(host: OpenClawApp, force: boolean) {
   await startWhatsAppLogin(host, force);
   await loadChannels(host, true);
 }
 
-export async function handleWhatsAppWait(host: FirmOSApp) {
+export async function handleWhatsAppWait(host: OpenClawApp) {
   await waitWhatsAppLogin(host);
   await loadChannels(host, true);
 }
 
-export async function handleWhatsAppLogout(host: FirmOSApp) {
+export async function handleWhatsAppLogout(host: OpenClawApp) {
   await logoutWhatsApp(host);
   await loadChannels(host, true);
 }
 
-export async function handleChannelConfigSave(host: FirmOSApp) {
+export async function handleChannelConfigSave(host: OpenClawApp) {
   await saveConfig(host);
   await loadConfig(host);
   await loadChannels(host, true);
 }
 
-export async function handleChannelConfigReload(host: FirmOSApp) {
+export async function handleChannelConfigReload(host: OpenClawApp) {
   await loadConfig(host);
   await loadChannels(host, true);
 }
@@ -57,7 +57,7 @@ function parseValidationErrors(details: unknown): Record<string, string> {
   return errors;
 }
 
-function resolveNostrAccountId(host: FirmOSApp): string {
+function resolveNostrAccountId(host: OpenClawApp): string {
   const accounts = host.channelsSnapshot?.channelAccounts?.nostr ?? [];
   return accounts[0]?.accountId ?? host.nostrProfileAccountId ?? "default";
 }
@@ -67,7 +67,7 @@ function buildNostrProfileUrl(accountId: string, suffix = ""): string {
 }
 
 export function handleNostrProfileEdit(
-  host: FirmOSApp,
+  host: OpenClawApp,
   accountId: string,
   profile: NostrProfile | null,
 ) {
@@ -75,13 +75,13 @@ export function handleNostrProfileEdit(
   host.nostrProfileFormState = createNostrProfileFormState(profile ?? undefined);
 }
 
-export function handleNostrProfileCancel(host: FirmOSApp) {
+export function handleNostrProfileCancel(host: OpenClawApp) {
   host.nostrProfileFormState = null;
   host.nostrProfileAccountId = null;
 }
 
 export function handleNostrProfileFieldChange(
-  host: FirmOSApp,
+  host: OpenClawApp,
   field: keyof NostrProfile,
   value: string,
 ) {
@@ -102,7 +102,7 @@ export function handleNostrProfileFieldChange(
   };
 }
 
-export function handleNostrProfileToggleAdvanced(host: FirmOSApp) {
+export function handleNostrProfileToggleAdvanced(host: OpenClawApp) {
   const state = host.nostrProfileFormState;
   if (!state) {
     return;
@@ -113,7 +113,7 @@ export function handleNostrProfileToggleAdvanced(host: FirmOSApp) {
   };
 }
 
-export async function handleNostrProfileSave(host: FirmOSApp) {
+export async function handleNostrProfileSave(host: OpenClawApp) {
   const state = host.nostrProfileFormState;
   if (!state || state.saving) {
     return;
@@ -184,7 +184,7 @@ export async function handleNostrProfileSave(host: FirmOSApp) {
   }
 }
 
-export async function handleNostrProfileImport(host: FirmOSApp) {
+export async function handleNostrProfileImport(host: OpenClawApp) {
   const state = host.nostrProfileFormState;
   if (!state || state.importing) {
     return;

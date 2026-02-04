@@ -1,16 +1,13 @@
-/**
- * Gateway Browser Client
- * 
- * Connects to the local gateway using Token Authentication.
- */
-
+import { buildDeviceAuthPayload } from "../../../src/gateway/device-auth.js";
 import {
   GATEWAY_CLIENT_MODES,
   GATEWAY_CLIENT_NAMES,
   type GatewayClientMode,
   type GatewayClientName,
 } from "../../../src/gateway/protocol/client-info.js";
-import { generateUUID } from "./uuid";
+import { clearDeviceAuthToken, loadDeviceAuthToken, storeDeviceAuthToken } from "./device-auth.ts";
+import { loadOrCreateDeviceIdentity, signDevicePayload } from "./device-identity.ts";
+import { generateUUID } from "./uuid.ts";
 
 export type GatewayEventFrame = {
   type: "event";
@@ -75,7 +72,7 @@ export class GatewayBrowserClient {
   private connectTimer: number | null = null;
   private backoffMs = 800;
 
-  constructor(private opts: GatewayBrowserClientOptions) { }
+  constructor(private opts: GatewayBrowserClientOptions) {}
 
   start() {
     this.closed = false;
@@ -128,10 +125,6 @@ export class GatewayBrowserClient {
     this.pending.clear();
   }
 
-  /**
-   * Send connect message - AUTH DISABLED
-   * No device identity, no tokens, no signatures.
-   */
   private async sendConnect() {
     if (this.connectSent) {
       return;
@@ -142,8 +135,66 @@ export class GatewayBrowserClient {
       this.connectTimer = null;
     }
 
-    // Simplified: Use the token provided in options
-    // The gateway now strictly validates this token.
+    // crypto.subtle is only available in secure contexts (HTTPS, localhost).
+    // Over plain HTTP, we skip device identity and fall back to token-only auth.
+    // Gateways may reject this unless gateway.controlUi.allowInsecureAuth is enabled.
+    const isSecureContext = typeof crypto !== "undefined" && !!crypto.subtle;
+
+    const scopes = ["operator.admin", "operator.approvals", "operator.pairing"];
+    const role = "operator";
+    let deviceIdentity: Awaited<ReturnType<typeof loadOrCreateDeviceIdentity>> | null = null;
+    let canFallbackToShared = false;
+    let authToken = this.opts.token;
+
+    if (isSecureContext) {
+      deviceIdentity = await loadOrCreateDeviceIdentity();
+      const storedToken = loadDeviceAuthToken({
+        deviceId: deviceIdentity.deviceId,
+        role,
+      })?.token;
+      authToken = storedToken ?? this.opts.token;
+      canFallbackToShared = Boolean(storedToken && this.opts.token);
+    }
+    const auth =
+      authToken || this.opts.password
+        ? {
+            token: authToken,
+            password: this.opts.password,
+          }
+        : undefined;
+
+    let device:
+      | {
+          id: string;
+          publicKey: string;
+          signature: string;
+          signedAt: number;
+          nonce: string | undefined;
+        }
+      | undefined;
+
+    if (isSecureContext && deviceIdentity) {
+      const signedAtMs = Date.now();
+      const nonce = this.connectNonce ?? undefined;
+      const payload = buildDeviceAuthPayload({
+        deviceId: deviceIdentity.deviceId,
+        clientId: this.opts.clientName ?? GATEWAY_CLIENT_NAMES.CONTROL_UI,
+        clientMode: this.opts.mode ?? GATEWAY_CLIENT_MODES.WEBCHAT,
+        role,
+        scopes,
+        signedAtMs,
+        token: authToken ?? null,
+        nonce,
+      });
+      const signature = await signDevicePayload(deviceIdentity.privateKey, payload);
+      device = {
+        id: deviceIdentity.deviceId,
+        publicKey: deviceIdentity.publicKey,
+        signature,
+        signedAt: signedAtMs,
+        nonce,
+      };
+    }
     const params = {
       minProtocol: 3,
       maxProtocol: 3,
@@ -154,23 +205,32 @@ export class GatewayBrowserClient {
         mode: this.opts.mode ?? GATEWAY_CLIENT_MODES.WEBCHAT,
         instanceId: this.opts.instanceId,
       },
-      role: "operator",
-      scopes: ["operator.admin", "operator.approvals", "operator.pairing"],
-      auth: {
-        token: this.opts.token || "",
-      },
+      role,
+      scopes,
+      device,
       caps: [],
+      auth,
       userAgent: navigator.userAgent,
       locale: navigator.language,
     };
 
     void this.request<GatewayHelloOk>("connect", params)
-
       .then((hello) => {
+        if (hello?.auth?.deviceToken && deviceIdentity) {
+          storeDeviceAuthToken({
+            deviceId: deviceIdentity.deviceId,
+            role: hello.auth.role ?? role,
+            token: hello.auth.deviceToken,
+            scopes: hello.auth.scopes ?? [],
+          });
+        }
         this.backoffMs = 800;
         this.opts.onHello?.(hello);
       })
       .catch(() => {
+        if (canFallbackToShared && deviceIdentity) {
+          clearDeviceAuthToken({ deviceId: deviceIdentity.deviceId, role });
+        }
         this.ws?.close(CONNECT_FAILED_CLOSE_CODE, "connect failed");
       });
   }
@@ -184,75 +244,69 @@ export class GatewayBrowserClient {
     }
 
     const frame = parsed as { type?: unknown };
-
-    if (frame.type === "nonce") {
-      const nonceFrame = parsed as { nonce?: string };
-      this.connectNonce = nonceFrame.nonce ?? null;
-      // Don't wait —­ proceed immediately
-      this.sendConnect();
+    if (frame.type === "event") {
+      const evt = parsed as GatewayEventFrame;
+      if (evt.event === "connect.challenge") {
+        const payload = evt.payload as { nonce?: unknown } | undefined;
+        const nonce = payload && typeof payload.nonce === "string" ? payload.nonce : null;
+        if (nonce) {
+          this.connectNonce = nonce;
+          void this.sendConnect();
+        }
+        return;
+      }
+      const seq = typeof evt.seq === "number" ? evt.seq : null;
+      if (seq !== null) {
+        if (this.lastSeq !== null && seq > this.lastSeq + 1) {
+          this.opts.onGap?.({ expected: this.lastSeq + 1, received: seq });
+        }
+        this.lastSeq = seq;
+      }
+      try {
+        this.opts.onEvent?.(evt);
+      } catch (err) {
+        console.error("[gateway] event handler error:", err);
+      }
       return;
     }
 
     if (frame.type === "res") {
       const res = parsed as GatewayResponseFrame;
-      const p = this.pending.get(res.id);
-      if (p) {
-        this.pending.delete(res.id);
-        if (res.ok) {
-          p.resolve(res.payload);
-        } else {
-          p.reject(new Error(res.error?.message ?? "unknown error"));
-        }
+      const pending = this.pending.get(res.id);
+      if (!pending) {
+        return;
+      }
+      this.pending.delete(res.id);
+      if (res.ok) {
+        pending.resolve(res.payload);
+      } else {
+        pending.reject(new Error(res.error?.message ?? "request failed"));
       }
       return;
     }
+  }
 
-    if (frame.type === "event") {
-      const evt = parsed as GatewayEventFrame;
-      if (typeof evt.seq === "number") {
-        if (this.lastSeq !== null && evt.seq !== this.lastSeq + 1) {
-          this.opts.onGap?.({ expected: this.lastSeq + 1, received: evt.seq });
-        }
-        this.lastSeq = evt.seq;
-      }
-      this.opts.onEvent?.(evt);
-      return;
+  request<T = unknown>(method: string, params?: unknown): Promise<T> {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      return Promise.reject(new Error("gateway not connected"));
     }
+    const id = generateUUID();
+    const frame = { type: "req", id, method, params };
+    const p = new Promise<T>((resolve, reject) => {
+      this.pending.set(id, { resolve: (v) => resolve(v as T), reject });
+    });
+    this.ws.send(JSON.stringify(frame));
+    return p;
   }
 
   private queueConnect() {
-    // Reset connect state
-    this.connectSent = false;
-    this.lastSeq = null;
     this.connectNonce = null;
-    // We'll wait for the nonce frame, but set a fallback
-    this.connectTimer = window.setTimeout(() => this.sendConnect(), 500);
-  }
-
-  async request<T = unknown>(method: string, params: unknown = {}): Promise<T> {
-    return new Promise((resolve, reject) => {
-      if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-        reject(new Error("not connected"));
-        return;
-      }
-      const id = generateUUID();
-      this.pending.set(id, {
-        resolve: resolve as (value: unknown) => void,
-        reject,
-      });
-      const frame = JSON.stringify({
-        type: "req",
-        id,
-        method,
-        params,
-      });
-      this.ws.send(frame);
-    });
+    this.connectSent = false;
+    if (this.connectTimer !== null) {
+      window.clearTimeout(this.connectTimer);
+    }
+    this.connectTimer = window.setTimeout(() => {
+      void this.sendConnect();
+    }, 750);
   }
 }
-
-export type GatewayProviderState = {
-  client: GatewayBrowserClient | null;
-  connected: boolean;
-  hello: GatewayHelloOk | null;
-};

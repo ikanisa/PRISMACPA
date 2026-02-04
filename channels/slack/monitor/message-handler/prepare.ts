@@ -22,6 +22,7 @@ import {
 import {
   shouldAckReaction as shouldAckReactionGate,
   type AckReactionScope,
+<<<<<<< HEAD:channels/slack/monitor/message-handler/prepare.ts
 } from "../../../../src/channels/ack-reactions.js";
 import { formatAllowlistMatchMeta } from "../../../../src/channels/allowlist-match.js";
 import { resolveControlCommandGate } from "../../../../src/channels/command-gating.js";
@@ -36,6 +37,23 @@ import { buildPairingReply } from "../../../../src/pairing/pairing-messages.js";
 import { upsertChannelPairingRequest } from "../../../../src/pairing/pairing-store.js";
 import { resolveAgentRoute } from "../../../../src/routing/resolve-route.js";
 import { resolveThreadSessionKeys } from "../../../../src/routing/session-key.js";
+=======
+} from "../../../channels/ack-reactions.js";
+import { formatAllowlistMatchMeta } from "../../../channels/allowlist-match.js";
+import { resolveControlCommandGate } from "../../../channels/command-gating.js";
+import { resolveConversationLabel } from "../../../channels/conversation-label.js";
+import { logInboundDrop } from "../../../channels/logging.js";
+import { resolveMentionGatingWithBypass } from "../../../channels/mention-gating.js";
+import { recordInboundSession } from "../../../channels/session.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../../config/sessions.js";
+import { logVerbose, shouldLogVerbose } from "../../../globals.js";
+import { enqueueSystemEvent } from "../../../infra/system-events.js";
+import { buildPairingReply } from "../../../pairing/pairing-messages.js";
+import { upsertChannelPairingRequest } from "../../../pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../../routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../../routing/session-key.js";
+import { buildUntrustedChannelMetadata } from "../../../security/channel-metadata.js";
+>>>>>>> upstream/main:src/slack/monitor/message-handler/prepare.ts
 import { reactSlackMessage } from "../../actions.js";
 import { sendMessageSlack } from "../../send.js";
 import { resolveSlackThreadContext } from "../../threading.js";
@@ -440,15 +458,16 @@ export async function prepareSlackMessage(params: {
 
   const slackTo = isDirectMessage ? `user:${message.user}` : `channel:${message.channel}`;
 
-  const channelDescription = [channelInfo?.topic, channelInfo?.purpose]
-    .map((entry) => entry?.trim())
-    .filter((entry): entry is string => Boolean(entry))
-    .filter((entry, index, list) => list.indexOf(entry) === index)
-    .join("\n");
-  const systemPromptParts = [
-    channelDescription ? `Channel description: ${channelDescription}` : null,
-    channelConfig?.systemPrompt?.trim() || null,
-  ].filter((entry): entry is string => Boolean(entry));
+  const untrustedChannelMetadata = isRoomish
+    ? buildUntrustedChannelMetadata({
+        source: "slack",
+        label: "Slack channel description",
+        entries: [channelInfo?.topic, channelInfo?.purpose],
+      })
+    : undefined;
+  const systemPromptParts = [channelConfig?.systemPrompt?.trim() || null].filter(
+    (entry): entry is string => Boolean(entry),
+  );
   const groupSystemPrompt =
     systemPromptParts.length > 0 ? systemPromptParts.join("\n\n") : undefined;
 
@@ -507,6 +526,7 @@ export async function prepareSlackMessage(params: {
     ConversationLabel: envelopeFrom,
     GroupSubject: isRoomish ? roomLabel : undefined,
     GroupSystemPrompt: isRoomish ? groupSystemPrompt : undefined,
+    UntrustedContext: untrustedChannelMetadata ? [untrustedChannelMetadata] : undefined,
     SenderName: senderName,
     SenderId: senderId,
     Provider: "slack" as const,

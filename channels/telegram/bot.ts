@@ -10,7 +10,10 @@ import type { TelegramContext, TelegramMessage } from "./bot/types.js";
 import { resolveDefaultAgentId } from "../../src/agents/agent-scope.js";
 import { resolveTextChunkLimit } from "../../src/auto-reply/chunk.js";
 import { isControlCommandMessage } from "../../src/auto-reply/command-detection.js";
-import { DEFAULT_GROUP_HISTORY_LIMIT, type HistoryEntry } from "../../src/auto-reply/reply/history.js";
+import {
+  DEFAULT_GROUP_HISTORY_LIMIT,
+  type HistoryEntry,
+} from "../../src/auto-reply/reply/history.js";
 import {
   isNativeCommandsExplicitlyDisabled,
   resolveNativeCommandsEnabled,
@@ -446,7 +449,9 @@ export function createTelegramBot(opts: TelegramBotOptions) {
       senderLabel = senderLabel || "unknown";
 
       // Extract forum thread info (similar to message processing)
+      // oxlint-disable-next-line typescript/no-explicit-any
       const messageThreadId = (reaction as any).message_thread_id;
+      // oxlint-disable-next-line typescript/no-explicit-any
       const isForum = (reaction.chat as any).is_forum === true;
       const resolvedThreadId = resolveTelegramForumThreadId({
         isForum,

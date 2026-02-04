@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { FirmOSApp } from "./app";
+import { OpenClawApp } from "./app.ts";
 import "../styles.css";
 
 // oxlint-disable-next-line typescript/unbound-method
-const originalConnect = FirmOSApp.prototype.connect;
+const originalConnect = OpenClawApp.prototype.connect;
 
 function mountApp(pathname: string) {
   window.history.replaceState({}, "", pathname);
-  const app = document.createElement("firmos-app") as FirmOSApp;
+  const app = document.createElement("openclaw-app") as OpenClawApp;
   document.body.append(app);
   return app;
 }
@@ -19,17 +19,17 @@ function nextFrame() {
 }
 
 beforeEach(() => {
-  FirmOSApp.prototype.connect = () => {
+  OpenClawApp.prototype.connect = () => {
     // no-op: avoid real gateway WS connections in browser tests
   };
-  window.__FIRMOS_CONTROL_UI_BASE_PATH__ = undefined;
+  window.__OPENCLAW_CONTROL_UI_BASE_PATH__ = undefined;
   localStorage.clear();
   document.body.innerHTML = "";
 });
 
 afterEach(() => {
-  FirmOSApp.prototype.connect = originalConnect;
-  window.__FIRMOS_CONTROL_UI_BASE_PATH__ = undefined;
+  OpenClawApp.prototype.connect = originalConnect;
+  window.__OPENCLAW_CONTROL_UI_BASE_PATH__ = undefined;
   localStorage.clear();
   document.body.innerHTML = "";
 });
@@ -53,22 +53,22 @@ describe("control UI routing", () => {
   });
 
   it("infers nested base paths", async () => {
-    const app = mountApp("/apps/firmos/cron");
+    const app = mountApp("/apps/openclaw/cron");
     await app.updateComplete;
 
-    expect(app.basePath).toBe("/apps/firmos");
+    expect(app.basePath).toBe("/apps/openclaw");
     expect(app.tab).toBe("cron");
-    expect(window.location.pathname).toBe("/apps/firmos/cron");
+    expect(window.location.pathname).toBe("/apps/openclaw/cron");
   });
 
   it("honors explicit base path overrides", async () => {
-    window.__FIRMOS_CONTROL_UI_BASE_PATH__ = "/firmos";
-    const app = mountApp("/firmos/sessions");
+    window.__OPENCLAW_CONTROL_UI_BASE_PATH__ = "/openclaw";
+    const app = mountApp("/openclaw/sessions");
     await app.updateComplete;
 
-    expect(app.basePath).toBe("/firmos");
+    expect(app.basePath).toBe("/openclaw");
     expect(app.tab).toBe("sessions");
-    expect(window.location.pathname).toBe("/firmos/sessions");
+    expect(window.location.pathname).toBe("/openclaw/sessions");
   });
 
   it("updates the URL when clicking nav items", async () => {
@@ -116,7 +116,7 @@ describe("control UI routing", () => {
     const app = mountApp("/chat");
     await app.updateComplete;
 
-    const initialContainer = app.querySelector(".chat-thread");
+    const initialContainer: HTMLElement | null = app.querySelector(".chat-thread");
     expect(initialContainer).not.toBeNull();
     if (!initialContainer) {
       return;
@@ -171,7 +171,7 @@ describe("control UI routing", () => {
 
   it("hydrates token from URL params even when settings already set", async () => {
     localStorage.setItem(
-      "firmos.control.settings.v1",
+      "openclaw.control.settings.v1",
       JSON.stringify({ token: "existing-token" }),
     );
     const app = mountApp("/ui/overview?token=abc123");

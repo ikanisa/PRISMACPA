@@ -1,5 +1,5 @@
-import type { GatewayBrowserClient } from "../gateway";
-import type { AgentsListResult, GatewayAgentRow } from "../types";
+import type { GatewayBrowserClient } from "../gateway.ts";
+import type { AgentsListResult } from "../types.ts";
 
 export type AgentsState = {
   client: GatewayBrowserClient | null;
@@ -7,6 +7,7 @@ export type AgentsState = {
   agentsLoading: boolean;
   agentsError: string | null;
   agentsList: AgentsListResult | null;
+  agentsSelectedId: string | null;
 };
 
 export async function loadAgents(state: AgentsState) {
@@ -19,37 +20,18 @@ export async function loadAgents(state: AgentsState) {
   state.agentsLoading = true;
   state.agentsError = null;
   try {
-    const res = await state.client.request("agents.list", {}) as AgentsListResult | null;
+    const res = await state.client.request<AgentsListResult>("agents.list", {});
     if (res) {
       state.agentsList = res;
+      const selected = state.agentsSelectedId;
+      const known = res.agents.some((entry) => entry.id === selected);
+      if (!selected || !known) {
+        state.agentsSelectedId = res.defaultId ?? res.agents[0]?.id ?? null;
+      }
     }
   } catch (err) {
     state.agentsError = String(err);
   } finally {
     state.agentsLoading = false;
   }
-}
-
-/**
- * Get display name for an agent
- */
-export function getAgentDisplayName(agent: GatewayAgentRow): string {
-  return agent.identity?.name || agent.name || agent.id;
-}
-
-/**
- * Get emoji for an agent
- */
-export function getAgentEmoji(agent: GatewayAgentRow): string {
-  return agent.identity?.emoji || "🤖";
-}
-
-/**
- * Get agent by ID from state
- */
-export function getAgentById(
-  state: AgentsState,
-  agentId: string,
-): GatewayAgentRow | undefined {
-  return state.agentsList?.agents.find((a) => a.id === agentId);
 }

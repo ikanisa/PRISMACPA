@@ -18,6 +18,7 @@ import { createReplyDispatcherWithTyping } from "../../../src/auto-reply/reply/r
 import {
   removeAckReactionAfterReply,
   shouldAckReaction as shouldAckReactionGate,
+<<<<<<< HEAD:channels/discord/monitor/message-handler.process.ts
 } from "../../../src/channels/ack-reactions.js";
 import { logTypingFailure, logAckFailure } from "../../../src/channels/logging.js";
 import { createReplyPrefixContext } from "../../../src/channels/reply-prefix.js";
@@ -29,6 +30,20 @@ import { danger, logVerbose, shouldLogVerbose } from "../../../src/globals.js";
 import { buildAgentSessionKey } from "../../../src/routing/resolve-route.js";
 import { resolveThreadSessionKeys } from "../../../src/routing/session-key.js";
 import { truncateUtf16Safe } from "../../../src/utils.js";
+=======
+} from "../../channels/ack-reactions.js";
+import { logTypingFailure, logAckFailure } from "../../channels/logging.js";
+import { createReplyPrefixContext } from "../../channels/reply-prefix.js";
+import { recordInboundSession } from "../../channels/session.js";
+import { createTypingCallbacks } from "../../channels/typing.js";
+import { resolveMarkdownTableMode } from "../../config/markdown-tables.js";
+import { readSessionUpdatedAt, resolveStorePath } from "../../config/sessions.js";
+import { danger, logVerbose, shouldLogVerbose } from "../../globals.js";
+import { buildAgentSessionKey } from "../../routing/resolve-route.js";
+import { resolveThreadSessionKeys } from "../../routing/session-key.js";
+import { buildUntrustedChannelMetadata } from "../../security/channel-metadata.js";
+import { truncateUtf16Safe } from "../../utils.js";
+>>>>>>> upstream/main:src/discord/monitor/message-handler.process.ts
 import { reactMessageDiscord, removeReactionDiscord } from "../send.js";
 import { normalizeDiscordSlug } from "./allow-list.js";
 import { resolveTimestampMs } from "./format.js";
@@ -137,7 +152,13 @@ export async function processDiscordMessage(ctx: DiscordMessagePreflightContext)
   const forumContextLine = isForumStarter ? `[Forum parent: #${forumParentSlug}]` : null;
   const groupChannel = isGuildMessage && displayChannelSlug ? `#${displayChannelSlug}` : undefined;
   const groupSubject = isDirectMessage ? undefined : groupChannel;
-  const channelDescription = channelInfo?.topic?.trim();
+  const untrustedChannelMetadata = isGuildMessage
+    ? buildUntrustedChannelMetadata({
+        source: "discord",
+        label: "Discord channel topic",
+        entries: [channelInfo?.topic],
+      })
+    : undefined;
   const senderName = sender.isPluralKit
     ? (sender.name ?? author.username)
     : (data.member?.nickname ?? author.globalName ?? author.username);
@@ -145,10 +166,9 @@ export async function processDiscordMessage(ctx: DiscordMessagePreflightContext)
     ? (sender.tag ?? sender.name ?? author.username)
     : author.username;
   const senderTag = sender.tag;
-  const systemPromptParts = [
-    channelDescription ? `Channel topic: ${channelDescription}` : null,
-    channelConfig?.systemPrompt?.trim() || null,
-  ].filter((entry): entry is string => Boolean(entry));
+  const systemPromptParts = [channelConfig?.systemPrompt?.trim() || null].filter(
+    (entry): entry is string => Boolean(entry),
+  );
   const groupSystemPrompt =
     systemPromptParts.length > 0 ? systemPromptParts.join("\n\n") : undefined;
   const storePath = resolveStorePath(cfg.session?.store, {
@@ -281,6 +301,7 @@ export async function processDiscordMessage(ctx: DiscordMessagePreflightContext)
     SenderTag: senderTag,
     GroupSubject: groupSubject,
     GroupChannel: groupChannel,
+    UntrustedContext: untrustedChannelMetadata ? [untrustedChannelMetadata] : undefined,
     GroupSystemPrompt: isGuildMessage ? groupSystemPrompt : undefined,
     GroupSpace: isGuildMessage ? (guildInfo?.id ?? guildSlug) || undefined : undefined,
     Provider: "discord" as const,

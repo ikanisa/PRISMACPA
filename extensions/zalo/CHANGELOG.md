@@ -1,6 +1,14 @@
 # Changelog
 
+<<<<<<< HEAD
+
 ## 2026.2.1
+
+=======
+
+## 2026.2.2
+
+> > > > > > > upstream/main
 
 ### Changes
 

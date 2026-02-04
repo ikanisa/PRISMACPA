@@ -9,11 +9,15 @@ import {
 import { createServer as createHttpsServer } from "node:https";
 import type { CanvasHostHandler } from "../canvas-host/server.js";
 import type { createSubsystemLogger } from "../logging/subsystem.js";
-import { handleSlackHttpRequest } from "../../channels/slack/http/index.js";
 import { resolveAgentAvatar } from "../agents/identity-avatar.js";
 import { handleA2uiHttpRequest } from "../canvas-host/a2ui.js";
 import { loadConfig } from "../config/config.js";
-import { handleControlUiAvatarRequest, handleControlUiHttpRequest } from "./control-ui.js";
+import { handleSlackHttpRequest } from "../slack/http/index.js";
+import {
+  handleControlUiAvatarRequest,
+  handleControlUiHttpRequest,
+  type ControlUiRootState,
+} from "./control-ui.js";
 import { applyHookMappings } from "./hooks-mapping.js";
 import {
   extractHookToken,
@@ -206,6 +210,7 @@ export function createGatewayHttpServer(opts: {
   canvasHost: CanvasHostHandler | null;
   controlUiEnabled: boolean;
   controlUiBasePath: string;
+  controlUiRoot?: ControlUiRootState;
   openAiChatCompletionsEnabled: boolean;
   openResponsesEnabled: boolean;
   openResponsesConfig?: import("../config/types.gateway.js").GatewayHttpResponsesConfig;
@@ -218,6 +223,7 @@ export function createGatewayHttpServer(opts: {
     canvasHost,
     controlUiEnabled,
     controlUiBasePath,
+    controlUiRoot,
     openAiChatCompletionsEnabled,
     openResponsesEnabled,
     openResponsesConfig,
@@ -239,58 +245,9 @@ export function createGatewayHttpServer(opts: {
       return;
     }
 
-    // CORS support for Cloudflare Pages origins
-    const origin = req.headers.origin ?? "";
-    const allowedOrigins = [
-      "https://formos.pages.dev",
-      /^https:\/\/[a-z0-9]+\.formos\.pages\.dev$/, // Preview deployments
-    ];
-    const isAllowedOrigin = allowedOrigins.some((allowed) =>
-      typeof allowed === "string" ? origin === allowed : allowed.test(origin),
-    );
-
-    if (isAllowedOrigin) {
-      res.setHeader("Access-Control-Allow-Origin", origin);
-      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-      res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-OpenClaw-Token",
-      );
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader("Access-Control-Max-Age", "86400");
-    }
-
-    // Handle CORS preflight
-    if (req.method === "OPTIONS") {
-      res.statusCode = 204;
-      res.end();
-      return;
-    }
-
     try {
       const configSnapshot = loadConfig();
       const trustedProxies = configSnapshot.gateway?.trustedProxies ?? [];
-
-      // Dev-token endpoint for UI auto-connection in local dev environments
-      const url = new URL(req.url ?? "/", `http://localhost`);
-      if (url.pathname === "/__openclaw__/dev-token" && req.method === "GET") {
-        // Only provide token for localhost requests in token auth mode
-        const remoteAddr = req.socket?.remoteAddress ?? "";
-        const isLocalhost =
-          remoteAddr === "127.0.0.1" || remoteAddr === "::1" || remoteAddr === "::ffff:127.0.0.1";
-        if (isLocalhost && resolvedAuth.mode === "token" && resolvedAuth.token) {
-          res.setHeader("Access-Control-Allow-Origin", "*");
-          res.setHeader("Cache-Control", "no-store");
-          sendJson(res, 200, { token: resolvedAuth.token });
-          return;
-        }
-        // Not available in this configuration
-        res.statusCode = 404;
-        res.setHeader("Content-Type", "text/plain; charset=utf-8");
-        res.end("Not Found");
-        return;
-      }
-
       if (await handleHooksRequest(req, res)) {
         return;
       }
@@ -350,6 +307,7 @@ export function createGatewayHttpServer(opts: {
           handleControlUiHttpRequest(req, res, {
             basePath: controlUiBasePath,
             config: configSnapshot,
+            root: controlUiRoot,
           })
         ) {
           return;

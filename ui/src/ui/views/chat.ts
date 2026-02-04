@@ -1,25 +1,18 @@
 import { html, nothing } from "lit";
 import { ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
-import type { GatewayAgentRow, SessionsListResult } from "../types";
-import type { ChatItem, MessageGroup } from "../types/chat-types";
-import type { ChatAttachment, ChatQueueItem } from "../ui-types";
+import type { SessionsListResult } from "../types.ts";
+import type { ChatItem, MessageGroup } from "../types/chat-types.ts";
+import type { ChatAttachment, ChatQueueItem } from "../ui-types.ts";
 import {
   renderMessageGroup,
   renderReadingIndicatorGroup,
   renderStreamingGroup,
-} from "../chat/grouped-render";
-import { isInterAgentMessage, normalizeMessage, normalizeRoleForGrouping } from "../chat/message-normalizer";
-import { icons } from "../icons";
-import { renderMarkdownSidebar } from "./markdown-sidebar";
-import { renderAgentSelector } from "./agent-selector";
-import {
-  renderMentionAutocomplete,
-  detectMentionTrigger,
-  insertMention,
-  filterAgentsForMention,
-} from "../components/mention-autocomplete";
-import "../components/resizable-divider";
+} from "../chat/grouped-render.ts";
+import { normalizeMessage, normalizeRoleForGrouping } from "../chat/message-normalizer.ts";
+import { icons } from "../icons.ts";
+import { renderMarkdownSidebar } from "./markdown-sidebar.ts";
+import "../components/resizable-divider.ts";
 
 export type CompactionIndicatorStatus = {
   active: boolean;
@@ -60,12 +53,9 @@ export type ChatProps = {
   // Image attachments
   attachments?: ChatAttachment[];
   onAttachmentsChange?: (attachments: ChatAttachment[]) => void;
-  // Agent selector props (optional - only shown when agents available)
-  agents?: GatewayAgentRow[];
-  currentAgentId?: string | null;
-  isGroupChat?: boolean;
-  onAgentSelect?: (agentId: string) => void;
-  onGroupChatSelect?: () => void;
+  // Scroll control
+  showNewMessages?: boolean;
+  onScrollToBottom?: () => void;
   // Event handlers
   onRefresh: () => void;
   onToggleFocusMode: () => void;
@@ -78,11 +68,6 @@ export type ChatProps = {
   onCloseSidebar?: () => void;
   onSplitRatioChange?: (ratio: number) => void;
   onChatScroll?: (event: Event) => void;
-  // Mention autocomplete state (managed by parent)
-  mentionActive?: boolean;
-  mentionQuery?: string;
-  mentionHighlightIndex?: number;
-  onMentionStateChange?: (active: boolean, query: string, highlightIndex: number) => void;
 };
 
 const COMPACTION_TOAST_DURATION_MS = 5000;
@@ -175,7 +160,7 @@ function renderAttachmentPreview(props: ChatProps) {
   return html`
     <div class="chat-attachments">
       ${attachments.map(
-    (att) => html`
+        (att) => html`
           <div class="chat-attachment">
             <img
               src=${att.dataUrl}
@@ -187,15 +172,15 @@ function renderAttachmentPreview(props: ChatProps) {
               type="button"
               aria-label="Remove attachment"
               @click=${() => {
-        const next = (props.attachments ?? []).filter((a) => a.id !== att.id);
-        props.onAttachmentsChange?.(next);
-      }}
+                const next = (props.attachments ?? []).filter((a) => a.id !== att.id);
+                props.onAttachmentsChange?.(next);
+              }}
             >
               ${icons.x}
             </button>
           </div>
         `,
-  )}
+      )}
     </div>
   `;
 }
@@ -228,42 +213,42 @@ export function renderChat(props: ChatProps) {
       aria-live="polite"
       @scroll=${props.onChatScroll}
     >
-      ${props.loading
-      ? html`
+      ${
+        props.loading
+          ? html`
               <div class="muted">Loading chat…</div>
             `
-      : nothing
-    }
+          : nothing
+      }
       ${repeat(
-      buildChatItems(props),
-      (item) => item.key,
-      (item) => {
-        if (item.kind === "reading-indicator") {
-          return renderReadingIndicatorGroup(assistantIdentity);
-        }
+        buildChatItems(props),
+        (item) => item.key,
+        (item) => {
+          if (item.kind === "reading-indicator") {
+            return renderReadingIndicatorGroup(assistantIdentity);
+          }
 
-        if (item.kind === "stream") {
-          return renderStreamingGroup(
-            item.text,
-            item.startedAt,
-            props.onOpenSidebar,
-            assistantIdentity,
-          );
-        }
+          if (item.kind === "stream") {
+            return renderStreamingGroup(
+              item.text,
+              item.startedAt,
+              props.onOpenSidebar,
+              assistantIdentity,
+            );
+          }
 
-        if (item.kind === "group") {
-          return renderMessageGroup(item, {
-            onOpenSidebar: props.onOpenSidebar,
-            showReasoning,
-            assistantName: props.assistantName,
-            assistantAvatar: assistantIdentity.avatar,
-            agents: props.agents,
-          });
-        }
+          if (item.kind === "group") {
+            return renderMessageGroup(item, {
+              onOpenSidebar: props.onOpenSidebar,
+              showReasoning,
+              assistantName: props.assistantName,
+              assistantAvatar: assistantIdentity.avatar,
+            });
+          }
 
-        return nothing;
-      },
-    )}
+          return nothing;
+        },
+      )}
     </div>
   `;
 
@@ -275,21 +260,9 @@ export function renderChat(props: ChatProps) {
 
       ${renderCompactionIndicator(props.compactionStatus)}
 
-      ${props.agents && props.agents.length > 0 && props.onAgentSelect && props.onGroupChatSelect
-      ? renderAgentSelector({
-        connected: props.connected,
-        agents: props.agents,
-        currentAgentId: props.currentAgentId ?? null,
-        isGroupChat: props.isGroupChat ?? false,
-        maxVisiblePills: 5,
-        onAgentSelect: props.onAgentSelect,
-        onGroupChatSelect: props.onGroupChatSelect,
-      })
-      : nothing
-    }
-
-      ${props.focusMode
-      ? html`
+      ${
+        props.focusMode
+          ? html`
             <button
               class="chat-focus-exit"
               type="button"
@@ -300,8 +273,8 @@ export function renderChat(props: ChatProps) {
               ${icons.x}
             </button>
           `
-      : nothing
-    }
+          : nothing
+      }
 
       <div
         class="chat-split-container ${sidebarOpen ? "chat-split-container--open" : ""}"
@@ -313,42 +286,45 @@ export function renderChat(props: ChatProps) {
           ${thread}
         </div>
 
-        ${sidebarOpen
-      ? html`
+        ${
+          sidebarOpen
+            ? html`
               <resizable-divider
                 .splitRatio=${splitRatio}
                 @resize=${(e: CustomEvent) => props.onSplitRatioChange?.(e.detail.splitRatio)}
               ></resizable-divider>
               <div class="chat-sidebar">
                 ${renderMarkdownSidebar({
-        content: props.sidebarContent ?? null,
-        error: props.sidebarError ?? null,
-        onClose: props.onCloseSidebar!,
-        onViewRawText: () => {
-          if (!props.sidebarContent || !props.onOpenSidebar) {
-            return;
-          }
-          props.onOpenSidebar(`\`\`\`\n${props.sidebarContent}\n\`\`\``);
-        },
-      })}
+                  content: props.sidebarContent ?? null,
+                  error: props.sidebarError ?? null,
+                  onClose: props.onCloseSidebar!,
+                  onViewRawText: () => {
+                    if (!props.sidebarContent || !props.onOpenSidebar) {
+                      return;
+                    }
+                    props.onOpenSidebar(`\`\`\`\n${props.sidebarContent}\n\`\`\``);
+                  },
+                })}
               </div>
             `
-      : nothing
-    }
+            : nothing
+        }
       </div>
 
-      ${props.queue.length
-      ? html`
+      ${
+        props.queue.length
+          ? html`
             <div class="chat-queue" role="status" aria-live="polite">
               <div class="chat-queue__title">Queued (${props.queue.length})</div>
               <div class="chat-queue__list">
                 ${props.queue.map(
-        (item) => html`
+                  (item) => html`
                     <div class="chat-queue__item">
                       <div class="chat-queue__text">
-                        ${item.text ||
-          (item.attachments?.length ? `Image (${item.attachments.length})` : "")
-          }
+                        ${
+                          item.text ||
+                          (item.attachments?.length ? `Image (${item.attachments.length})` : "")
+                        }
                       </div>
                       <button
                         class="btn chat-queue__remove"
@@ -360,16 +336,29 @@ export function renderChat(props: ChatProps) {
                       </button>
                     </div>
                   `,
-      )}
+                )}
               </div>
             </div>
           `
-      : nothing
-    }
+          : nothing
+      }
+
+      ${
+        props.showNewMessages
+          ? html`
+            <button
+              class="btn chat-new-messages"
+              type="button"
+              @click=${props.onScrollToBottom}
+            >
+              New messages ${icons.arrowDown}
+            </button>
+          `
+          : nothing
+      }
 
       <div class="chat-compose">
         ${renderAttachmentPreview(props)}
-        ${renderMentionDropdown(props)}
         <div class="chat-compose__row">
           <label class="field chat-compose__field">
             <span>Message</span>
@@ -377,8 +366,29 @@ export function renderChat(props: ChatProps) {
               ${ref((el) => el && adjustTextareaHeight(el as HTMLTextAreaElement))}
               .value=${props.draft}
               ?disabled=${!props.connected}
-              @keydown=${(e: KeyboardEvent) => handleComposeKeydown(e, props, canCompose)}
-              @input=${(e: Event) => handleComposeInput(e, props)}
+              @keydown=${(e: KeyboardEvent) => {
+                if (e.key !== "Enter") {
+                  return;
+                }
+                if (e.isComposing || e.keyCode === 229) {
+                  return;
+                }
+                if (e.shiftKey) {
+                  return;
+                } // Allow Shift+Enter for line breaks
+                if (!props.connected) {
+                  return;
+                }
+                e.preventDefault();
+                if (canCompose) {
+                  props.onSend();
+                }
+              }}
+              @input=${(e: Event) => {
+                const target = e.target as HTMLTextAreaElement;
+                adjustTextareaHeight(target);
+                props.onDraftChange(target.value);
+              }}
               @paste=${(e: ClipboardEvent) => handlePaste(e, props)}
               placeholder=${composePlaceholder}
             ></textarea>
@@ -405,137 +415,6 @@ export function renderChat(props: ChatProps) {
   `;
 }
 
-/**
- * Handle keydown in the compose textarea, including mention navigation
- */
-function handleComposeKeydown(e: KeyboardEvent, props: ChatProps, canCompose: boolean) {
-  const target = e.target as HTMLTextAreaElement;
-  const agents = props.agents ?? [];
-  const mentionActive = props.mentionActive ?? false;
-  const mentionQuery = props.mentionQuery ?? "";
-  const highlightIndex = props.mentionHighlightIndex ?? 0;
-
-  // If mention autocomplete is active, handle navigation keys
-  if (mentionActive && agents.length > 0 && props.onMentionStateChange) {
-    const filtered = filterAgentsForMention(agents, mentionQuery);
-    const maxIndex = filtered.length - 1;
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      const newIndex = Math.min(highlightIndex + 1, maxIndex);
-      props.onMentionStateChange(true, mentionQuery, newIndex);
-      return;
-    }
-
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      const newIndex = Math.max(highlightIndex - 1, 0);
-      props.onMentionStateChange(true, mentionQuery, newIndex);
-      return;
-    }
-
-    if (e.key === "Enter" && filtered.length > 0) {
-      e.preventDefault();
-      const selected = filtered[highlightIndex];
-      if (selected) {
-        const agentName = selected.identity?.name || selected.name || selected.id;
-        const cursorPos = target.selectionStart ?? props.draft.length;
-        const { newText, newCursorPosition } = insertMention(props.draft, cursorPos, agentName);
-        props.onDraftChange(newText);
-        props.onMentionStateChange(false, "", 0);
-        // Set cursor position after mention
-        requestAnimationFrame(() => {
-          target.setSelectionRange(newCursorPosition, newCursorPosition);
-        });
-      }
-      return;
-    }
-
-    if (e.key === "Escape") {
-      e.preventDefault();
-      props.onMentionStateChange(false, "", 0);
-      return;
-    }
-  }
-
-  // Normal Enter handling for sending message
-  if (e.key !== "Enter") {
-    return;
-  }
-  if (e.isComposing || e.keyCode === 229) {
-    return;
-  }
-  if (e.shiftKey) {
-    return; // Allow Shift+Enter for line breaks
-  }
-  if (!props.connected) {
-    return;
-  }
-  e.preventDefault();
-  if (canCompose) {
-    props.onSend();
-  }
-}
-
-/**
- * Handle input changes in the compose textarea, detecting @ mentions
- */
-function handleComposeInput(e: Event, props: ChatProps) {
-  const target = e.target as HTMLTextAreaElement;
-  adjustTextareaHeight(target);
-  props.onDraftChange(target.value);
-
-  // Detect @ trigger for mention autocomplete
-  if (props.agents && props.agents.length > 0 && props.onMentionStateChange) {
-    const cursorPos = target.selectionStart ?? target.value.length;
-    const query = detectMentionTrigger(target.value, cursorPos);
-    if (query !== null) {
-      props.onMentionStateChange(true, query, 0);
-    } else if (props.mentionActive) {
-      props.onMentionStateChange(false, "", 0);
-    }
-  }
-}
-
-/**
- * Render mention autocomplete dropdown
- */
-function renderMentionDropdown(props: ChatProps) {
-  if (!props.mentionActive || !props.agents || props.agents.length === 0) {
-    return nothing;
-  }
-
-  return renderMentionAutocomplete({
-    active: props.mentionActive,
-    query: props.mentionQuery ?? "",
-    agents: props.agents,
-    highlightedIndex: props.mentionHighlightIndex ?? 0,
-    onSelect: (agent) => {
-      // We handle selection in keydown for now (Enter key)
-      // This is for click selection
-      if (props.onMentionStateChange) {
-        const agentName = agent.identity?.name || agent.name || agent.id;
-        // Insert mention at current position
-        const el = document.querySelector(".chat-compose__field textarea") as HTMLTextAreaElement | null;
-        const cursorPos = el?.selectionStart ?? props.draft.length;
-        const { newText, newCursorPosition } = insertMention(props.draft, cursorPos, agentName);
-        props.onDraftChange(newText);
-        props.onMentionStateChange(false, "", 0);
-        // Restore focus and set cursor
-        if (el) {
-          requestAnimationFrame(() => {
-            el.focus();
-            el.setSelectionRange(newCursorPosition, newCursorPosition);
-          });
-        }
-      }
-    },
-    onClose: () => {
-      props.onMentionStateChange?.(false, "", 0);
-    },
-  });
-}
-
 const CHAT_HISTORY_RENDER_LIMIT = 200;
 
 function groupMessages(items: ChatItem[]): Array<ChatItem | MessageGroup> {
@@ -555,34 +434,21 @@ function groupMessages(items: ChatItem[]): Array<ChatItem | MessageGroup> {
     const normalized = normalizeMessage(item.message);
     const role = normalizeRoleForGrouping(normalized.role);
     const timestamp = normalized.timestamp || Date.now();
-    // Extract agentId from message for grouping (enables agent avatars)
-    const msgObj = item.message as Record<string, unknown> | null;
-    const agentId = typeof msgObj?.agentId === "string" ? msgObj.agentId : undefined;
-    // Detect inter-agent (A2A) messages for special styling
-    const isA2A = isInterAgentMessage(item.message);
 
-    // Group by both role AND agentId so different agents get separate groups
-    const sameGroup =
-      currentGroup &&
-      currentGroup.role === role &&
-      currentGroup.agentId === agentId;
-
-    if (!sameGroup) {
+    if (!currentGroup || currentGroup.role !== role) {
       if (currentGroup) {
         result.push(currentGroup);
       }
       currentGroup = {
         kind: "group",
-        key: `group:${role}:${agentId ?? "default"}:${item.key}`,
+        key: `group:${role}:${item.key}`,
         role,
-        agentId,
-        isInterAgent: isA2A,
         messages: [{ message: item.message, key: item.key }],
         timestamp,
         isStreaming: false,
       };
     } else {
-      currentGroup!.messages.push({ message: item.message, key: item.key });
+      currentGroup.messages.push({ message: item.message, key: item.key });
     }
   }
 

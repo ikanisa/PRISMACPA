@@ -1,17 +1,17 @@
-import type { EventLogEntry } from "./app-events";
-import type { DevicePairingList } from "./controllers/devices";
-import type { ExecApprovalRequest } from "./controllers/exec-approval";
-import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals";
-import type { SkillMessage } from "./controllers/skills";
-import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway";
-import type { Tab } from "./navigation";
-import type { UiSettings } from "./storage";
-import type { ThemeMode, ResolvedTheme } from "./theme";
-import type { ThemeTransitionContext } from "./theme-transition";
-import type { CompactionStatus } from "./app-tool-stream";
-import type { ConfigUiHints } from "./types";
+import type { EventLogEntry } from "./app-events.ts";
+import type { DevicePairingList } from "./controllers/devices.ts";
+import type { ExecApprovalRequest } from "./controllers/exec-approval.ts";
+import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals.ts";
+import type { SkillMessage } from "./controllers/skills.ts";
+import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway.ts";
+import type { Tab } from "./navigation.ts";
+import type { UiSettings } from "./storage.ts";
+import type { ThemeTransitionContext } from "./theme-transition.ts";
+import type { ThemeMode } from "./theme.ts";
 import type {
   AgentsListResult,
+  AgentsFilesListResult,
+  AgentIdentityResult,
   ChannelsStatusSnapshot,
   ConfigSnapshot,
   CronJob,
@@ -25,9 +25,9 @@ import type {
   SessionsListResult,
   SkillStatusReport,
   StatusSummary,
-} from "./types";
-import type { ChatAttachment, ChatQueueItem, CronFormState } from "./ui-types";
-import type { NostrProfileFormState } from "./views/channels.nostr-profile-form";
+} from "./types.ts";
+import type { ChatAttachment, ChatQueueItem, CronFormState } from "./ui-types.ts";
+import type { NostrProfileFormState } from "./views/channels.nostr-profile-form.ts";
 
 export type AppViewState = {
   settings: UiSettings;
@@ -37,7 +37,7 @@ export type AppViewState = {
   basePath: string;
   connected: boolean;
   theme: ThemeMode;
-  themeResolved: ResolvedTheme;
+  themeResolved: "light" | "dark";
   hello: GatewayHelloOk | null;
   lastError: string | null;
   eventLog: EventLogEntry[];
@@ -52,19 +52,14 @@ export type AppViewState = {
   chatMessages: unknown[];
   chatToolMessages: unknown[];
   chatStream: string | null;
-  chatStreamStartedAt: number | null;
   chatRunId: string | null;
-  compactionStatus: CompactionStatus | null;
   chatAvatarUrl: string | null;
   chatThinkingLevel: string | null;
   chatQueue: ChatQueueItem[];
-  // Sidebar state for tool output viewing
-  sidebarOpen: boolean;
-  sidebarContent: string | null;
-  sidebarError: string | null;
-  splitRatio: number;
   nodesLoading: boolean;
   nodes: Array<Record<string, unknown>>;
+  chatNewMessagesBelow: boolean;
+  scrollToBottom: () => void;
   devicesLoading: boolean;
   devicesError: string | null;
   devicesList: DevicePairingList | null;
@@ -88,19 +83,13 @@ export type AppViewState = {
   configSaving: boolean;
   configApplying: boolean;
   updateRunning: boolean;
-  applySessionKey: string;
   configSnapshot: ConfigSnapshot | null;
   configSchema: unknown;
-  configSchemaVersion: string | null;
   configSchemaLoading: boolean;
-  configUiHints: ConfigUiHints;
+  configUiHints: Record<string, unknown>;
   configForm: Record<string, unknown> | null;
   configFormOriginal: Record<string, unknown> | null;
-  configFormDirty: boolean;
   configFormMode: "form" | "raw";
-  configSearchQuery: string;
-  configActiveSection: string | null;
-  configActiveSubsection: string | null;
   channelsLoading: boolean;
   channelsSnapshot: ChannelsStatusSnapshot | null;
   channelsError: string | null;
@@ -111,7 +100,7 @@ export type AppViewState = {
   whatsappBusy: boolean;
   nostrProfileFormState: NostrProfileFormState | null;
   nostrProfileAccountId: string | null;
-
+  configFormDirty: boolean;
   presenceLoading: boolean;
   presenceEntries: PresenceEntry[];
   presenceError: string | null;
@@ -119,6 +108,22 @@ export type AppViewState = {
   agentsLoading: boolean;
   agentsList: AgentsListResult | null;
   agentsError: string | null;
+  agentsSelectedId: string | null;
+  agentsPanel: "overview" | "files" | "tools" | "skills" | "channels" | "cron";
+  agentFilesLoading: boolean;
+  agentFilesError: string | null;
+  agentFilesList: AgentsFilesListResult | null;
+  agentFileContents: Record<string, string>;
+  agentFileDrafts: Record<string, string>;
+  agentFileActive: string | null;
+  agentFileSaving: boolean;
+  agentIdentityLoading: boolean;
+  agentIdentityError: string | null;
+  agentIdentityById: Record<string, AgentIdentityResult>;
+  agentSkillsLoading: boolean;
+  agentSkillsError: string | null;
+  agentSkillsReport: SkillStatusReport | null;
+  agentSkillsAgentId: string | null;
   sessionsLoading: boolean;
   sessionsResult: SessionsListResult | null;
   sessionsError: string | null;
@@ -158,19 +163,7 @@ export type AppViewState = {
   logsLevelFilters: Record<LogLevel, boolean>;
   logsAutoFollow: boolean;
   logsTruncated: boolean;
-  logsAtBottom: boolean;
-  logsCursor: number | null;
-  logsLastFetchAt: number | null;
-  logsLimit: number;
-  logsMaxBytes: number;
-  // Chat support
-  refreshSessionsAfterChat: Set<string>;
   client: GatewayBrowserClient | null;
-  // Private-like fields needed for SettingsHost compatibility
-  chatHasAutoScrolled: boolean;
-  eventLogBuffer: EventLogEntry[];
-  themeMedia: MediaQueryList | null;
-  themeMediaHandler: ((event: MediaQueryListEvent) => void) | null;
   connect: () => void;
   setTab: (tab: Tab) => void;
   setTheme: (theme: ThemeMode, context?: ThemeTransitionContext) => void;
@@ -178,7 +171,6 @@ export type AppViewState = {
   loadOverview: () => Promise<void>;
   loadAssistantIdentity: () => Promise<void>;
   loadCron: () => Promise<void>;
-  switchToAgentSession: (sessionKey: string) => void;
   handleWhatsAppStart: (force: boolean) => Promise<void>;
   handleWhatsAppWait: () => Promise<void>;
   handleWhatsAppLogout: () => Promise<void>;
@@ -222,7 +214,7 @@ export type AppViewState = {
   setPassword: (next: string) => void;
   setSessionKey: (next: string) => void;
   setChatMessage: (next: string) => void;
-  handleChatSend: (messageOverride?: string, opts?: { attachments?: ChatAttachment[] }) => Promise<void>;
+  handleChatSend: () => Promise<void>;
   handleChatAbort: () => Promise<void>;
   handleChatSelectQueueItem: (id: string) => void;
   handleChatDropQueueItem: (id: string) => void;
@@ -231,18 +223,4 @@ export type AppViewState = {
   handleLogsLevelFilterToggle: (level: LogLevel) => void;
   handleLogsAutoFollowToggle: (next: boolean) => void;
   handleCallDebugMethod: (method: string, params: string) => Promise<void>;
-  // Chat and scroll handlers
-  handleChatScroll: (event: Event) => void;
-  handleSendChat: (messageOverride?: string, opts?: { attachments?: ChatAttachment[]; restoreDraft?: boolean }) => Promise<void>;
-  handleAbortChat: () => Promise<void>;
-  removeQueuedMessage: (id: string) => void;
-  resetToolStream: () => void;
-  resetChatScroll: () => void;
-  // Sidebar handlers
-  handleOpenSidebar: (content: string) => void;
-  handleCloseSidebar: () => void;
-  handleSplitRatioChange: (ratio: number) => void;
-  // Log handlers
-  handleLogsScroll: (event: Event) => void;
-  exportLogs: (lines: string[], label: string) => void;
 };

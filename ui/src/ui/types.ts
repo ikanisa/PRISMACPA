@@ -302,18 +302,20 @@ export type ConfigSchemaResponse = {
 };
 
 export type PresenceEntry = {
-  instanceId?: string | null;
-  host?: string | null;
-  ip?: string | null;
-  version?: string | null;
-  platform?: string | null;
   deviceFamily?: string | null;
-  modelIdentifier?: string | null;
-  mode?: string | null;
+  host?: string | null;
+  instanceId?: string | null;
+  ip?: string | null;
   lastInputSeconds?: number | null;
+  mode?: string | null;
+  modelIdentifier?: string | null;
+  platform?: string | null;
   reason?: string | null;
+  roles?: Array<string | null> | null;
+  scopes?: Array<string | null> | null;
   text?: string | null;
   ts?: number | null;
+  version?: string | null;
 };
 
 export type GatewaySessionsDefaults = {
@@ -359,6 +361,41 @@ export type AgentsListResult = {
   mainKey: string;
   scope: string;
   agents: GatewayAgentRow[];
+};
+
+export type AgentIdentityResult = {
+  agentId: string;
+  name: string;
+  avatar: string;
+  emoji?: string;
+};
+
+export type AgentFileEntry = {
+  name: string;
+  path: string;
+  missing: boolean;
+  size?: number;
+  updatedAtMs?: number;
+  content?: string;
+};
+
+export type AgentsFilesListResult = {
+  agentId: string;
+  workspace: string;
+  files: AgentFileEntry[];
+};
+
+export type AgentsFilesGetResult = {
+  agentId: string;
+  workspace: string;
+  file: AgentFileEntry;
+};
+
+export type AgentsFilesSetResult = {
+  ok: true;
+  agentId: string;
+  workspace: string;
+  file: AgentFileEntry;
 };
 
 export type GatewaySessionRow = {
@@ -419,23 +456,23 @@ export type CronWakeMode = "next-heartbeat" | "now";
 export type CronPayload =
   | { kind: "systemEvent"; text: string }
   | {
-    kind: "agentTurn";
-    message: string;
-    thinking?: string;
-    timeoutSeconds?: number;
-    deliver?: boolean;
-    provider?:
-    | "last"
-    | "whatsapp"
-    | "telegram"
-    | "discord"
-    | "slack"
-    | "signal"
-    | "imessage"
-    | "msteams";
-    to?: string;
-    bestEffortDeliver?: boolean;
-  };
+      kind: "agentTurn";
+      message: string;
+      thinking?: string;
+      timeoutSeconds?: number;
+      deliver?: boolean;
+      provider?:
+        | "last"
+        | "whatsapp"
+        | "telegram"
+        | "discord"
+        | "slack"
+        | "signal"
+        | "imessage"
+        | "msteams";
+      to?: string;
+      bestEffortDeliver?: boolean;
+    };
 
 export type CronIsolation = {
   postToMainPrefix?: string;
@@ -499,6 +536,7 @@ export type SkillStatusEntry = {
   name: string;
   description: string;
   source: string;
+  bundled?: boolean;
   filePath: string;
   baseDir: string;
   skillKey: string;

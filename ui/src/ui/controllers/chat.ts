@@ -1,7 +1,7 @@
-import type { GatewayBrowserClient } from "../gateway";
-import type { ChatAttachment } from "../ui-types";
-import { extractText } from "../chat/message-extract";
-import { generateUUID } from "../uuid";
+import type { GatewayBrowserClient } from "../gateway.ts";
+import type { ChatAttachment } from "../ui-types.ts";
+import { extractText } from "../chat/message-extract.ts";
+import { generateUUID } from "../uuid.ts";
 
 export type ChatState = {
   client: GatewayBrowserClient | null;
@@ -34,10 +34,13 @@ export async function loadChatHistory(state: ChatState) {
   state.chatLoading = true;
   state.lastError = null;
   try {
-    const res = await state.client.request("chat.history", {
-      sessionKey: state.sessionKey,
-      limit: 200,
-    });
+    const res = await state.client.request<{ messages?: Array<unknown>; thinkingLevel?: string }>(
+      "chat.history",
+      {
+        sessionKey: state.sessionKey,
+        limit: 200,
+      },
+    );
     state.chatMessages = Array.isArray(res.messages) ? res.messages : [];
     state.chatThinkingLevel = res.thinkingLevel ?? null;
   } catch (err) {
@@ -174,7 +177,7 @@ export function handleChatEvent(state: ChatState, payload?: ChatEventPayload) {
   }
 
   // Final from another run (e.g. sub-agent announce): refresh history to show new message.
-  // See https://github.com/firmos/firmos/issues/1909
+  // See https://github.com/openclaw/openclaw/issues/1909
   if (payload.runId && state.chatRunId && payload.runId !== state.chatRunId) {
     if (payload.state === "final") {
       return "final";

@@ -37,9 +37,16 @@ import { buildPairingReply } from "../../../src/pairing/pairing-messages.js";
 import {
   readChannelAllowFromStore,
   upsertChannelPairingRequest,
+<<<<<<< HEAD:channels/discord/monitor/native-command.ts
 } from "../../../src/pairing/pairing-store.js";
 import { resolveAgentRoute } from "../../../src/routing/resolve-route.js";
 import { loadWebMedia } from "../../../src/web/media.js";
+=======
+} from "../../pairing/pairing-store.js";
+import { resolveAgentRoute } from "../../routing/resolve-route.js";
+import { buildUntrustedChannelMetadata } from "../../security/channel-metadata.js";
+import { loadWebMedia } from "../../web/media.js";
+>>>>>>> upstream/main:src/discord/monitor/native-command.ts
 import { chunkDiscordTextWithMode } from "../chunk.js";
 import {
   allowListMatches,
@@ -758,14 +765,22 @@ async function dispatchDiscordCommandInteraction(params: {
     GroupSubject: isGuild ? interaction.guild?.name : undefined,
     GroupSystemPrompt: isGuild
       ? (() => {
+          const systemPromptParts = [channelConfig?.systemPrompt?.trim() || null].filter(
+            (entry): entry is string => Boolean(entry),
+          );
+          return systemPromptParts.length > 0 ? systemPromptParts.join("\n\n") : undefined;
+        })()
+      : undefined,
+    UntrustedContext: isGuild
+      ? (() => {
           const channelTopic =
             channel && "topic" in channel ? (channel.topic ?? undefined) : undefined;
-          const channelDescription = channelTopic?.trim();
-          const systemPromptParts = [
-            channelDescription ? `Channel topic: ${channelDescription}` : null,
-            channelConfig?.systemPrompt?.trim() || null,
-          ].filter((entry): entry is string => Boolean(entry));
-          return systemPromptParts.length > 0 ? systemPromptParts.join("\n\n") : undefined;
+          const untrustedChannelMetadata = buildUntrustedChannelMetadata({
+            source: "discord",
+            label: "Discord channel topic",
+            entries: [channelTopic],
+          });
+          return untrustedChannelMetadata ? [untrustedChannelMetadata] : undefined;
         })()
       : undefined,
     SenderName: user.globalName ?? user.username,

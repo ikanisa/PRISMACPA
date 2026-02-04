@@ -1,16 +1,16 @@
 import { html, nothing } from "lit";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import type { AssistantIdentity } from "../assistant-identity";
-import type { MessageGroup } from "../types/chat-types";
-import { toSanitizedMarkdownHtml } from "../markdown";
-import { renderCopyAsMarkdownButton } from "./copy-as-markdown";
+import type { AssistantIdentity } from "../assistant-identity.ts";
+import type { MessageGroup } from "../types/chat-types.ts";
+import { toSanitizedMarkdownHtml } from "../markdown.ts";
+import { renderCopyAsMarkdownButton } from "./copy-as-markdown.ts";
 import {
   extractTextCached,
   extractThinkingCached,
   formatReasoningMarkdown,
-} from "./message-extract";
-import { isToolResultMessage, normalizeRoleForGrouping } from "./message-normalizer";
-import { extractToolCards, renderToolCardSidebar } from "./tool-cards";
+} from "./message-extract.ts";
+import { isToolResultMessage, normalizeRoleForGrouping } from "./message-normalizer.ts";
+import { extractToolCards, renderToolCardSidebar } from "./tool-cards.ts";
 
 type ImageBlock = {
   url: string;
@@ -86,14 +86,14 @@ export function renderStreamingGroup(
       ${renderAvatar("assistant", assistant)}
       <div class="chat-group-messages">
         ${renderGroupedMessage(
-    {
-      role: "assistant",
-      content: [{ type: "text", text }],
-      timestamp: startedAt,
-    },
-    { isStreaming: true, showReasoning: false },
-    onOpenSidebar,
-  )}
+          {
+            role: "assistant",
+            content: [{ type: "text", text }],
+            timestamp: startedAt,
+          },
+          { isStreaming: true, showReasoning: false },
+          onOpenSidebar,
+        )}
         <div class="chat-group-footer">
           <span class="chat-sender-name">${name}</span>
           <span class="chat-group-timestamp">${timestamp}</span>
@@ -134,7 +134,8 @@ export function renderMessageGroup(
         : normalizedRole;
 
   // Determine CSS class: interagent overrides user styling for A2A messages
-  let roleClass = normalizedRole === "user" ? "user" : normalizedRole === "assistant" ? "assistant" : "other";
+  let roleClass =
+    normalizedRole === "user" ? "user" : normalizedRole === "assistant" ? "assistant" : "other";
   if (group.isInterAgent) {
     roleClass = "interagent";
   }
@@ -145,27 +146,28 @@ export function renderMessageGroup(
   });
 
   // For A2A messages, show "From: AgentName" badge
-  const fromBadge = group.isInterAgent && resolvedName
-    ? html`<span class="chat-a2a-badge">From: @${resolvedName}</span>`
-    : nothing;
+  const fromBadge =
+    group.isInterAgent && resolvedName
+      ? html`<span class="chat-a2a-badge">From: @${resolvedName}</span>`
+      : nothing;
 
   return html`
     <div class="chat-group ${roleClass}">
       ${renderAvatar(group.role, {
-    name: resolvedName,
-    avatar: resolvedAvatar,
-  })}
+        name: resolvedName,
+        avatar: resolvedAvatar,
+      })}
       <div class="chat-group-messages">
         ${group.messages.map((item, index) =>
-    renderGroupedMessage(
-      item.message,
-      {
-        isStreaming: group.isStreaming && index === group.messages.length - 1,
-        showReasoning: opts.showReasoning,
-      },
-      opts.onOpenSidebar,
-    ),
-  )}
+          renderGroupedMessage(
+            item.message,
+            {
+              isStreaming: group.isStreaming && index === group.messages.length - 1,
+              showReasoning: opts.showReasoning,
+            },
+            opts.onOpenSidebar,
+          ),
+        )}
         <div class="chat-group-footer">
           ${fromBadge}
           <span class="chat-sender-name">${who}</span>
@@ -225,7 +227,7 @@ function renderMessageImages(images: ImageBlock[]) {
   return html`
     <div class="chat-message-images">
       ${images.map(
-    (img) => html`
+        (img) => html`
           <img
             src=${img.url}
             alt=${img.alt ?? "Attached image"}
@@ -233,7 +235,7 @@ function renderMessageImages(images: ImageBlock[]) {
             @click=${() => window.open(img.url, "_blank")}
           />
         `,
-  )}
+      )}
     </div>
   `;
 }
@@ -286,16 +288,18 @@ function renderGroupedMessage(
     <div class="${bubbleClasses}">
       ${canCopyMarkdown ? renderCopyAsMarkdownButton(markdown!) : nothing}
       ${renderMessageImages(images)}
-      ${reasoningMarkdown
-      ? html`<div class="chat-thinking">${unsafeHTML(
-        toSanitizedMarkdownHtml(reasoningMarkdown),
-      )}</div>`
-      : nothing
-    }
-      ${markdown
-      ? html`<div class="chat-text">${unsafeHTML(toSanitizedMarkdownHtml(markdown))}</div>`
-      : nothing
-    }
+      ${
+        reasoningMarkdown
+          ? html`<div class="chat-thinking">${unsafeHTML(
+              toSanitizedMarkdownHtml(reasoningMarkdown),
+            )}</div>`
+          : nothing
+      }
+      ${
+        markdown
+          ? html`<div class="chat-text">${unsafeHTML(toSanitizedMarkdownHtml(markdown))}</div>`
+          : nothing
+      }
       ${toolCards.map((card) => renderToolCardSidebar(card, onOpenSidebar))}
     </div>
   `;

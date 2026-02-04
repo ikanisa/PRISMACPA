@@ -1,6 +1,6 @@
 const KEY = "firmos.control.settings.v1";
 
-import type { ThemeMode } from "./theme";
+import type { ThemeMode } from "./theme.ts";
 
 export type UiSettings = {
   gatewayUrl: string;
@@ -18,7 +18,7 @@ export type UiSettings = {
 
 export function loadSettings(): UiSettings {
   // Use local gateway URL by default (ws://127.0.0.1:18789)
-  const defaultUrl = 'ws://127.0.0.1:18789';
+  const defaultUrl = "ws://127.0.0.1:18789";
 
   const defaults: UiSettings = {
     gatewayUrl: defaultUrl,
@@ -54,7 +54,7 @@ export function loadSettings(): UiSettings {
         typeof parsed.lastActiveSessionKey === "string" && parsed.lastActiveSessionKey.trim()
           ? parsed.lastActiveSessionKey.trim()
           : (typeof parsed.sessionKey === "string" && parsed.sessionKey.trim()) ||
-          defaults.lastActiveSessionKey,
+            defaults.lastActiveSessionKey,
       theme:
         parsed.theme === "light" || parsed.theme === "dark" || parsed.theme === "system"
           ? parsed.theme
@@ -67,8 +67,8 @@ export function loadSettings(): UiSettings {
           : defaults.chatShowThinking,
       splitRatio:
         typeof parsed.splitRatio === "number" &&
-          parsed.splitRatio >= 0.4 &&
-          parsed.splitRatio <= 0.7
+        parsed.splitRatio >= 0.4 &&
+        parsed.splitRatio <= 0.7
           ? parsed.splitRatio
           : defaults.splitRatio,
       navCollapsed:
@@ -78,7 +78,9 @@ export function loadSettings(): UiSettings {
           ? parsed.navGroupsCollapsed
           : defaults.navGroupsCollapsed,
       agentNavExpanded:
-        typeof parsed.agentNavExpanded === "boolean" ? parsed.agentNavExpanded : defaults.agentNavExpanded,
+        typeof parsed.agentNavExpanded === "boolean"
+          ? parsed.agentNavExpanded
+          : defaults.agentNavExpanded,
     };
   } catch {
     return defaults;
