@@ -46,11 +46,11 @@ import {
   listUpcomingDeadlines,
   type Deadline,
   type Jurisdiction,
-} from "../../firmos/db.js";
-import * as firmos from "../../firmos/index.js";
+} from "../../../firmos/engines/db.js";
+import * as firmos from "../../../firmos/engines/index.js";
 import { ErrorCodes, errorShape } from "../protocol/index.js";
 // Re-export db from firmos index for convenience if needed, or rely on the named imports above.
-// The named imports from "../../firmos/db.js" are fine.
+// The named imports from "../../../firmos/engines/db.js" are fine.
 
 // =============================================================================
 // AGENT DEFINITIONS (Static Roster)

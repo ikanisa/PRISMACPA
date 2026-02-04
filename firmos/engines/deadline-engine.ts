@@ -4,7 +4,7 @@
  * Handles regulatory deadline tracking, alerting, and timeline management.
  */
 
-import { createSessionsSendTool } from "../agents/tools/sessions-send-tool.js";
+import { createSessionsSendTool } from "../../src/agents/tools/sessions-send-tool.js";
 import { listUpcomingDeadlines, getSupabaseClient } from "./db.js";
 
 // =============================================================================

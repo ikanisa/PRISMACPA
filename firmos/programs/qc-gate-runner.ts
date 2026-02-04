@@ -5,7 +5,7 @@
  * Validates outputs, evidence, and compliance before release.
  */
 
-import { loadConfig } from '../firmos-core/config-loader.js';
+import { loadConfig } from '../core/config-loader.js';
 import {
 
     validateTaskNode,

@@ -5,8 +5,15 @@ packages:
   - packages/*
   - channels/*
   - extensions/*
-  - modules
-  - modules/programs
+  - firmos
+  - firmos/modules
+  - firmos/agents
+  - firmos/core
+  - firmos/tools
+  - firmos/packs
+  - firmos/policies-pkg
+  - firmos/programs
+  - firmos/skills
 
 onlyBuiltDependencies:
   - "@whiskeysockets/baileys"
